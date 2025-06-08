@@ -85,6 +85,55 @@ export interface Dispute {
   umaLink: string
 }
 
+// Add these new interfaces after the existing ones
+export interface Transaction {
+  actionType: string
+  blockNumber: string
+  blockTimestamp: string
+  createdAt: string
+  id: string
+  initiator: string
+  ipId: string
+  logIndex: string
+  resourceId: string
+  resourceType: string
+  transactionIndex: string
+  txHash: string
+}
+
+export interface RoyaltyPay {
+  amount: string
+  blockNumber: string
+  blockTimestamp: string
+  id: string
+  payerIpId: string
+  receiverIpId: string
+  sender: string
+  token: string
+}
+
+export interface LicenseToken {
+  blockNumber: string
+  blockTime: string
+  burntAt: string
+  id: string
+  licenseTemplate: string
+  licenseTermsId: string
+  licensorIpId: string
+  owner: string
+  transferable: string
+}
+
+export interface LicenseMintingFeePaid {
+  amount: string
+  blockNumber: string
+  blockTimestamp: string
+  id: string
+  payer: string
+  receiverIpId: string
+  token: string
+}
+
 export const api = {
   async listIPAssets(options: any = {}) {
     const response = await fetch(`${API_BASE_URL}/api/v3/assets`, {
@@ -136,6 +185,110 @@ export const api = {
 
   async getDispute(disputeId: string) {
     const response = await fetch(`${API_BASE_URL}/api/v3/disputes/${disputeId}`, {
+      method: "GET",
+      headers,
+    })
+    return response.json()
+  },
+
+  async listTransactions(options: any = {}) {
+    const response = await fetch(`${API_BASE_URL}/api/v3/transactions`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({
+        options: {
+          orderBy: "blockNumber",
+          orderDirection: "desc",
+          pagination: { limit: 50 },
+          ...options,
+        },
+      }),
+    })
+    return response.json()
+  },
+
+  async listLatestTransactions(options: any = {}) {
+    const response = await fetch(`${API_BASE_URL}/api/v3/transactions/latest`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({
+        options: {
+          orderBy: "blockNumber",
+          orderDirection: "desc",
+          pagination: { limit: 50 },
+          ...options,
+        },
+      }),
+    })
+    return response.json()
+  },
+
+  async getTransaction(trxId: string) {
+    const response = await fetch(`${API_BASE_URL}/api/v3/transactions/${trxId}`, {
+      method: "GET",
+      headers,
+    })
+    return response.json()
+  },
+
+  async listRoyaltyPays(options: any = {}) {
+    const response = await fetch(`${API_BASE_URL}/api/v3/royalties/payments`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({
+        options: {
+          orderBy: "blockNumber",
+          orderDirection: "desc",
+          pagination: { limit: 50 },
+          ...options,
+        },
+      }),
+    })
+    return response.json()
+  },
+
+  async getRoyaltyPay(royaltyPayId: string) {
+    const response = await fetch(`${API_BASE_URL}/api/v3/royalties/payments/${royaltyPayId}`, {
+      method: "GET",
+      headers,
+    })
+    return response.json()
+  },
+
+  async listLicenseTokens(options: any = {}) {
+    const response = await fetch(`${API_BASE_URL}/api/v3/licenses/tokens`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({
+        options: {
+          orderBy: "blockNumber",
+          orderDirection: "desc",
+          pagination: { limit: 50 },
+          ...options,
+        },
+      }),
+    })
+    return response.json()
+  },
+
+  async listLicenseMintingFees(options: any = {}) {
+    const response = await fetch(`${API_BASE_URL}/api/v3/licenses/mintingfees`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({
+        options: {
+          orderBy: "blockNumber",
+          orderDirection: "desc",
+          pagination: { limit: 50 },
+          ...options,
+        },
+      }),
+    })
+    return response.json()
+  },
+
+  async getLicenseMintingFee(licenseMintingFeePaidId: string) {
+    const response = await fetch(`${API_BASE_URL}/api/v3/licenses/mintingfees/${licenseMintingFeePaidId}`, {
       method: "GET",
       headers,
     })

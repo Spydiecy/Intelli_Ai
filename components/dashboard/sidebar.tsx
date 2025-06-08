@@ -12,6 +12,7 @@ import {
   ArrowLeft
 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { useEffect } from "react"
 
 interface DashboardSidebarProps {
   open: boolean
@@ -20,6 +21,9 @@ interface DashboardSidebarProps {
 
 export function DashboardSidebar({ open, setOpen }: DashboardSidebarProps) {
   const pathname = usePathname()
+  useEffect(() => {
+  setOpen(false)
+  }, [])
   
   const routes = [
     {
@@ -35,7 +39,7 @@ export function DashboardSidebar({ open, setOpen }: DashboardSidebarProps) {
     {
       label: "Swap",
       icon: ArrowLeftRight,
-      href: "/dashboard/swap"
+      href: "/dashboard/ip-asset"
     },
       {
       label: "Cross Chain Swap Info",

@@ -41,7 +41,7 @@ export default function WalletPage() {
           <div className="backdrop-blur-sm bg-black/20 border border-white/10 rounded-xl p-6 hover:border-white/20 transition-all shadow-md">
             <div className="flex flex-col sm:flex-row justify-between items-center">
               <div className="mb-4 sm:mb-0">
-                <h2 className="text-xl font-bold mb-2 bg-gradient-to-r from-white to-white/90 text-transparent bg-clip-text">Solana Wallet</h2>
+                <h2 className="text-xl font-bold mb-2 bg-gradient-to-r from-white to-white/90 text-transparent bg-clip-text">Web3 Wallet</h2>
                 <div className="flex items-center gap-2">
                   <p className="text-sm text-white/60">{formatAddress(walletAddress)}</p>
                   <button 
@@ -51,7 +51,7 @@ export default function WalletPage() {
                     <Copy className="h-4 w-4 text-white/80" />
                   </button>
                   <a 
-                    href={`https://explorer.solana.com/address/${walletAddress}`} 
+                    href={`https://explorer.story.foundation/address/${walletAddress}`} 
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="p-1 hover:bg-white/10 rounded-md transition-all"
@@ -155,7 +155,7 @@ export default function WalletPage() {
               <Wallet className="h-8 w-8 text-white" />
             </div>
             <h2 className="text-xl font-bold mb-2 bg-gradient-to-r from-white to-white/90 text-transparent bg-clip-text">Connect Your Wallet</h2>
-            <p className="text-white/60 mb-6">Connect your Solana wallet to view your assets and interact with the Astra DeFi platform</p>
+            <p className="text-white/60 mb-6">Connect your Web3 wallet to view your assets and interact with the IntelliAI IP management platform</p>
           </div>
           <div className="flex flex-col gap-2 max-w-xs mx-auto">
             <Button size="lg" className="w-full bg-white/10 hover:bg-white/15 border border-white/10 hover:border-white/20 text-white">Connect Wallet</Button>

@@ -83,7 +83,7 @@ export function HeroSection() {
                                     <Link
                                         href="#link"
                                         className="hover:bg-background dark:hover:border-t-border bg-muted group mx-auto flex w-fit items-center gap-4 rounded-full border p-1 pl-4 shadow-md shadow-black/5 transition-all duration-300 dark:border-t-white/5 dark:shadow-zinc-950">
-                                        <span className="text-foreground text-sm">Introducing Support for Solana</span>
+                                        <span className="text-foreground text-sm">Introducing Support for Story Protocol</span>
                                         <span className="dark:border-background block h-4 w-0.5 border-l bg-white dark:bg-zinc-700"></span>
 
                                         <div className="bg-background group-hover:bg-muted size-6 overflow-hidden rounded-full duration-500">
@@ -100,11 +100,11 @@ export function HeroSection() {
                         
                                     <h1
                                         className="mt-8 max-w-4xl mx-auto text-balance text-6xl md:text-7xl lg:mt-16 xl:text-[5.25rem]">
-                                        Your AI-powered copilot for DeFi trading
+                                        Your AI-powered platform for IP Asset management
                                     </h1>
                                     <p
                                         className="mx-auto mt-8 max-w-2xl text-balance text-lg">
-                                        Astra harnesses the power of artificial intelligence and Solana's high-performance blockchain to transform your DeFi experience.
+                                        IntelliAI harnesses the power of artificial intelligence and Story Protocol's innovative IP infrastructure to transform intellectual property management.
                                     </p>
                                 </AnimatedGroup>
 
@@ -167,15 +167,15 @@ export function HeroSection() {
                                 <div className="inset-shadow-2xs ring-background dark:inset-shadow-white/20 bg-background relative mx-auto max-w-6xl overflow-hidden rounded-2xl border p-4 shadow-lg shadow-zinc-950/15 ring-1">
                                     <img
                                         className="bg-background aspect-15/8 relative hidden rounded-2xl dark:block"
-                                        src="https://raw.githubusercontent.com/Spydiecy/Astra/refs/heads/main/frontend/public/hero.png"
-                                        alt="app screen"
+                                        src="/hero.png"
+                                        alt="IntelliAI dashboard screen"
                                         width="2700"
                                         height="1440"
                                     />
                                     <img
                                         className="z-2 border-border/25 aspect-15/8 relative rounded-2xl border dark:hidden"
-                                        src="https://raw.githubusercontent.com/Spydiecy/Astra/refs/heads/main/frontend/public/hero.png"
-                                        alt="app screen"
+                                        src="/hero.png"
+                                        alt="IntelliAI dashboard screen"
                                         width="2700"
                                         height="1440"
                                     />
@@ -191,7 +191,7 @@ export function HeroSection() {
                         <div className="mb-16 text-center">
                             <h2 className="mb-4 text-4xl font-bold md:text-5xl">Core Features</h2>
                             <p className="mx-auto max-w-2xl text-muted-foreground">
-                                Powerful capabilities that elevate your DeFi trading experience
+                                Powerful capabilities that elevate your IP asset management experience
                             </p>
                         </div>
                         
@@ -203,76 +203,69 @@ export function HeroSection() {
                                         <path d="M12 20v-6M6 20V10M18 20V4"/>
                                     </svg>
                                 </div>
-                                <h3 className="mb-2 text-xl font-semibold">AI-Powered Trading Intelligence</h3>
-                                <p className="text-muted-foreground">Advanced algorithms provide data-driven suggestions for optimal trade entry and exit points.</p>
+                                <h3 className="mb-2 text-xl font-semibold">AI-Powered IP Intelligence</h3>
+                                <p className="text-muted-foreground">Advanced algorithms provide insights into IP asset performance and licensing opportunities.</p>
                             </div>
                             
                             {/* Feature 2 */}
                             <div className="group rounded-xl border p-6 hover:border-primary/50">
                                 <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide">
-                                        <path d="m8 6 4-4 4 4"/>
-                                        <path d="M12 2v10.3a4 4 0 0 1-1.172 2.872L4 22"/>
-                                        <path d="m20 22-5-5"/>
+                                        <path d="M9 12l2 2 4-4"/>
+                                        <path d="M21 12c.552 0 1-.448 1-1V5c0-.552-.448-1-1-1H3c-.552 0-1 .448-1 1v6c0 .552.448 1 1 1h18z"/>
+                                        <path d="M3 10v9a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-9"/>
                                     </svg>
                                 </div>
-                                <h3 className="mb-2 text-xl font-semibold">Seamless Multi-DEX Execution</h3>
-                                <p className="text-muted-foreground">Execute token swaps across multiple decentralized exchanges with minimal friction.</p>
+                                <h3 className="mb-2 text-xl font-semibold">Comprehensive IP Asset Management</h3>
+                                <p className="text-muted-foreground">Browse and explore IP assets registered on Story Protocol with advanced filtering.</p>
                             </div>
                             
                             {/* Feature 3 */}
                             <div className="group rounded-xl border p-6 hover:border-primary/50">
                                 <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide">
-                                        <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
-                                        <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
-                                        <path d="M4 22h16"/>
-                                        <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/>
-                                        <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/>
-                                        <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>
+                                        <rect width="20" height="14" x="2" y="5" rx="2"/>
+                                        <line x1="2" x2="22" y1="10" y2="10"/>
                                     </svg>
                                 </div>
-                                <h3 className="mb-2 text-xl font-semibold">Comprehensive Portfolio Analysis</h3>
-                                <p className="text-muted-foreground">Gain powerful insights about your holdings, performance metrics, and risk exposure.</p>
+                                <h3 className="mb-2 text-xl font-semibold">Minting Fees & Royalty Tracking</h3>
+                                <p className="text-muted-foreground">Monitor licensing minting fees across the Story Protocol ecosystem with detailed analytics.</p>
                             </div>
                             
                             {/* Feature 4 */}
                             <div className="group rounded-xl border p-6 hover:border-primary/50">
                                 <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide">
-                                        <path d="M2 22h20"/>
-                                        <path d="M10 7H5a2 2 0 0 0-2 2v11h7V7Z"/>
-                                        <path d="M10 18h7V5a2 2 0 0 0-2-2h-3v15Z"/>
-                                        <path d="M17 18h2a2 2 0 0 0 2-2V9h-4v9Z"/>
+                                        <path d="M5 12V7a7 7 0 1 1 14 0v5"/>
+                                        <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
+                                        <path d="m7 16 3-3 3 3"/>
                                     </svg>
                                 </div>
-                                <h3 className="mb-2 text-xl font-semibold">Intelligent Gas Optimization</h3>
-                                <p className="text-muted-foreground">Sophisticated timing mechanisms determine optimal transaction execution to minimize fees.</p>
+                                <h3 className="mb-2 text-xl font-semibold">IP Asset Relationships</h3>
+                                <p className="text-muted-foreground">Visualize IP asset hierarchies and track parent-child relationships across the ecosystem.</p>
                             </div>
                             
                             {/* Feature 5 */}
                             <div className="group rounded-xl border p-6 hover:border-primary/50">
                                 <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide">
-                                        <path d="M3 18v-6a9 9 0 0 1 18 0v6"/>
-                                        <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/>
+                                        <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>
                                     </svg>
                                 </div>
-                                <h3 className="mb-2 text-xl font-semibold">Real-time Market Sentiment Analysis</h3>
-                                <p className="text-muted-foreground">Leverage cutting-edge NLP to analyze market trends and sentiment indicators.</p>
+                                <h3 className="mb-2 text-xl font-semibold">License Management</h3>
+                                <p className="text-muted-foreground">View and analyze IP licensing terms, commercial usage rights, and revenue sharing.</p>
                             </div>
                             
                             {/* Feature 6 */}
                             <div className="group rounded-xl border p-6 hover:border-primary/50">
                                 <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide">
-                                        <rect x="2" y="3" width="20" height="14" rx="2"/>
-                                        <line x1="8" y1="21" x2="16" y2="21"/>
-                                        <line x1="12" y1="17" x2="12" y2="21"/>
+                                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/>
+                                        <path d="m9 12 2 2 4-4"/>
                                     </svg>
                                 </div>
-                                <h3 className="mb-2 text-xl font-semibold">Intuitive Interface</h3>
-                                <p className="text-muted-foreground">Clean, professional dashboard suitable for both novice and sophisticated traders.</p>
+                                <h3 className="mb-2 text-xl font-semibold">Story Protocol Integration</h3>
+                                <p className="text-muted-foreground">Direct integration with Story Protocol APIs and real-time blockchain data access.</p>
                             </div>
                         </div>
                     </div>
@@ -285,7 +278,7 @@ export function HeroSection() {
                             <div>
                                 <h2 className="mb-4 text-4xl font-bold md:text-5xl">Technical Architecture</h2>
                                 <p className="mb-6 text-muted-foreground">
-                                    Astra employs a robust technical foundation designed for performance, security, and exceptional user experience.
+                                    IntelliAI employs a robust technical foundation designed for performance, security, and exceptional user experience in IP asset management.
                                 </p>
                                 
                                 <ul className="space-y-4">
@@ -296,7 +289,7 @@ export function HeroSection() {
                                                 <polyline points="22 4 12 14.01 9 11.01"/>
                                             </svg>
                                         </div>
-                                        <span><strong>Frontend:</strong> React.js with Tailwind CSS for responsive design</span>
+                                        <span><strong>Frontend:</strong> Next.js with React and Tailwind CSS for responsive design</span>
                                     </li>
                                     <li className="flex items-start gap-2">
                                         <div className="flex-shrink-0 text-primary">
@@ -305,7 +298,7 @@ export function HeroSection() {
                                                 <polyline points="22 4 12 14.01 9 11.01"/>
                                             </svg>
                                         </div>
-                                        <span><strong>AI Engine:</strong> Custom-trained TensorFlow models with specialized trading algorithms</span>
+                                        <span><strong>AI Engine:</strong> Custom-trained models with specialized IP analysis algorithms</span>
                                     </li>
                                     <li className="flex items-start gap-2">
                                         <div className="flex-shrink-0 text-primary">
@@ -314,7 +307,7 @@ export function HeroSection() {
                                                 <polyline points="22 4 12 14.01 9 11.01"/>
                                             </svg>
                                         </div>
-                                        <span><strong>Blockchain Layer:</strong> Solana Web3.js for high-throughput transaction processing</span>
+                                        <span><strong>Blockchain Layer:</strong> Story Protocol APIs for IP asset data and transaction processing</span>
                                     </li>
                                     <li className="flex items-start gap-2">
                                         <div className="flex-shrink-0 text-primary">
@@ -323,7 +316,7 @@ export function HeroSection() {
                                                 <polyline points="22 4 12 14.01 9 11.01"/>
                                             </svg>
                                         </div>
-                                        <span><strong>Integration Layer:</strong> OKX DEX API for liquidity access and trade execution</span>
+                                        <span><strong>Integration Layer:</strong> Story APIs for comprehensive IP asset management</span>
                                     </li>
                                     <li className="flex items-start gap-2">
                                         <div className="flex-shrink-0 text-primary">
@@ -332,15 +325,15 @@ export function HeroSection() {
                                                 <polyline points="22 4 12 14.01 9 11.01"/>
                                             </svg>
                                         </div>
-                                        <span><strong>Data Services:</strong> Pyth Network for reliable, low-latency price oracle data</span>
+                                        <span><strong>Data Services:</strong> Real-time IP asset feeds and licensing data integration</span>
                                     </li>
                                 </ul>
                             </div>
                             
                             <div className="rounded-xl border p-4">
                                 <img 
-                                    src="https://raw.githubusercontent.com/Spydiecy/Astra/refs/heads/main/frontend/public/ai.png" 
-                                    alt="Blockchain Technology" 
+                                    src="/ai.png" 
+                                    alt="IntelliAI Technology" 
                                     className="rounded-lg w-full object-contain mx-auto" 
                                 />
                             </div>
@@ -354,7 +347,7 @@ export function HeroSection() {
                         <div className="mb-16 text-center">
                             <h2 className="mb-4 text-4xl font-bold md:text-5xl">Simple, Transparent Pricing</h2>
                             <p className="mx-auto max-w-2xl text-muted-foreground">
-                                Choose the plan that best suits your trading needs
+                                Choose the plan that best suits your IP management needs
                             </p>
                         </div>
                         
@@ -366,7 +359,7 @@ export function HeroSection() {
                                     <div className="mb-2 flex items-baseline">
                                         <span className="text-4xl font-bold">Free</span>
                                     </div>
-                                    <p className="text-muted-foreground">Perfect for beginners exploring DeFi</p>
+                                    <p className="text-muted-foreground">Perfect for beginners exploring IP assets</p>
                                 </div>
                                 
                                 <ul className="mb-8 space-y-3 text-sm">
@@ -375,21 +368,21 @@ export function HeroSection() {
                                             <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
                                             <polyline points="22 4 12 14.01 9 11.01"/>
                                         </svg>
-                                        <span>Basic portfolio analytics</span>
+                                        <span>Basic IP asset browsing</span>
                                     </li>
                                     <li className="flex items-center gap-2">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary">
                                             <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
                                             <polyline points="22 4 12 14.01 9 11.01"/>
                                         </svg>
-                                        <span>Single DEX trading</span>
+                                        <span>View IP asset information</span>
                                     </li>
                                     <li className="flex items-center gap-2">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary">
                                             <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
                                             <polyline points="22 4 12 14.01 9 11.01"/>
                                         </svg>
-                                        <span>Market data dashboard</span>
+                                        <span>IP asset dashboard</span>
                                     </li>
                                 </ul>
                                 
@@ -412,7 +405,7 @@ export function HeroSection() {
                                         <span className="text-4xl font-bold">$39</span>
                                         <span className="text-muted-foreground">/month</span>
                                     </div>
-                                    <p className="text-muted-foreground">For active traders seeking an edge</p>
+                                    <p className="text-muted-foreground">For active IP creators and managers</p>
                                 </div>
                                 
                                 <ul className="mb-8 space-y-3 text-sm">
@@ -428,28 +421,28 @@ export function HeroSection() {
                                             <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
                                             <polyline points="22 4 12 14.01 9 11.01"/>
                                         </svg>
-                                        <span>AI-powered trading insights</span>
+                                        <span>AI-powered IP insights</span>
                                     </li>
                                     <li className="flex items-center gap-2">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary">
                                             <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
                                             <polyline points="22 4 12 14.01 9 11.01"/>
                                         </svg>
-                                        <span>Multi-DEX trading</span>
+                                        <span>Advanced IP asset tracking</span>
                                     </li>
                                     <li className="flex items-center gap-2">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary">
                                             <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
                                             <polyline points="22 4 12 14.01 9 11.01"/>
                                         </svg>
-                                        <span>Gas optimization</span>
+                                        <span>Royalty tracking</span>
                                     </li>
                                     <li className="flex items-center gap-2">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary">
                                             <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
                                             <polyline points="22 4 12 14.01 9 11.01"/>
                                         </svg>
-                                        <span>Advanced portfolio analytics</span>
+                                        <span>Advanced analytics</span>
                                     </li>
                                 </ul>
                                 
@@ -468,7 +461,7 @@ export function HeroSection() {
                                         <span className="text-4xl font-bold">$99</span>
                                         <span className="text-muted-foreground">/month</span>
                                     </div>
-                                    <p className="text-muted-foreground">For professional traders and institutions</p>
+                                    <p className="text-muted-foreground">For professional IP managers and institutions</p>
                                 </div>
                                 
                                 <ul className="mb-8 space-y-3 text-sm">
@@ -484,21 +477,21 @@ export function HeroSection() {
                                             <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
                                             <polyline points="22 4 12 14.01 9 11.01"/>
                                         </svg>
-                                        <span>Algorithmic trading strategies</span>
+                                        <span>Automated IP management strategies</span>
                                     </li>
                                     <li className="flex items-center gap-2">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary">
                                             <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
                                             <polyline points="22 4 12 14.01 9 11.01"/>
                                         </svg>
-                                        <span>Flash loan implementation</span>
+                                        <span>White-label licensing solutions</span>
                                     </li>
                                     <li className="flex items-center gap-2">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary">
                                             <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
                                             <polyline points="22 4 12 14.01 9 11.01"/>
                                         </svg>
-                                        <span>Custom API integrations</span>
+                                        <span>Custom Story Protocol integrations</span>
                                     </li>
                                     <li className="flex items-center gap-2">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary">
@@ -521,8 +514,8 @@ export function HeroSection() {
                 
                 {/* Testimonials Section */}
                 <TestimonialsSection
-                  title="Trusted by traders worldwide"
-                  description="Join thousands of traders who are already building the future with our AI-powered DeFi platform"
+                  title="Trusted by IP creators worldwide"
+                  description="Join thousands of creators who are already building the future with our AI-powered IP management platform"
                   testimonials={[
                     {
                       author: {
@@ -530,7 +523,7 @@ export function HeroSection() {
                         handle: "@emmaai",
                         avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop&crop=face"
                       },
-                      text: "Using Astra has transformed how we handle DeFi trading. The speed and accuracy of the AI recommendations are unprecedented.",
+                      text: "Using IntelliAI has transformed how we handle IP asset management. The speed and accuracy of the AI recommendations are unprecedented.",
                       href: "https://twitter.com/emmaai"
                     },
                     {
@@ -539,7 +532,7 @@ export function HeroSection() {
                         handle: "@davidtech",
                         avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face"
                       },
-                      text: "The multi-DEX integration is flawless. I've reduced my transaction costs by 60% since implementing Astra for my trades.",
+                      text: "The Story Protocol integration is flawless. I've streamlined my IP licensing process by 60% since implementing IntelliAI for my assets.",
                       href: "https://twitter.com/davidtech"
                     },
                     {
@@ -548,7 +541,7 @@ export function HeroSection() {
                         handle: "@sofiaml",
                         avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=face"
                       },
-                      text: "Finally, a trading tool that actually understands market context! The accuracy in sentiment analysis is impressive."
+                      text: "Finally, an IP management tool that actually understands the complexity of intellectual property! The accuracy in licensing analysis is impressive."
                     }
                   ]}
                 />
@@ -560,7 +553,7 @@ export function HeroSection() {
                             <div className="md:col-span-2">
                                 <Logo className="mb-4" />
                                 <p className="mb-4 max-w-xs text-muted-foreground">
-                                    Your AI-powered copilot for DeFi trading on Solana. Enhancing trading efficiency through advanced algorithms.
+                                    Your AI-powered platform for IP asset management on Story Protocol. Enhancing IP discovery and licensing through advanced algorithms.
                                 </p>
                                 <div className="flex space-x-4">
                                     <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
@@ -607,7 +600,7 @@ export function HeroSection() {
                         
                         <div className="mt-10 border-t pt-6">
                             <p className="text-center text-xs text-muted-foreground">
-                                © {new Date().getFullYear()} Astra. All rights reserved. Developed for the OKX Solana Accelerate Hackathon 2025.
+                                © {new Date().getFullYear()} IntelliAI. All rights reserved. Developed for the Story Protocol ecosystem 2025.
                             </p>
                         </div>
                     </div>
@@ -708,7 +701,7 @@ const Logo = ({ className }: { className?: string }) => {
     return (
         <div className={cn('flex items-center gap-2', className)}>
             <div className="font-bold text-xl bg-gradient-to-b from-white to-gray-400 bg-clip-text text-transparent dark:from-white dark:to-gray-400">
-                ASTRA
+                INTELLIAI
             </div>
         </div>
     )

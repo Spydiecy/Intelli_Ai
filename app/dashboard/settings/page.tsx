@@ -7,7 +7,7 @@ import { UserRound, Moon, Sun, BellRing, ShieldAlert, Languages, HelpCircle, Bot
 export default function SettingsPage() {
   const [darkMode, setDarkMode] = useState(true)
   const [notifications, setNotifications] = useState(true)
-  const [aiTrading, setAiTrading] = useState(false)
+  const [aiIPManagement, setAiIPManagement] = useState(false)
   const [language, setLanguage] = useState("English")
 
   return (
@@ -35,7 +35,7 @@ export default function SettingsPage() {
                   <input 
                     type="text" 
                     id="display-name"
-                    defaultValue="Astra User"
+                    defaultValue="IntelliAI User"
                     className="w-full p-2 rounded-md border border-white/10 bg-black/30 text-white focus:border-white/30 focus:outline-none"
                   />
                 </div>
@@ -114,7 +114,7 @@ export default function SettingsPage() {
               <div className="flex justify-between items-center">
                 <div>
                   <h3 className="text-lg font-medium mb-1">Notifications</h3>
-                  <p className="text-sm text-white/60">Receive trading and platform notifications</p>
+                  <p className="text-sm text-white/60">Receive IP management and platform notifications</p>
                 </div>
                 <label className="relative inline-flex items-center cursor-pointer">
                   <input 
@@ -136,22 +136,22 @@ export default function SettingsPage() {
             <div className="flex-1">
               <div className="flex justify-between items-center">
                 <div>
-                  <h3 className="text-lg font-medium mb-1">AI-Powered Trading</h3>
-                  <p className="text-sm text-white/60">Enable AI to make trading decisions on your behalf</p>
+                  <h3 className="text-lg font-medium mb-1">AI-Powered IP Management</h3>
+                  <p className="text-sm text-white/60">Enable AI to make IP management decisions on your behalf</p>
                 </div>
                 <label className="relative inline-flex items-center cursor-pointer">
                   <input 
                     type="checkbox" 
-                    checked={aiTrading} 
-                    onChange={() => setAiTrading(!aiTrading)} 
+                    checked={aiIPManagement} 
+                    onChange={() => setAiIPManagement(!aiIPManagement)} 
                     className="sr-only peer"
                   />
                   <div className="w-11 h-6 bg-black/30 border border-white/20 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-white/20"></div>
                 </label>
               </div>
-              {aiTrading && (
+              {aiIPManagement && (
                 <div className="mt-4 p-3 bg-white/5 border border-white/10 rounded-lg">
-                  <p className="text-sm">AI Trading is now <strong>enabled</strong>. Astra will analyze market conditions and execute trades according to your risk profile.</p>
+                  <p className="text-sm">AI IP Management is now <strong>enabled</strong>. IntelliAI will analyze IP asset opportunities and assist with licensing according to your preferences.</p>
                   <Button size="sm" variant="outline" className="mt-2 border-white/20 hover:bg-white/10 text-white">Configure AI Settings</Button>
                 </div>
               )}
@@ -192,7 +192,7 @@ export default function SettingsPage() {
           </div>
           <div>
             <h3 className="text-lg font-medium mb-1">Help & Support</h3>
-            <p className="text-sm text-white/60 mb-4">Get help with your account and the Astra DeFi platform</p>
+            <p className="text-sm text-white/60 mb-4">Get help with your account and the IntelliAI IP management platform</p>
             
             <div className="flex flex-wrap gap-2">
               <Button variant="outline" className="border-white/20 hover:bg-white/10 text-white">Documentation</Button>

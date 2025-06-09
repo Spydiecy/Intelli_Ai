@@ -71,7 +71,7 @@ export function DashboardSidebar({ open, setOpen }: DashboardSidebarProps) {
       <div className="flex flex-col h-full">
         <div className="flex items-center justify-between p-5 border-b border-white/10">
           <div className={cn("flex items-center", !open && "hidden")}>
-            <span className="text-xl font-bold bg-gradient-to-b from-white to-white/70 text-transparent bg-clip-text">Astra</span>
+            <span className="text-xl font-bold bg-gradient-to-b from-white to-white/70 text-transparent bg-clip-text">IntelliAI</span>
           </div>
           <button 
             onClick={() => setOpen(!open)}

@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Astra - AI-powered DeFi Trading on Solana",
-  description: "Astra is an intelligent trading assistant that harnesses the power of artificial intelligence and Solana's high-performance blockchain to transform your DeFi experience.",
+  title: "IntelliAI - AI-powered IP Asset Management on Story Protocol",
+  description: "IntelliAI is an intelligent IP management assistant that harnesses the power of artificial intelligence and Story Protocol's innovative IP infrastructure to transform your intellectual property management experience.",
 };
 
 export default function RootLayout({

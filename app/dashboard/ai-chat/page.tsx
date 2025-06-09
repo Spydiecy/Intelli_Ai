@@ -928,8 +928,8 @@ const suggestions = [
   "What's my balance?",
   "Display my wallet balance",
   "Explain the current SOL market conditions",
-  "How does Astra's AI trading work?",
-  "What's the best DeFi strategy for beginners?",
+  "How does IntelliAI's IP management work?",
+  "What's the best IP strategy for beginners?",
   "How to minimize transaction fees?",
 ]
 
@@ -940,7 +940,7 @@ export default function AiChatPage() {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "system",
-      content: "Hello! I'm Astra AI, your DeFi assistant. How can I help you today?",
+      content: "Hello! I'm IntelliAI Assistant, your IP management assistant. How can I help you today?",
     },
   ])
   const [input, setInput] = useState("")
@@ -1081,7 +1081,7 @@ export default function AiChatPage() {
     setMessages([
       {
         role: "system",
-        content: "Hello! I'm Astra AI, your DeFi assistant. How can I help you today?",
+        content: "Hello! I'm IntelliAI Assistant, your IP management assistant. How can I help you today?",
       },
     ])
   }
@@ -1239,7 +1239,7 @@ export default function AiChatPage() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleSendMessage()}
-            placeholder="Ask Astra AI about DeFi strategies, market analysis, or trading tips..."
+            placeholder="Ask IntelliAI about IP management strategies, licensing opportunities, or Story Protocol insights..."
             className="w-full py-4 px-4 bg-transparent border-none pr-24 focus:outline-none text-white placeholder:text-white/40"
             disabled={loading}
           />

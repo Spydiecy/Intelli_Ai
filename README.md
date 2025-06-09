@@ -1,150 +1,165 @@
-# Astra ✨
-**Your AI-powered copilot for DeFi trading on Solana**
-https://astra-ashen-six.vercel.app/
+# IntelliAI ✨
+**Your AI-powered platform for Story Protocol IP Asset management**
+https://intelliai.vercel.app/
 
-![Astra Landing Page](https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-LW61UbVGHx08UdwYCJrymJnjhEBcP1.png)
-[![Twitter Follow](https://img.shields.io/twitter/follow/Astra_ai_okx?style=social)](https://x.com/Astra_ai_okx)
-[![Solana](https://img.shields.io/badge/Built%20on-Solana-9945FF?style=flat&logo=solana)](https://solana.com)
-[![OKX](https://img.shields.io/badge/Powered%20by-OKX%20API-000000?style=flat)](https://www.okx.com)
+![IntelliAI Landing Page](https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-LW61UbVGHx08UdwYCJrymJnjhEBcP1.png)
+[![Twitter Follow](https://img.shields.io/twitter/follow/IntelliAI_platform?style=social)](https://x.com/IntelliAI_platform)
+[![Story Protocol](https://img.shields.io/badge/Built%20on-Story%20Protocol-FF6B6B?style=flat)](https://storyprotocol.xyz/)
+[![Web3](https://img.shields.io/badge/Powered%20by-Story%20APIs-4ECDC4?style=flat)](https://api.storyapis.com)
 
 ## Overview 🌐
 
-Astra is an intelligent trading assistant that harnesses the power of artificial intelligence and Solana's high-performance blockchain to transform the DeFi experience. As your personal trading copilot, Astra elevates your trading strategy by simplifying complex operations, identifying prime opportunities, and executing transactions with unparalleled efficiency.
+IntelliAI is an intelligent IP asset management platform that harnesses the power of artificial intelligence and Story Protocol's innovative IP infrastructure to transform intellectual property management. As your personal IP management assistant, IntelliAI simplifies complex IP operations, provides insights into licensing opportunities, and helps you navigate the emerging world of programmable IP assets.
 
-Built for the **OKX Solana Accelerate Hackathon 2024**, Astra represents the next generation of DeFi trading platforms, combining cutting-edge AI with seamless blockchain integration.
+Built for the next generation of creators, developers, and IP holders, IntelliAI represents the convergence of AI technology and blockchain-based intellectual property management on Story Protocol.
 
 ## 🚀 Core Features
 
-### 🤖 AI-Powered Trading Intelligence
-- Advanced algorithms provide data-driven suggestions for optimal trade entry and exit points
-- Real-time market analysis with intelligent recommendations
-- AI chat interface with integrated candlestick data visualization
+### 🤖 AI-Powered IP Intelligence
+- Advanced algorithms provide insights into IP asset performance and licensing opportunities
+- Real-time IP market analysis with intelligent recommendations
+- AI chat interface with integrated IP asset data visualization
 
-### 💱 Seamless Multi-DEX Execution
-- Execute token swaps across multiple decentralized exchanges with minimal friction
-- Cross-chain swap functionality for enhanced liquidity access
-- Support for 193+ Solana tokens with real-time pricing
+### 📋 Comprehensive IP Asset Management
+- Browse and explore IP assets registered on Story Protocol
+- Real-time IP asset tracking and performance metrics
+- Detailed IP asset information including metadata, licensing terms, and ancestry
 
-### 📊 Comprehensive Portfolio Analysis
-- Real-time portfolio tracking and performance metrics
-- Live token balance monitoring
-- Comprehensive risk exposure analysis
+### 💰 Minting Fees & Royalty Tracking
+- Monitor licensing minting fees across the Story Protocol ecosystem
+- Track royalty distributions and revenue streams
+- Comprehensive fee analysis with pagination and filtering
+
+### 🔗 IP Asset Relationships
+- Visualize IP asset hierarchies and derivative relationships
+- Track parent-child relationships between IP assets
+- Explore IP asset ancestry and descendant trees
+
+### 📊 License Management
+- View and analyze IP licensing terms and conditions
+- Track commercial usage rights and revenue sharing
+- Monitor licensing policies and arbitration settings
+
+### 🎯 Story Protocol Integration
+- Direct integration with Story Protocol APIs
+- Real-time blockchain data from Story testnet
+- Native support for IP asset registration and management
 - Interactive candlestick charts with market data
 
-### ⚡ Intelligent Gas Optimization
-- Sophisticated timing mechanisms determine optimal transaction execution
-- Minimize fees through smart transaction batching
-- Real-time gas price monitoring and optimization
+### ⚡ Intelligent Data Processing
+- Sophisticated filtering mechanisms for IP asset discovery
+- Smart pagination for large datasets
+- Real-time data synchronization with Story Protocol
 
-### 🔗 Cross-Chain Compatibility
-- Seamless operation across Solana and compatible blockchain networks
-- Cross-chain swap information and routing
-- Multi-chain portfolio management
+### 🔗 Cross-Chain IP Discovery
+- Seamless operation across Story Protocol and compatible networks
+- Multi-chain IP asset exploration and management
+- Cross-platform IP licensing opportunities
 
-### 💼 Phantom Wallet Integration
-- Secure and seamless wallet connectivity
-- Real-time balance updates and transaction history
-- Native Solana account integration for optimal user experience
+### 💼 Wallet Integration
+- Secure connection with popular Web3 wallets
+- Real-time balance updates for IP-related tokens
+- Native Story Protocol account integration for optimal user experience
 
 ## 📱 Screenshots
 
-### Dashboard Overview
-![Astra Dashboard](https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-lkFuL1NaBGSI0c7Hs5spClWbNIPFHi.png)
-*Real-time portfolio tracking with SOL candlestick charts and market statistics*
+### IP Asset Dashboard
+![IntelliAI Dashboard](https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-lkFuL1NaBGSI0c7Hs5spClWbNIPFHi.png)
+*Comprehensive IP asset management with real-time Story Protocol data*
 
-### Token Swap Interface
-![Astra Swap](https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-yheZLjFSiOgbBAhKkYn8Su9G2RXpMW.png)
-*Intuitive swap interface with real-time balance display and token selection*
+### Minting Fees Interface
+![IntelliAI Fees](https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-yheZLjFSiOgbBAhKkYn8Su9G2RXpMW.png)
+*Detailed minting fee tracking with advanced filtering and pagination*
 
 ## 🔧 Technical Architecture
 
-Astra employs a robust technical foundation designed for performance, security, and exceptional user experience:
+IntelliAI employs a robust technical foundation designed for performance, security, and exceptional user experience in the IP management space:
 
-- **Frontend**: React.js with Tailwind CSS for responsive design
-- **AI Engine**: Custom-trained models with specialized trading algorithms
-- **Blockchain Layer**: Solana Web3.js for high-throughput transaction processing
-- **Integration Layer**: OKX DEX API for liquidity access and trade execution
-- **Data Services**: Real-time price feeds and market data integration
-- **Wallet Integration**: Phantom wallet for secure account management
+- **Frontend**: Next.js with React and Tailwind CSS for responsive design
+- **AI Engine**: Custom-trained models with specialized IP analysis algorithms
+- **Blockchain Layer**: Story Protocol APIs for IP asset data and transaction processing
+- **Integration Layer**: Story APIs for comprehensive IP asset management
+- **Data Services**: Real-time IP asset feeds and licensing data integration
+- **Wallet Integration**: Web3 wallet support for Story Protocol interactions
 
 ## 🎯 Key Features
 
-### Real-Time Data Integration
-- **Live Token Balances**: Instant updates of your Solana wallet holdings
-- **Market Data**: Real-time price feeds and trading volume information
-- **Candlestick Charts**: Interactive price charts with technical indicators
-- **Portfolio Tracking**: Comprehensive overview of your DeFi positions
+### Real-Time IP Data Integration
+- **Live IP Assets**: Instant updates of registered IP assets on Story Protocol
+- **Licensing Data**: Real-time licensing terms and minting fee information
+- **Relationship Mapping**: Interactive visualization of IP asset hierarchies
+- **Portfolio Tracking**: Comprehensive overview of your IP asset holdings
 
-### AI-Powered Chat Assistant
-- Intelligent trading recommendations based on market analysis
-- Natural language queries about market conditions and portfolio performance
-- Integration with candlestick data for visual market insights
-- Personalized trading strategies and risk management advice
+### AI-Powered IP Assistant
+- Intelligent IP asset recommendations based on market analysis
+- Natural language queries about IP performance and licensing opportunities
+- Integration with Story Protocol data for comprehensive IP insights
+- Personalized IP management strategies and optimization advice
 
-### Cross-Chain Functionality
-- **Cross-Chain Swaps**: Trade assets across different blockchain networks
-- **Multi-Chain Portfolio**: Track holdings across various chains
-- **Liquidity Aggregation**: Access the best rates across multiple DEXs
-- **Bridge Integration**: Seamless asset transfers between chains
+### Story Protocol Functionality
+- **IP Asset Discovery**: Explore registered IP assets with advanced filtering
+- **Licensing Management**: Track and analyze licensing terms and fees
+- **Ancestry Tracking**: Visualize IP asset relationships and derivative works
+- **Revenue Analytics**: Monitor minting fees and royalty distributions
 
-### OKX API Integration
-- Direct access to OKX's extensive liquidity pools
-- Advanced trading features and order types
-- Real-time market data and price discovery
-- Professional-grade trading tools and analytics
+### Story APIs Integration
+- Direct access to Story Protocol's comprehensive IP database
+- Advanced IP asset search and filtering capabilities
+- Real-time IP asset metadata and licensing information
+- Professional-grade IP management tools and analytics
 
 ## 💡 Strategic Use Cases
 
-### Algorithmic Trading
-Deploy sophisticated trading strategies that execute automatically based on predefined market conditions and AI-generated signals.
+### IP Asset Discovery
+Deploy sophisticated search algorithms to discover and analyze IP assets on Story Protocol with AI-powered insights.
 
-### Arbitrage Detection
-Identify and capitalize on price differentials across exchanges for profit opportunities with minimal risk exposure.
+### Licensing Optimization
+Identify optimal licensing opportunities and track revenue performance across your IP asset portfolio.
 
-### Systematic Accumulation
-Implement dollar-cost averaging strategies to build positions methodically over time with AI-optimized entry points.
+### IP Portfolio Management
+Implement systematic IP asset management strategies with AI-optimized recommendations for licensing and monetization.
 
-### Flash Loan Strategies
-Utilize Solana's exceptional speed for complex flash loan implementations and advanced DeFi strategies.
+### Derivative Tracking
+Utilize Story Protocol's relationship mapping to track derivative works and understand IP asset genealogy.
 
-### Dynamic Portfolio Rebalancing
-Maintain optimal asset allocation through intelligent automated adjustments based on market conditions and risk parameters.
+### Revenue Analytics
+Maintain comprehensive tracking of licensing fees, royalties, and IP-related revenue streams across your portfolio.
 
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Phantom Wallet installed and configured
-- SOL tokens for transaction fees
-- Basic understanding of DeFi trading concepts
+- Web3 wallet (MetaMask, WalletConnect, etc.) configured for Story Protocol
+- Basic understanding of intellectual property and blockchain concepts
+- Internet connection for real-time IP data access
 
 ### Quick Start
-1. **Connect Your Wallet**: Use the "Connect Wallet" button to link your Phantom wallet
-2. **Explore Your Portfolio**: View your current holdings and performance metrics
-3. **Start Trading**: Use the swap interface to trade tokens with AI recommendations
-4. **Chat with AI**: Ask questions and get personalized trading insights
-5. **Monitor Markets**: Track real-time price movements and market trends
+1. **Connect Your Wallet**: Use the "Connect Wallet" button to link your Web3 wallet
+2. **Explore IP Assets**: Browse registered IP assets on Story Protocol with advanced filtering
+3. **Track Licensing**: Monitor minting fees and licensing opportunities across the ecosystem
+4. **Chat with AI**: Ask questions and get personalized IP management insights
+5. **Analyze Relationships**: Explore IP asset hierarchies and derivative relationships
 
-## 🏆 Hackathon Achievement
-Astra was developed as part of the prestigious OKX Solana Accelerate Hackathon, showcasing innovative solutions in the DeFi space. The project demonstrates the potential of combining AI technology with high-performance blockchain infrastructure to create next-generation trading experiences.
+## 🏆 Innovation Focus
+IntelliAI represents the cutting edge of IP management technology, showcasing innovative solutions for the emerging programmable IP economy. The project demonstrates the potential of combining AI technology with blockchain-based IP infrastructure to create next-generation IP management experiences.
 
 ## 👨‍💻 Developer
 
-Passionate about building the future of decentralized finance through innovative technology solutions. Specializing in AI integration, blockchain development, and user experience design.
+Passionate about building the future of intellectual property management through innovative technology solutions. Specializing in AI integration, blockchain development, and IP-focused user experience design.
 
 ## 🔗 Links & Resources
 
-- **Twitter/X**: [@Astra_ai_okx](https://x.com/Astra_ai_okx)
-- **Live Demo**: [Launch Dashboard](https://astra-ashen-six.vercel.app/)
-- **Documentation**: [API Docs](https://web3.okx.com/fr/build/dev-docs/dex-api/dex-what-is-dex-api)
-- **Support**: [Discord Community](https://discord.com/channels/1359817958045646878/1360074997946777681)
+- **Twitter/X**: [@IntelliAI_platform](https://x.com/IntelliAI_platform)
+- **Live Demo**: [Launch Dashboard](https://intelliai.vercel.app/)
+- **Story Protocol**: [Official Documentation](https://docs.storyprotocol.xyz/)
+- **Story APIs**: [API Documentation](https://api.storyapis.com)
 
 ## 🤝 Acknowledgements
 
-- **Solana Foundation** for their revolutionary blockchain infrastructure and developer tools
-- **OKX DEX Team** for their comprehensive trading API ecosystem and liquidity solutions
-- **Phantom Wallet** for their excellent wallet infrastructure and developer support
-- **OKX Solana Accelerate Hackathon** organizers and mentors for their vision and support
-- **Solana Developer Community** for continuous innovation and collaboration
+- **Story Protocol Foundation** for their revolutionary IP infrastructure and developer tools
+- **Story APIs Team** for their comprehensive IP management API ecosystem
+- **Web3 Wallet Providers** for their excellent wallet infrastructure and developer support
+- **Story Protocol Community** for continuous innovation and collaboration in the IP space
+- **Open Source Contributors** for their valuable contributions to the Web3 ecosystem
 
 ## 📄 License
 
@@ -152,17 +167,19 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🚀 Future Roadmap
 
-- [ ] Advanced AI trading strategies
-- [ ] Mobile application development
-- [ ] Additional blockchain integrations
-- [ ] Social trading features
-- [ ] Advanced analytics dashboard
-- [ ] Institutional trading tools
+- [ ] Advanced AI IP analysis and recommendations
+- [ ] Mobile application for IP management
+- [ ] Multi-chain IP asset support
+- [ ] Social IP collaboration features
+- [ ] Advanced IP analytics dashboard
+- [ ] Enterprise IP management tools
+- [ ] IP licensing marketplace integration
+- [ ] Automated royalty distribution
 
 ---
 
-**Built with ❤️ for the DeFi community**
+**Built with ❤️ for the IP creator community**
 
-*Transforming the future of decentralized trading, one transaction at a time.*
+*Transforming the future of intellectual property management, one IP asset at a time.*
 ```
 

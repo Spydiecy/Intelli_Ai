@@ -6,53 +6,36 @@ https://intelliai.vercel.app/
 [![Twitter Follow](https://img.shields.io/twitter/follow/IntelliAI_platform?style=social)](https://x.com/IntelliAI_platform)
 [![Story Protocol](https://img.shields.io/badge/Built%20on-Story%20Protocol-FF6B6B?style=flat)](https://storyprotocol.xyz/)
 [![Tomo Wallet](https://img.shields.io/badge/Powered%20by-Tomo%20Wallet-4ECDC4?style=flat)](https://tomo.inc/)
+[![deBridge](https://img.shields.io/badge/Cross--Chain-deBridge-8B5CF6?style=flat)](https://debridge.finance/)
 [![Web3](https://img.shields.io/badge/Powered%20by-Story%20APIs-4ECDC4?style=flat)](https://api.storyapis.com)
 
 ## Overview 🌐
 
 IntelliAI is an intelligent IP asset management platform that harnesses the power of artificial intelligence and Story Protocol's innovative IP infrastructure to transform intellectual property management. As your personal IP management assistant, IntelliAI simplifies complex IP operations, provides insights into licensing opportunities, and helps you navigate the emerging world of programmable IP assets.
 
-Built for the next generation of creators, developers, and IP holders, IntelliAI represents the convergence of AI technology and blockchain-based intellectual property management on Story Protocol. **Now featuring seamless multi-chain wallet integration powered by Tomo Wallet's cutting-edge technology.**
+Built for the next generation of creators, developers, and IP holders, IntelliAI represents the convergence of AI technology and blockchain-based intellectual property management on Story Protocol. **Now featuring seamless multi-chain wallet integration powered by Tomo Wallet's cutting-edge technology and cross-chain bridging capabilities through deBridge Protocol's advanced infrastructure.**
 
 ## 🏆 Hackathon Bounty Features
 
 ### 🚀 **Tomo Wallet Integration** - *Featured Bounty*
-IntelliAI proudly integrates **Tomo Wallet's EVM Kit** as our primary wallet solution, delivering exceptional multi-chain capabilities:
+IntelliAI integrates **Tomo Wallet's EVM Kit** for seamless multi-chain wallet connectivity:
 
-#### ✨ **Seamless Connection Experience**
-- **One-Click Connect**: Direct wallet connection without complex setup
-- **Multi-Wallet Support**: MetaMask, Rainbow, WalletConnect, and more
-- **Universal Compatibility**: Works across all major EVM-compatible chains
-- **Professional UI**: Beautiful, responsive wallet connection interface
+- **Universal Wallet Support**: MetaMask, Rainbow, WalletConnect, and 20+ wallets
+- **Social Sign In**: Supports walletless sign in with google, X, etc...
+- **One-Click Connection**: Instant wallet authentication across all networks
+- **Enterprise Security**: Non-custodial with industry-standard encryption
+- **Mobile Optimized**: Perfect experience on all devices
 
-#### 🔗 **Multi-Chain Excellence**
-- **Chain Flexibility**: Support for Ethereum, Polygon, Optimism, Arbitrum, Base, and more
-- **Automatic Chain Detection**: Smart chain switching based on dApp requirements
-- **Cross-Chain Ready**: Built for the multi-chain future of Web3
-- **Story Protocol Native**: Optimized for Story Protocol interactions
+### 🌉 **deBridge Cross-Chain Integration** - *Featured Bounty*
+IntelliAI integrates **deBridge Protocol** for cross-chain token bridging:
 
-#### 🛡️ **Enterprise-Grade Security**
-- **Non-Custodial**: Your keys, your coins - complete user control
-- **Secure Connection**: Industry-standard encryption and security protocols
-- **Privacy First**: No personal data collection or tracking
-- **Audit-Ready**: Professional-grade security implementations
+- **Story Protocol Native**: Optimized for Story Protocol
+- **Multi-Chain Support**: Bridge between Story, Ethereum, Polygon, Arbitrum, Optimism
+- **DLN Technology**: Decentralized liquidity network with competitive rates
+- **Real-Time Tracking**: Order monitoring with unique IDs and status updates
+- **Transparent Fees**: Clear breakdown of protocol and solver fees
 
-#### 🎯 **Developer-Friendly Integration**
-IntelliAI has successfully integrated Tomo wallet for comprehensive multi-wallet support, enabling secure wallet, email, and social logins with seamless one-click connections across 20+ wallet providers.
-
-#### 📱 **Superior User Experience**
-- **Instant Connection**: Lightning-fast wallet connection and authentication
-- **Mobile Optimized**: Perfect mobile experience across all devices
-- **Responsive Design**: Seamless experience on desktop, tablet, and mobile
-- **Intuitive Interface**: User-friendly design that reduces friction
-
-### 🎉 **Why Tomo Wallet?**
-We chose Tomo Wallet for this hackathon bounty because of their:
-- **Innovation**: Cutting-edge multi-chain wallet technology
-- **Reliability**: Battle-tested infrastructure and APIs
-- **Developer Experience**: Excellent documentation and integration tools
-- **Community**: Strong ecosystem and developer support
-- **Future-Ready**: Built for the next generation of Web3 applications
+---
 
 ## 🚀 Core Features
 
@@ -98,14 +81,16 @@ We chose Tomo Wallet for this hackathon bounty because of their:
 - Cross-platform IP licensing opportunities
 
 ### 💼 Advanced Wallet Integration
-- **Tomo Wallet EVM Kit**: Professional multi-chain wallet integration
-- **Universal Wallet Support**: MetaMask, Rainbow, WalletConnect, and 20+ wallets
-- **Multi-Chain Ready**: Ethereum, Polygon, Optimism, Arbitrum, Base support
-- **One-Click Connection**: Seamless wallet authentication experience
-- **Real-time Balance Updates**: Live token and IP asset balance tracking
-- **Chain Switching**: Automatic network detection and switching
-- **Mobile Optimized**: Perfect mobile wallet experience
-- **Enterprise Security**: Non-custodial, secure, and privacy-focused
+- **Tomo Wallet EVM Kit**: Multi-chain wallet support (20+ wallets)
+- **One-Click Connection**: MetaMask, Rainbow, WalletConnect integration
+- **Multi-Chain Ready**: Ethereum, Polygon, Optimism, Arbitrum, Base
+- **Enterprise Security**: Non-custodial with real-time balance tracking
+
+### 🌉 Cross-Chain Bridging
+- **deBridge Protocol**: Professional cross-chain infrastructure
+- **Story Protocol Native**: Optimized token transfers and order tracking
+- **DLN Technology**: Decentralized liquidity with competitive rates
+- **Auto Discovery**: Real-time token detection across networks
 
 ## 📱 Screenshots
 
@@ -121,14 +106,13 @@ We chose Tomo Wallet for this hackathon bounty because of their:
 
 IntelliAI employs a robust technical foundation designed for performance, security, and exceptional user experience in the IP management space:
 
-- **Frontend**: Next.js 15 with React 19 and Tailwind CSS for responsive design
-- **AI Engine**: Custom-trained models with specialized IP analysis algorithms
-- **Blockchain Layer**: Story Protocol APIs for IP asset data and transaction processing
-- **Wallet Infrastructure**: **Tomo EVM Kit** for multi-chain wallet connectivity
-- **Multi-Chain Support**: Wagmi + Viem for comprehensive blockchain interactions
-- **Integration Layer**: Story APIs for comprehensive IP asset management
-- **Data Services**: Real-time IP asset feeds and licensing data integration
-- **State Management**: React Query for efficient data fetching and caching
+- **Frontend**: Next.js 15 with React 19 and Tailwind CSS
+- **AI Engine**: Custom-trained models with IP analysis algorithms
+- **Blockchain**: Story Protocol APIs for IP asset data and transactions
+- **Wallet**: Tomo EVM Kit for multi-chain wallet connectivity
+- **Bridge**: deBridge Protocol for cross-chain token transfers
+- **Multi-Chain**: Wagmi + Viem for blockchain interactions
+- **State Management**: React Query for data fetching and caching
 
 ## 🎯 Key Features
 
@@ -234,16 +218,15 @@ Passionate about building the future of intellectual property management through
 - **Story Protocol**: [Official Documentation](https://docs.storyprotocol.xyz/)
 - **Story APIs**: [API Documentation](https://api.storyapis.com)
 - **Tomo Wallet**: [Official Website](https://tomo.inc/)
-- **Tomo Documentation**: [Developer Docs](https://docs.tomo.inc/)
+- **deBridge**: [Cross-Chain Protocol](https://debridge.finance/)
 
 ## 🤝 Acknowledgements
 
-- **Tomo Inc.** for their revolutionary multi-chain wallet infrastructure and seamless developer experience
-- **Story Protocol Foundation** for their revolutionary IP infrastructure and developer tools
-- **Story APIs Team** for their comprehensive IP management API ecosystem
-- **Web3 Wallet Providers** for their excellent wallet infrastructure and developer support
-- **Story Protocol Community** for continuous innovation and collaboration in the IP space
-- **Open Source Contributors** for their valuable contributions to the Web3 ecosystem
+- **Tomo Inc.** for multi-chain wallet infrastructure and seamless developer experience
+- **deBridge** for cross-chain bridging protocol and comprehensive API suite
+- **Story Protocol Foundation** for revolutionary IP infrastructure and developer tools
+- **Story APIs Team** for comprehensive IP management API ecosystem
+- **Open Source Contributors** for valuable contributions to the Web3 ecosystem
 
 ## 📄 License
 

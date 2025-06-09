@@ -10,7 +10,8 @@ import {
   Settings, 
   Home,
   ArrowLeft,
-  Coins
+  Coins,
+  Repeat
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useEffect } from "react"
@@ -42,8 +43,13 @@ export function DashboardSidebar({ open, setOpen }: DashboardSidebarProps) {
       icon: ArrowLeftRight,
       href: "/dashboard/ip-asset"
     },
+    {
+      label: "Swap",
+      icon: Repeat,
+      href: "/dashboard/swap"
+    },
       {
-      label: "Cross Chain Swap Info",
+      label: "Transactions",
       icon: ArrowLeftRight,
       href: "/dashboard/transactions"
     },

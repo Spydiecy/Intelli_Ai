@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Search, CreditCard, Database, RefreshCw, ArrowUpRight, ArrowDownRight, ExternalLink, Filter, ChevronLeft, ChevronRight } from "lucide-react"
+import { Search, CreditCard, Database, RefreshCw, ArrowUpRight, ArrowDownRight, ExternalLink, Filter, ChevronLeft, ChevronRight, Copy } from "lucide-react"
 import Link from "next/link"
 import { motion } from "framer-motion"
 import { shortenAddress, formatTimestamp, formatAmount } from "@/lib/utils"
@@ -67,26 +67,20 @@ export default function MintingFeesPage() {
     setShowApiModal(true)
   }
 
-  const totalAmount = mintingFees.reduce((sum, f) => sum + Number.parseFloat(f.amount || "0"), 0)
-
-  // Format large numbers with K/M suffixes
-  const formatLargeNumber = (num: number) => {
-    if (num >= 1000000) {
-      return `${(num / 1000000).toFixed(2)}M`
-    } else if (num >= 1000) {
-      return `${(num / 1000).toFixed(2)}K`
-    } else if (num >= 1) {
-      return num.toFixed(2)
+  const copyToClipboard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text)
+      // You could add a toast notification here
+    } catch (err) {
+      console.error('Failed to copy: ', err)
     }
-    return num.toFixed(6)
   }
 
-  // Format token amounts specifically for display
-  const formatTokenAmount = (amount: string | number) => {
-    const num = Number(amount || 0)
-    if (num >= 1000000000000) {
-      return `${(num / 1000000000000).toFixed(2)}T`
-    } else if (num >= 1000000000) {
+  const totalAmount = mintingFees.reduce((sum, f) => sum + Number.parseFloat(f.amount || "0"), 0)
+
+  // Format large numbers for total volume (no Wei conversion, just K/M/B suffixes)
+  const formatLargeNumber = (num: number) => {
+    if (num >= 1000000000) {
       return `${(num / 1000000000).toFixed(2)}B`
     } else if (num >= 1000000) {
       return `${(num / 1000000).toFixed(2)}M`
@@ -96,6 +90,32 @@ export default function MintingFeesPage() {
       return num.toFixed(2)
     }
     return num.toFixed(6)
+  }
+
+  // Format token amounts with proper Wei-like conversion (Story Protocol uses IP token)
+  const formatTokenAmount = (amount: string | number) => {
+    const num = Number(amount || 0)
+    
+    // Handle very small numbers
+    if (num < 0.000001) {
+      return `${num.toExponential(2)} IP`
+    }
+    
+    // Assuming 18 decimal places like ETH (convert from Wei-like units)
+    const actualAmount = num / Math.pow(10, 18)
+    
+    if (actualAmount >= 1000000000) {
+      return `${(actualAmount / 1000000000).toFixed(2)}B IP`
+    } else if (actualAmount >= 1000000) {
+      return `${(actualAmount / 1000000).toFixed(2)}M IP`
+    } else if (actualAmount >= 1000) {
+      return `${(actualAmount / 1000).toFixed(2)}K IP`
+    } else if (actualAmount >= 1) {
+      return `${actualAmount.toFixed(2)} IP`
+    } else if (actualAmount >= 0.01) {
+      return `${actualAmount.toFixed(4)} IP`
+    }
+    return `${actualAmount.toFixed(6)} IP`
   }
 
   // Pagination logic
@@ -299,24 +319,42 @@ export default function MintingFeesPage() {
                         <CardTitle className="text-lg text-white">Minting Fee</CardTitle>
                         <Badge className="bg-white/10 text-white border-white/20 px-3 py-1">
                           <CreditCard className="w-3 h-3 mr-1" />
-                          <span className="font-mono text-sm">{formatLargeNumber(Number(fee.amount || 0))} {fee.token}</span>
+                          <span className="font-mono text-sm">{formatTokenAmount(fee.amount || 0)}</span>
                         </Badge>
                       </div>
                     </CardHeader>
                     <CardContent className="space-y-4">
                       {/* Payer and Receiver Section */}
-                      <div className="bg-white/5 p-4 rounded-lg border border-white/10">
-                        <div className="grid grid-cols-1 gap-4">
-                          <div>
-                            <div className="text-xs text-white/60 mb-1 uppercase tracking-wide">Payer</div>
-                            <div className="text-white font-mono text-sm break-all">{fee.payer}</div>
+                      <div className="bg-white/5 p-3 rounded border border-white/10">
+                        <div className="flex items-center gap-3">
+                          <div className="flex-1 min-w-0">
+                            <div className="text-xs text-white/60 mb-1 font-medium">PAYER</div>
+                            <div className="flex items-center gap-2">
+                              <div className="text-white font-mono text-xs">{shortenAddress(fee.payer, 8, 6)}</div>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => copyToClipboard(fee.payer)}
+                                className="h-5 w-5 p-0 text-white/40 hover:text-white hover:bg-white/10"
+                              >
+                                <Copy className="w-3 h-3" />
+                              </Button>
+                            </div>
                           </div>
-                          <div className="flex items-center justify-center">
-                            <ArrowDownRight className="w-5 h-5 text-white/60" />
-                          </div>
-                          <div>
-                            <div className="text-xs text-white/60 mb-1 uppercase tracking-wide">Receiver IP</div>
-                            <div className="text-white font-mono text-sm break-all">{fee.receiverIpId}</div>
+                          <ArrowDownRight className="w-4 h-4 text-white/40 flex-shrink-0" />
+                          <div className="flex-1 min-w-0">
+                            <div className="text-xs text-white/60 mb-1 font-medium">RECEIVER IP</div>
+                            <div className="flex items-center gap-2">
+                              <div className="text-white font-mono text-xs">{shortenAddress(fee.receiverIpId, 8, 6)}</div>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => copyToClipboard(fee.receiverIpId)}
+                                className="h-5 w-5 p-0 text-white/40 hover:text-white hover:bg-white/10"
+                              >
+                                <Copy className="w-3 h-3" />
+                              </Button>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -329,7 +367,17 @@ export default function MintingFeesPage() {
                         </div>
                         <div>
                           <label className="text-white/60 font-medium text-xs uppercase tracking-wide">Token</label>
-                          <p className="text-white">{fee.token}</p>
+                          <div className="flex items-center gap-2">
+                            <p className="text-white font-mono text-xs">{shortenAddress(fee.token, 8, 6)}</p>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => copyToClipboard(fee.token)}
+                              className="h-6 w-6 p-0 text-white/40 hover:text-white hover:bg-white/10"
+                            >
+                              <Copy className="w-3 h-3" />
+                            </Button>
+                          </div>
                         </div>
                       </div>
                       
@@ -341,7 +389,7 @@ export default function MintingFeesPage() {
                       {/* Action Buttons */}
                       <div className="flex gap-2 pt-2 border-t border-white/10">
                         <a 
-                          href={`https://explorer.story.foundation/account/${fee.receiverIpId}`}
+                          href={`https://www.storyscan.io/address/${fee.receiverIpId}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="flex-1"

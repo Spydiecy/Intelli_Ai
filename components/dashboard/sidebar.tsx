@@ -9,7 +9,8 @@ import {
   ArrowLeftRight, 
   Settings, 
   Home,
-  ArrowLeft
+  ArrowLeft,
+  Coins
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useEffect } from "react"
@@ -52,14 +53,9 @@ export function DashboardSidebar({ open, setOpen }: DashboardSidebarProps) {
       href: "/dashboard/royalties"
     },
     {
-      label: "Pee",
-      icon: BarChart2,
+      label: "Minting Fees",
+      icon: Coins,
       href: "/dashboard/minting-fees"
-    },
-    {
-      label: "Settings",
-      icon: Settings,
-      href: "/dashboard/settings"
     }
   ]
 

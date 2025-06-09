@@ -1,14 +1,20 @@
 "use client"
 
 import React, { createContext, useContext, useState, useEffect } from 'react'
+import { useConnectModal, useAccountModal, useChainModal } from '@tomo-inc/tomo-evm-kit'
+import { useAccount, useDisconnect } from 'wagmi'
 
 interface WalletContextType {
   wallet: any | null
   connecting: boolean
   connected: boolean
   publicKey: string | null
-  connectWallet: () => Promise<void>
+  connectWallet: () => void
   disconnectWallet: () => Promise<void>
+  // Tomo-specific methods
+  openConnectModal: () => void
+  openAccountModal: () => void
+  openChainModal: () => void
 }
 
 const WalletContext = createContext<WalletContextType>({
@@ -16,8 +22,11 @@ const WalletContext = createContext<WalletContextType>({
   connecting: false,
   connected: false,
   publicKey: null,
-  connectWallet: async () => {},
-  disconnectWallet: async () => {}
+  connectWallet: () => {},
+  disconnectWallet: async () => {},
+  openConnectModal: () => {},
+  openAccountModal: () => {},
+  openChainModal: () => {}
 })
 
 export const useWallet = () => useContext(WalletContext)
@@ -25,85 +34,39 @@ export const useWallet = () => useContext(WalletContext)
 export const WalletProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [wallet, setWallet] = useState<any | null>(null)
   const [connecting, setConnecting] = useState(false)
-  const [connected, setConnected] = useState(false)
-  const [publicKey, setPublicKey] = useState<string | null>(null)
+
+  // Tomo EVM Kit hooks - with safe defaults
+  const { openConnectModal } = useConnectModal() || { openConnectModal: () => {} }
+  const { openAccountModal } = useAccountModal() || { openAccountModal: () => {} }
+  const { openChainModal } = useChainModal() || { openChainModal: () => {} }
+  const { address, isConnected } = useAccount() || { address: undefined, isConnected: false }
+  const { disconnect } = useDisconnect() || { disconnect: async () => {} }
+
+  // Combined state - only using Tomo now
+  const connected = isConnected
+  const publicKey = address || null
 
   useEffect(() => {
-    const checkForPhantom = async () => {
-      try {
-        // Check if window is defined (browser environment)
-        if (typeof window !== 'undefined') {
-          // Check if Phantom is installed
-          const phantom = window.solana
-          
-          if (phantom) {
-            setWallet(phantom)
-            
-            // Check if already connected
-            if (phantom.isConnected) {
-              const key = phantom.publicKey?.toString()
-              setConnected(true)
-              setPublicKey(key || null)
-            }
-            
-            // Handle connection change events
-            phantom.on('connect', () => {
-              const key = phantom.publicKey?.toString()
-              setConnected(true)
-              setPublicKey(key || null)
-              setConnecting(false)
-            })
-            
-            phantom.on('disconnect', () => {
-              setConnected(false)
-              setPublicKey(null)
-            })
-          }
-        }
-      } catch (error) {
-        console.error("Error checking for Phantom wallet:", error)
-      }
+    if (isConnected && address) {
+      setWallet(address)
+    } else {
+      setWallet(null)
     }
-    
-    // Only run in browser
-    if (typeof window !== 'undefined') {
-      checkForPhantom()
-    }
-    
-    return () => {
-      // Clean up listeners if needed
-      if (wallet) {
-        wallet.off('connect')
-        wallet.off('disconnect')
-      }
-    }
-  }, [])
+  }, [isConnected, address])
 
-  const connectWallet = async () => {
-    try {
-      if (!wallet) {
-        window.open('https://phantom.app/', '_blank')
-        return
-      }
-      
-      setConnecting(true)
-      
-      // Phantom wallet connection
-      await wallet.connect()
-      
-    } catch (error) {
-      console.error("Error connecting to wallet:", error)
-      setConnecting(false)
+  const connectWallet = () => {
+    // Directly open Tomo connect modal
+    if (openConnectModal) {
+      openConnectModal()
     }
   }
 
   const disconnectWallet = async () => {
     try {
-      if (wallet) {
-        await wallet.disconnect()
-        setConnected(false)
-        setPublicKey(null)
+      if (disconnect) {
+        await disconnect()
       }
+      setWallet(null)
     } catch (error) {
       console.error("Error disconnecting wallet:", error)
     }
@@ -117,7 +80,10 @@ export const WalletProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         connected,
         publicKey,
         connectWallet,
-        disconnectWallet
+        disconnectWallet,
+        openConnectModal: openConnectModal || (() => {}),
+        openAccountModal: openAccountModal || (() => {}),
+        openChainModal: openChainModal || (() => {})
       }}
     >
       {children}

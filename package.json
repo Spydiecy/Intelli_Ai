@@ -16,10 +16,13 @@
     "@radix-ui/react-select": "^2.2.5",
     "@radix-ui/react-slot": "^1.2.2",
     "@radix-ui/react-tabs": "^1.1.12",
-    "@solana/web3.js": "^1.98.2",
+    "@tanstack/react-query": "^5.80.6",
+    "@tomo-inc/tomo-evm-kit": "^0.0.45",
+    "@tomo-inc/tomo-web-sdk": "^1.0.26",
     "bs58": "^6.0.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "core-js-pure": "^3.43.0",
     "framer-motion": "^12.12.1",
     "lucide-react": "^0.511.0",
     "next": "15.3.2",
@@ -27,7 +30,9 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "recharts": "^2.15.3",
-    "tailwind-merge": "^3.3.0"
+    "tailwind-merge": "^3.3.0",
+    "viem": "^2.31.0",
+    "wagmi": "^2.15.6"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

@@ -54,10 +54,19 @@ export const WalletProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }
   }, [isConnected, address])
 
-  const connectWallet = () => {
-    // Directly open Tomo connect modal
-    if (openConnectModal) {
-      openConnectModal()
+  const connectWallet = async () => {
+    try {
+      setConnecting(true)
+      
+      // Use Tomo EVM Kit modal for connection
+      if (openConnectModal) {
+        openConnectModal()
+      }
+      setConnecting(false)
+    } catch (error) {
+      console.error("Error connecting to Tomo wallet:", error)
+      setConnecting(false)
+      throw error
     }
   }
 

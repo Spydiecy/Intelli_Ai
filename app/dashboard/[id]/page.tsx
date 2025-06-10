@@ -292,7 +292,7 @@ export default function IPAssetDetailPage() {
                             className="flex items-center justify-between bg-gray-800 p-3 rounded border border-gray-600"
                           >
                             <span className="text-white font-mono text-sm">{rootId}</span>
-                            <Link href={`/ip-asset/${rootId}`}>
+                            <Link href={`/dashboard/${rootId}`}>
                               <Button size="sm" variant="ghost" className="text-purple-400 hover:text-purple-300">
                                 <Eye className="w-4 h-4" />
                               </Button>
@@ -435,14 +435,14 @@ export default function IPAssetDetailPage() {
                       </div>
 
                       <div className="flex gap-2">
-                        <Link href={`/ip-asset/${edge.parentIpId}`}>
+                        <Link href={`/dashboard/${edge.parentIpId}`}>
                           <Button size="sm" className="bg-purple-600 hover:bg-purple-700">
                             <Eye className="w-4 h-4 mr-2" />
                             View Parent
                           </Button>
                         </Link>
                         {edge.ipId !== asset.ipId && (
-                          <Link href={`/ip-asset/${edge.ipId}`}>
+                          <Link href={`/dashboard/${edge.ipId}`}>
                             <Button
                               size="sm"
                               variant="outline"

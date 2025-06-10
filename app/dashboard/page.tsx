@@ -357,7 +357,7 @@ export default function HomePage() {
                     </p>
 
                     <div className="flex gap-2">
-                      <Link href={`/ip-asset/${asset.id}`} className="flex-1">
+                      <Link href={`/dashboard/${asset.id}`} className="flex-1">
                         <Button className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white">
                           <Eye className="w-4 h-4 mr-2" />
                           View Details
@@ -375,7 +375,7 @@ export default function HomePage() {
 
                     {/* Quick Navigation Links */}
                     <div className="flex gap-1 mt-2">
-                      <Link href={`/transactions?ipId=${asset.ipId}`}>
+                      <Link href={`/dashboard/transactions?ipId=${asset.ipId}`}>
                         <Button
                           size="sm"
                           variant="ghost"
@@ -384,7 +384,7 @@ export default function HomePage() {
                           View Transactions
                         </Button>
                       </Link>
-                      <Link href={`/royalties?ipId=${asset.ipId}`}>
+                      <Link href={`/dashboard/royalties?ipId=${asset.ipId}`}>
                         <Button
                           size="sm"
                           variant="ghost"

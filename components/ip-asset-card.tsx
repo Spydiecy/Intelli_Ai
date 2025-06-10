@@ -88,7 +88,7 @@ export function IPAssetCard({ asset, index, onViewResponse }: IPAssetCardProps) 
             </p>
 
             <div className="flex gap-2">
-              <Link href={`/dashboard/ip-asset/${asset.id}`} className="flex-1">
+              <Link href={`/dashboard/${asset.id}`} className="flex-1">
                 <Button className="w-full bg-pink-600 hover:bg-pink-700 text-white">
                   <Eye className="w-4 h-4 mr-2" />
                   View Details

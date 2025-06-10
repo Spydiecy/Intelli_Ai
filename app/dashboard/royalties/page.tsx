@@ -182,11 +182,11 @@ export default function RoyaltiesPage() {
                   </div>
                   <div className="flex justify-between items-center mb-4">
                     <span>Token:</span>
-                    <span>{royalty.token}</span>
+                    <span>{royalty.token.substring(0,4)}..{royalty.token.substring(39)}</span>
                   </div>
                   <div className="flex justify-between items-center mb-4">
                     <span>Amount:</span>
-                    <span>{formatAmount(Number.parseFloat(royalty.amount || "0"))}</span>
+                    <span>{royalty.amount}</span>
                   </div>
                   <div className="flex justify-between items-center mb-4">
                     <span>Timestamp:</span>

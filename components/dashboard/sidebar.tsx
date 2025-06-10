@@ -39,24 +39,20 @@ export function DashboardSidebar({ open, setOpen }: DashboardSidebarProps) {
       href: "/dashboard/ai-chat"
     },
     {
-      label: "Ip Assets",
-      icon: ArrowLeftRight,
-      href: "/dashboard/ip-asset"
-    },
-    {
-      label: "Swap",
+      label: "Bridge",
       icon: Repeat,
-      href: "/dashboard/swap"
+      href: "/dashboard/bridge"
     },
-      {
+   
+    {
+      label: "Royalties",
+      icon: BarChart2,
+      href: "/dashboard/royalties"
+    },
+       {
       label: "Transactions",
       icon: ArrowLeftRight,
       href: "/dashboard/transactions"
-    },
-    {
-      label: "Portfolio",
-      icon: BarChart2,
-      href: "/dashboard/royalties"
     },
     {
       label: "Minting Fees",

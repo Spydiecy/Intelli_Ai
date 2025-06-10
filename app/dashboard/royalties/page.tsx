@@ -168,7 +168,7 @@ export default function RoyaltiesPage() {
           <div className="text-red-500 text-center">{error}</div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredRoyalties.map((royalty) => (
+            {filteredRoyalties.map((royalty:any) => (
               <Card key={royalty.id} className="bg-gray-800 text-white">
                 <CardHeader>
                   <CardTitle>

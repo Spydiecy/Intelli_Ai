@@ -9,12 +9,13 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Search, Sparkles, Database, RefreshCw, Eye, Users, GitBranch, Shield, ExternalLink } from 'lucide-react'
+import { CreateIPAssetModal } from "@/components/create-ip-asset-modal"
+import { Search, Sparkles, Database, RefreshCw, Eye, Users, GitBranch, Shield, ExternalLink, Plus } from 'lucide-react'
 import Image from "next/image"
 import Link from "next/link"
 import { motion } from "framer-motion"
 import { shortenAddress } from "@/lib/utils"
-import { type GeminiFilterResponse } from "@/lib/gemini-agent"
+import type { GeminiFilterResponse } from "@/lib/gemini-agent"
 
 export default function HomePage() {
   const [assets, setAssets] = useState<IPAsset[]>([])
@@ -25,6 +26,7 @@ export default function HomePage() {
   const [apiResponse, setApiResponse] = useState<any>(null)
   const [error, setError] = useState<string | null>(null)
   const [activeFilter, setActiveFilter] = useState<string | null>(null)
+  const [createModalOpen, setCreateModalOpen] = useState(false)
 
   useEffect(() => {
     loadAssets()
@@ -54,7 +56,7 @@ export default function HomePage() {
   const handleApplyAIFilter = (filter: GeminiFilterResponse) => {
     if (filter.dataType !== "ip_assets") {
       // Navigate to the appropriate page
-      window.location.href = `/${filter.dataType.replace('_', '-')}?aiFilter=${encodeURIComponent(JSON.stringify(filter))}`
+      window.location.href = `/${filter.dataType.replace("_", "-")}?aiFilter=${encodeURIComponent(JSON.stringify(filter))}`
       return
     }
 
@@ -75,9 +77,14 @@ export default function HomePage() {
     setShowApiModal(true)
   }
 
+  const handleCreateSuccess = () => {
+    // Refresh the assets list after successful creation
+    loadAssets()
+  }
+
   return (
     <div className="min-h-screen bg-black">
-    
+      <Navigation onApplyAIFilter={handleApplyAIFilter} />
 
       {/* Header */}
       <div className="bg-gradient-to-r from-gray-900 via-black to-gray-900 text-white">
@@ -98,6 +105,26 @@ export default function HomePage() {
               Discover and explore IP Assets on the Story Protocol blockchain. View detailed information, relationships,
               and licensing terms.
             </p>
+            
+            {/* Create IP Asset CTA */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              className="mb-8"
+            >
+              <Button
+                onClick={() => setCreateModalOpen(true)}
+                size="lg"
+                className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-8 py-3 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+              >
+                <Plus className="w-5 h-5 mr-2" />
+                Create New IP Asset
+              </Button>
+              <p className="text-sm text-gray-400 mt-2">
+                Register your intellectual property on Story Protocol
+              </p>
+            </motion.div>
           </motion.div>
         </div>
       </div>
@@ -120,6 +147,13 @@ export default function HomePage() {
             />
           </div>
           <div className="flex gap-2">
+            <Button
+              onClick={() => setCreateModalOpen(true)}
+              className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Create IP Asset
+            </Button>
             <Button
               onClick={loadAssets}
               disabled={loading}
@@ -325,7 +359,7 @@ export default function HomePage() {
                     </p>
 
                     <div className="flex gap-2">
-                      <Link href={`/dashboard/ip-asset/${asset.id}`} className="flex-1">
+                      <Link href={`/ip-asset/${asset.id}`} className="flex-1">
                         <Button className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white">
                           <Eye className="w-4 h-4 mr-2" />
                           View Details
@@ -343,7 +377,7 @@ export default function HomePage() {
 
                     {/* Quick Navigation Links */}
                     <div className="flex gap-1 mt-2">
-                      <Link href={`/dashboard/transactions?ipId=${asset.ipId}`}>
+                      <Link href={`/transactions?ipId=${asset.ipId}`}>
                         <Button
                           size="sm"
                           variant="ghost"
@@ -352,7 +386,7 @@ export default function HomePage() {
                           View Transactions
                         </Button>
                       </Link>
-                      <Link href={`/dashboard/royalties?ipId=${asset.ipId}`}>
+                      <Link href={`/royalties?ipId=${asset.ipId}`}>
                         <Button
                           size="sm"
                           variant="ghost"
@@ -373,7 +407,14 @@ export default function HomePage() {
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-20">
             <Shield className="w-16 h-16 text-gray-600 mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-gray-400 mb-2">No IP Assets Found</h3>
-            <p className="text-gray-500">Try adjusting your search criteria</p>
+            <p className="text-gray-500 mb-6">Try adjusting your search criteria or create a new IP asset</p>
+            <Button
+              onClick={() => setCreateModalOpen(true)}
+              className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Create Your First IP Asset
+            </Button>
           </motion.div>
         )}
       </div>
@@ -384,6 +425,13 @@ export default function HomePage() {
         onClose={() => setShowApiModal(false)}
         title={selectedAsset ? `IP Asset: ${selectedAsset.nftMetadata?.name || selectedAsset.id}` : "API Response"}
         data={selectedAsset || apiResponse}
+      />
+
+      {/* Create IP Asset Modal */}
+      <CreateIPAssetModal
+        isOpen={createModalOpen}
+        onClose={() => setCreateModalOpen(false)}
+        onSuccess={handleCreateSuccess}
       />
     </div>
   )

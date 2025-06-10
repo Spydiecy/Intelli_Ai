@@ -479,7 +479,12 @@ export function CreateIPAssetModal({ isOpen, onClose, onSuccess }: CreateIPAsset
                 onClick={() => setStep(2)}
                 disabled={
 
-                true
+                  (!formData.title ||
+                    !formData.description ||
+                    (!customPrivateKey && !envValidation.isValid && !envValidation.hasDummyKey) ||
+                    (customPrivateKey && !validatePrivateKey(customPrivateKey))
+                  )|| false
+                
                 }
                 className="bg-blue-600 hover:bg-blue-700 text-white"
               >

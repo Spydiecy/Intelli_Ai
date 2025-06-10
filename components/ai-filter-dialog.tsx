@@ -6,12 +6,12 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { LoadingSpinner } from "@/components/ui/loading-spinner"
 import { Sparkles, Search, X } from 'lucide-react'
-import { geminiAgent, type GeminiFilterResponse } from "@/lib/gemini-agent"
+import { geminiAgent } from "@/lib/gemini-agent"
 
 interface AIFilterDialogProps {
   isOpen: boolean
   onClose: () => void
-  onApplyFilter: (filter: GeminiFilterResponse) => void
+  onApplyFilter: (filter:any) => void
   dataType: "ip_assets" | "transactions" | "royalties" | "minting_fees"
 }
 

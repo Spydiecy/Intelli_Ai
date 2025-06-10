@@ -14,7 +14,6 @@ import { Search, Activity, Database, RefreshCw, ArrowUpRight, ExternalLink, Spar
 import Link from "next/link"
 import { motion } from "framer-motion"
 import { shortenAddress, formatTimestamp } from "@/lib/utils"
-import { type GeminiFilterResponse } from "@/lib/gemini-agent"
 
 export default function TransactionsPage() {
   const searchParams = useSearchParams()
@@ -36,7 +35,7 @@ export default function TransactionsPage() {
     // Apply AI filter if present in URL
     if (aiFilterParam) {
       try {
-        const filter = JSON.parse(decodeURIComponent(aiFilterParam)) as GeminiFilterResponse
+        const filter = JSON.parse(decodeURIComponent(aiFilterParam)) 
         if (filter.filters.searchTerm) {
           setSearchTerm(filter.filters.searchTerm)
         }
@@ -68,7 +67,7 @@ export default function TransactionsPage() {
     }
   }
 
-  const handleApplyAIFilter = (filter: GeminiFilterResponse) => {
+  const handleApplyAIFilter = (filter:any) => {
     if (filter.dataType !== "transactions") {
       // Navigate to the appropriate page
       const path = filter.dataType === "ip_assets" ? "/" : `/${filter.dataType.replace('_', '-')}`

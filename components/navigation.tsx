@@ -7,10 +7,9 @@ import { Shield, Activity, DollarSign, CreditCard, Home, Sparkles } from 'lucide
 import { cn } from "@/lib/utils"
 import { useState } from "react"
 import { AIFilterDialog } from "@/components/ai-filter-dialog"
-import { type GeminiFilterResponse } from "@/lib/gemini-agent"
 
 interface NavigationProps {
-  onApplyAIFilter?: (filter: GeminiFilterResponse) => void
+  onApplyAIFilter?: (filter: any) => void
 }
 
 export function Navigation({ onApplyAIFilter }: NavigationProps) {
@@ -32,7 +31,7 @@ export function Navigation({ onApplyAIFilter }: NavigationProps) {
         ? "royalties" 
         : "minting_fees"
 
-  const handleApplyFilter = (filter: GeminiFilterResponse) => {
+  const handleApplyFilter = (filter: any) => {
     if (onApplyAIFilter) {
       onApplyAIFilter(filter)
     }

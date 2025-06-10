@@ -13,7 +13,6 @@ import { Badge } from "@/components/ui/badge"
 import { Search, DollarSign, RefreshCw, ExternalLink, Sparkles } from "lucide-react"
 import { motion } from "framer-motion"
 import { shortenAddress, formatTimestamp, formatAmount } from "@/lib/utils"
-import type { GeminiFilterResponse } from "@/lib/gemini-agent"
 
 export default function RoyaltiesPage() {
   const searchParams = useSearchParams()
@@ -35,7 +34,7 @@ export default function RoyaltiesPage() {
     // Apply AI filter if present in URL
     if (aiFilterParam) {
       try {
-        const filter = JSON.parse(decodeURIComponent(aiFilterParam)) as GeminiFilterResponse
+        const filter = JSON.parse(decodeURIComponent(aiFilterParam)) 
         if (filter.filters.searchTerm) {
           setSearchTerm(filter.filters.searchTerm)
         }
@@ -67,7 +66,7 @@ export default function RoyaltiesPage() {
     }
   }
 
-  const handleApplyAIFilter = (filter: GeminiFilterResponse) => {
+  const handleApplyAIFilter = (filter: any) => {
     if (filter.dataType !== "royalties") {
       // Navigate to the appropriate page
       const path = filter.dataType === "ip_assets" ? "/" : `/${filter.dataType.replace("_", "-")}`
@@ -225,7 +224,7 @@ export default function RoyaltiesPage() {
           className="flex justify-center items-center"
         >
           <Badge className="bg-gradient-to-r from-green-600 to-blue-600 text-white">
-            Total Amount: {formatAmount(totalAmount)}
+            Total Amount: {totalAmount}
           </Badge>
         </motion.div>
       </div>

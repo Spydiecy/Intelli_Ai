@@ -478,10 +478,8 @@ export function CreateIPAssetModal({ isOpen, onClose, onSuccess }: CreateIPAsset
               <Button
                 onClick={() => setStep(2)}
                 disabled={
-                  !formData.title ||
-                  !formData.description ||
-                  (!customPrivateKey && !envValidation.isValid && !envValidation.hasDummyKey) ||
-                  (customPrivateKey && !validatePrivateKey(customPrivateKey))
+
+                true
                 }
                 className="bg-blue-600 hover:bg-blue-700 text-white"
               >

@@ -13,7 +13,7 @@ interface ApiResponseModalProps {
   data: any
 }
 
-export function ApiResponseModal({ isOpen, onClose, title, data }: ApiResponseModalProps) {
+export function ApiResponseModal({ isOpen, onClose, title, data }:any) {
   const [copied, setCopied] = useState(false)
 
   const handleCopy = () => {

@@ -32,7 +32,7 @@ interface ProvidersProps {
   children: React.ReactNode;
 }
 
-export function Providers({ children }: ProvidersProps) {
+export function Providers({ children }:any) {
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>

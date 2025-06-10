@@ -161,7 +161,7 @@ export async function createIPAsset(params: CreateIPAssetParams): Promise<Create
     const usingCustomWallet = !!params.customPrivateKey
 
     // Initialize Story Protocol client with custom or environment key
-    const { client, account } = createStoryClient(params.customPrivateKey)
+    const { client, account }:any = createStoryClient(params.customPrivateKey)
     console.log("Story Protocol client initialized")
     console.log("Using wallet address:", account.address)
     console.log("Using custom wallet:", usingCustomWallet)

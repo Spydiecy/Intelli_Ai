@@ -854,7 +854,7 @@ export default function AiChatPage() {
         setFilterModalOpen(true)
         setMessages((prev) => [
           ...prev,
-          { role: "system", content: "Opening advanced filter options for IP assets..." },
+          { role: "system", content: "Opening advanced filter options for IP assets...Take 1-2 Minutes" },
         ])
       } else if (
         geminiResponse.type === "create_ip_asset" ||

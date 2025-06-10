@@ -15,7 +15,6 @@ import Image from "next/image"
 import Link from "next/link"
 import { motion } from "framer-motion"
 import { shortenAddress } from "@/lib/utils"
-import type { GeminiFilterResponse } from "@/lib/gemini-agent"
 
 export default function HomePage() {
   const [assets, setAssets] = useState<IPAsset[]>([])
@@ -53,7 +52,7 @@ export default function HomePage() {
     }
   }
 
-  const handleApplyAIFilter = (filter: GeminiFilterResponse) => {
+  const handleApplyAIFilter = (filter:any) => {
     if (filter.dataType !== "ip_assets") {
       // Navigate to the appropriate page
       window.location.href = `/${filter.dataType.replace("_", "-")}?aiFilter=${encodeURIComponent(JSON.stringify(filter))}`
@@ -84,7 +83,6 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-black">
-      <Navigation onApplyAIFilter={handleApplyAIFilter} />
 
       {/* Header */}
       <div className="bg-gradient-to-r from-gray-900 via-black to-gray-900 text-white">
@@ -310,13 +308,13 @@ export default function HomePage() {
                       {asset.nftMetadata?.imageUrl && (
                         <div className="relative w-16 h-16 rounded-lg overflow-hidden border border-gray-700">
                           <Image
-                            src={asset.nftMetadata.imageUrl || "/placeholder.svg"}
+                            src={asset.nftMetadata.imageUrl || "https://cdn-icons-png.flaticon.com/512/11542/11542598.png"}
                             alt={asset.nftMetadata.name || "IP Asset"}
                             fill
                             className="object-cover"
                             onError={(e) => {
                               const target = e.target as HTMLImageElement
-                              target.src = "/placeholder.svg?height=64&width=64"
+                              target.src = "https://cdn-icons-png.flaticon.com/512/11542/11542598.png"
                             }}
                           />
                         </div>

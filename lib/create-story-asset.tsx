@@ -20,6 +20,7 @@ export interface CreateIPAssetParams {
     platform: string
     url: string
   }>
+  customPrivateKey?: string // New field for custom private key
 }
 
 export interface CreateIPAssetResult {
@@ -30,21 +31,32 @@ export interface CreateIPAssetResult {
   explorerUrl: string
   ipMetadataUri: string
   nftMetadataUri: string
+  walletAddress: string
+  usingCustomWallet: boolean
 }
 
 // SPG NFT Contract address (public collection for testing)
 const SPG_NFT_CONTRACT = "0xc32A8a0FF3beDDDa58393d022aF433e78739FAbc" as Address
 
-// Initialize Story Protocol Client
-function createStoryClient() {
-  const privateKeyEnv = process.env.NEXT_PUBLIC_WALLET_PRIVATE_KEY
-  
-  if (!privateKeyEnv) {
-    throw new Error("NEXT_PUBLIC_WALLET_PRIVATE_KEY environment variable is required")
+// Initialize Story Protocol Client with custom or environment private key
+function createStoryClient(customPrivateKey?: string) {
+  let privateKeyToUse: string
+
+  if (customPrivateKey) {
+    // Use custom private key provided by user
+    privateKeyToUse = customPrivateKey
+  } else {
+    // Fall back to environment variable
+    const privateKeyEnv = process.env.NEXT_PUBLIC_WALLET_PRIVATE_KEY || process.env.NEXT_PUBLIC_DUMMY_WALLET_KEY
+    
+    if (!privateKeyEnv) {
+      throw new Error("No private key available. Please provide a custom private key or set NEXT_PUBLIC_WALLET_PRIVATE_KEY or NEXT_PUBLIC_DUMMY_WALLET_KEY environment variable.")
+    }
+    privateKeyToUse = privateKeyEnv
   }
 
   // Clean and validate private key
-  let cleanPrivateKey = privateKeyEnv.trim()
+  let cleanPrivateKey = privateKeyToUse.trim()
   
   // Remove 0x prefix if present
   if (cleanPrivateKey.startsWith('0x')) {
@@ -70,7 +82,7 @@ function createStoryClient() {
     chainId: "aeneid",
   }
 
-  return StoryClient.newClient(config)
+  return { client: StoryClient.newClient(config), account }
 }
 
 // Initialize Pinata client
@@ -128,14 +140,31 @@ async function uploadImageToIPFS(imageFile: File): Promise<{ ipfsUrl: string; co
   }
 }
 
+// Validate private key format
+export function validatePrivateKey(key: string): boolean {
+  if (!key) return false
+  
+  // Remove 0x prefix if present
+  const cleanKey = key.startsWith('0x') ? key.slice(2) : key
+  
+  // Check if it's a valid hex string of correct length (64 characters = 32 bytes)
+  const hexRegex = /^[0-9a-fA-F]{64}$/
+  return hexRegex.test(cleanKey)
+}
+
 // Main function to create IP Asset
 export async function createIPAsset(params: CreateIPAssetParams): Promise<CreateIPAssetResult> {
   try {
     console.log("Starting IP Asset creation process...")
 
-    // Initialize Story Protocol client
-    const client:any = createStoryClient()
+    // Determine if using custom wallet
+    const usingCustomWallet = !!params.customPrivateKey
+
+    // Initialize Story Protocol client with custom or environment key
+    const { client, account } = createStoryClient(params.customPrivateKey)
     console.log("Story Protocol client initialized")
+    console.log("Using wallet address:", account.address)
+    console.log("Using custom wallet:", usingCustomWallet)
 
     let imageUploadResult: { ipfsUrl: string; contentHash: string } | null = null
 
@@ -158,7 +187,7 @@ export async function createIPAsset(params: CreateIPAssetParams): Promise<Create
       creators: [
         {
           name: params.creatorName || "Anonymous Creator",
-          address: params.creatorAddress || "0x0000000000000000000000000000000000000000",
+          address: params.creatorAddress || account.address,
           description: params.creatorDescription || "IP Asset Creator",
           contributionPercent: 100,
           socialMedia: params.socialMedia || [],
@@ -186,7 +215,7 @@ export async function createIPAsset(params: CreateIPAssetParams): Promise<Create
     console.log("Registering IP Asset on Story Protocol...")
     console.log("Using SPG NFT Contract:", SPG_NFT_CONTRACT)
     
-    const response:any = await client.ipAsset.mintAndRegisterIp({
+    const response: any = await client.ipAsset.mintAndRegisterIp({
       spgNftContract: SPG_NFT_CONTRACT,
       ipMetadata: {
         ipMetadataURI: ipMetadataUpload.ipfsUrl,
@@ -209,6 +238,8 @@ export async function createIPAsset(params: CreateIPAssetParams): Promise<Create
       explorerUrl: `https://aeneid.explorer.story.foundation/ipa/${response.ipId}`,
       ipMetadataUri: ipMetadataUpload.ipfsUrl,
       nftMetadataUri: nftMetadataUpload.ipfsUrl,
+      walletAddress: account.address,
+      usingCustomWallet,
     }
   } catch (error) {
     console.error("Failed to create IP Asset:", error)
@@ -216,7 +247,7 @@ export async function createIPAsset(params: CreateIPAssetParams): Promise<Create
     // Provide more specific error messages
     if (error instanceof Error) {
       if (error.message.includes("private key")) {
-        throw new Error("Invalid wallet private key. Please check your NEXT_PUBLIC_WALLET_PRIVATE_KEY environment variable.")
+        throw new Error("Invalid wallet private key. Please check your private key format.")
       }
       if (error.message.includes("PINATA_JWT")) {
         throw new Error("Invalid Pinata JWT. Please check your NEXT_PUBLIC_PINATA_JWT environment variable.")
@@ -232,23 +263,29 @@ export async function createIPAsset(params: CreateIPAssetParams): Promise<Create
 }
 
 // Utility function to validate environment variables
-export function validateEnvironmentVariables(): { isValid: boolean; errors: string[] } {
+export function validateEnvironmentVariables(): { isValid: boolean; errors: string[]; hasDummyKey: boolean } {
   const errors: string[] = []
 
-  // Check private key
+  // Check if we have either a regular private key or dummy key
   const privateKey = process.env.NEXT_PUBLIC_WALLET_PRIVATE_KEY
-  if (!privateKey) {
-    errors.push("NEXT_PUBLIC_WALLET_PRIVATE_KEY is required")
+  const dummyKey = process.env.NEXT_PUBLIC_DUMMY_WALLET_KEY
+  const hasDummyKey = !!dummyKey
+
+  if (!privateKey && !dummyKey) {
+    errors.push("Either NEXT_PUBLIC_WALLET_PRIVATE_KEY or NEXT_PUBLIC_DUMMY_WALLET_KEY is required")
   } else {
-    let cleanKey = privateKey.trim()
-    if (cleanKey.startsWith('0x')) {
-      cleanKey = cleanKey.slice(2)
-    }
-    if (cleanKey.length !== 64) {
-      errors.push("NEXT_PUBLIC_WALLET_PRIVATE_KEY must be 64 hex characters (32 bytes)")
-    }
-    if (!/^[0-9a-fA-F]+$/.test(cleanKey)) {
-      errors.push("NEXT_PUBLIC_WALLET_PRIVATE_KEY must contain only hexadecimal characters")
+    const keyToValidate = privateKey || dummyKey
+    if (keyToValidate) {
+      let cleanKey = keyToValidate.trim()
+      if (cleanKey.startsWith('0x')) {
+        cleanKey = cleanKey.slice(2)
+      }
+      if (cleanKey.length !== 64) {
+        errors.push("Private key must be 64 hex characters (32 bytes)")
+      }
+      if (!/^[0-9a-fA-F]+$/.test(cleanKey)) {
+        errors.push("Private key must contain only hexadecimal characters")
+      }
     }
   }
 
@@ -261,16 +298,24 @@ export function validateEnvironmentVariables(): { isValid: boolean; errors: stri
   return {
     isValid: errors.length === 0,
     errors,
+    hasDummyKey,
   }
 }
 
-// Get wallet address from private key
-export function getWalletAddress(): string {
+// Get wallet address from private key (environment or custom)
+export function getWalletAddress(customPrivateKey?: string): string {
   try {
-    const privateKeyEnv = process.env.NEXT_PUBLIC_WALLET_PRIVATE_KEY
-    if (!privateKeyEnv) return ""
+    let privateKeyToUse: string
 
-    let cleanPrivateKey = privateKeyEnv.trim()
+    if (customPrivateKey) {
+      privateKeyToUse = customPrivateKey
+    } else {
+      const privateKeyEnv = process.env.NEXT_PUBLIC_WALLET_PRIVATE_KEY || process.env.NEXT_PUBLIC_DUMMY_WALLET_KEY
+      if (!privateKeyEnv) return ""
+      privateKeyToUse = privateKeyEnv
+    }
+
+    let cleanPrivateKey = privateKeyToUse.trim()
     if (cleanPrivateKey.startsWith('0x')) {
       cleanPrivateKey = cleanPrivateKey.slice(2)
     }

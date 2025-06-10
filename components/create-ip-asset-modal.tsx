@@ -8,14 +8,29 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent } from "@/components/ui/card"
-import { Upload, X, Loader2, CheckCircle, AlertCircle, ExternalLink, Copy, Wallet } from 'lucide-react'
+import {
+  Upload,
+  X,
+  Loader2,
+  CheckCircle,
+  AlertCircle,
+  ExternalLink,
+  Copy,
+  Wallet,
+  Key,
+  Eye,
+  EyeOff,
+  Info,
+} from "lucide-react"
 import { Badge } from "@/components/ui/badge"
-import { 
-  createIPAsset, 
-  validateEnvironmentVariables, 
+
+import {
+  createIPAsset,
+  validateEnvironmentVariables,
   getWalletAddress,
-  type CreateIPAssetParams, 
-  type CreateIPAssetResult 
+  validatePrivateKey,
+  type CreateIPAssetParams,
+  type CreateIPAssetResult,
 } from "@/lib/create-story-asset"
 
 interface CreateIPAssetModalProps {
@@ -31,8 +46,15 @@ export function CreateIPAssetModal({ isOpen, onClose, onSuccess }: CreateIPAsset
   const [imagePreview, setImagePreview] = useState<string>("")
   const [createdAsset, setCreatedAsset] = useState<CreateIPAssetResult | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const [envValidation, setEnvValidation] = useState<{ isValid: boolean; errors: string[] }>({ isValid: true, errors: [] })
+  const [envValidation, setEnvValidation] = useState<{ isValid: boolean; errors: string[]; hasDummyKey: boolean }>({
+    isValid: true,
+    errors: [],
+    hasDummyKey: false,
+  })
   const [walletAddress, setWalletAddress] = useState<string>("")
+  const [customPrivateKey, setCustomPrivateKey] = useState<string>("")
+  const [showPrivateKey, setShowPrivateKey] = useState(false)
+  const [usingCustomWallet, setUsingCustomWallet] = useState(false)
 
   // Form data
   const [formData, setFormData] = useState({
@@ -51,16 +73,31 @@ export function CreateIPAssetModal({ isOpen, onClose, onSuccess }: CreateIPAsset
   useEffect(() => {
     const validation = validateEnvironmentVariables()
     setEnvValidation(validation)
-    
-    if (validation.isValid) {
+
+    if (validation.isValid || validation.hasDummyKey) {
       const address = getWalletAddress()
       setWalletAddress(address)
       // Auto-fill creator address if available
       if (address && !formData.creatorAddress) {
-        setFormData(prev => ({ ...prev, creatorAddress: address }))
+        setFormData((prev) => ({ ...prev, creatorAddress: address }))
       }
     }
   }, [])
+
+  // Update wallet address when custom private key changes
+  useEffect(() => {
+    if (customPrivateKey && validatePrivateKey(customPrivateKey)) {
+      const address = getWalletAddress(customPrivateKey)
+      setWalletAddress(address)
+      setUsingCustomWallet(true)
+      setFormData((prev) => ({ ...prev, creatorAddress: address }))
+    } else if (!customPrivateKey) {
+      const address = getWalletAddress()
+      setWalletAddress(address)
+      setUsingCustomWallet(false)
+      setFormData((prev) => ({ ...prev, creatorAddress: address }))
+    }
+  }, [customPrivateKey])
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
@@ -68,12 +105,14 @@ export function CreateIPAssetModal({ isOpen, onClose, onSuccess }: CreateIPAsset
       // Validate file size (max 10MB)
       if (file.size > 10 * 1024 * 1024) {
         setError("File too large. Please select an image smaller than 10MB")
+     
         return
       }
 
       // Validate file type
       if (!file.type.startsWith("image/")) {
         setError("Invalid file type. Please select an image file")
+   
         return
       }
 
@@ -96,15 +135,33 @@ export function CreateIPAssetModal({ isOpen, onClose, onSuccess }: CreateIPAsset
     setFormData((prev) => ({ ...prev, [field]: value }))
   }
 
+  const handlePrivateKeyChange = (value: string) => {
+    setCustomPrivateKey(value)
+    if (value && !validatePrivateKey(value)) {
+      setError("Invalid private key format. Must be 64 hexadecimal characters.")
+    } else {
+      setError(null)
+    }
+  }
+
   const createIPAssetReal = async () => {
     setLoading(true)
     setError(null)
 
     try {
-      // Validate environment variables again
-      const validation = validateEnvironmentVariables()
-      if (!validation.isValid) {
-        throw new Error(`Environment setup incomplete: ${validation.errors.join(", ")}`)
+      // Validate that we have either custom key or environment key
+      if (!customPrivateKey && !envValidation.isValid && !envValidation.hasDummyKey) {
+        throw new Error("Please enter a private key or ensure environment variables are set up correctly.")
+      }
+
+      // Validate custom private key if provided
+      if (customPrivateKey && !validatePrivateKey(customPrivateKey)) {
+        throw new Error("Invalid private key format. Must be 64 hexadecimal characters.")
+      }
+
+      // Validate Pinata JWT
+      if (!process.env.NEXT_PUBLIC_PINATA_JWT) {
+        throw new Error("PINATA_JWT environment variable is required. Please add it to your .env.local file.")
       }
 
       // Prepare social media links
@@ -127,6 +184,7 @@ export function CreateIPAssetModal({ isOpen, onClose, onSuccess }: CreateIPAsset
         creatorAddress: formData.creatorAddress,
         creatorDescription: formData.creatorDescription,
         socialMedia: socialMedia.length > 0 ? socialMedia : undefined,
+        customPrivateKey: customPrivateKey || undefined, // Pass custom key if provided
       }
 
       // Create the IP Asset using real SDK
@@ -135,10 +193,13 @@ export function CreateIPAssetModal({ isOpen, onClose, onSuccess }: CreateIPAsset
       setCreatedAsset(result)
       setStep(3) // Success step
 
+    
     } catch (error) {
       console.error("Failed to create IP Asset:", error)
       const errorMessage = error instanceof Error ? error.message : "Unknown error occurred"
       setError(errorMessage)
+
+
     } finally {
       setLoading(false)
     }
@@ -146,8 +207,7 @@ export function CreateIPAssetModal({ isOpen, onClose, onSuccess }: CreateIPAsset
 
   const copyToClipboard = (text: string, label: string) => {
     navigator.clipboard.writeText(text)
-    // You can add a toast notification here if you have one
-    console.log(`${label} copied to clipboard`)
+
   }
 
   const handleClose = () => {
@@ -167,6 +227,8 @@ export function CreateIPAssetModal({ isOpen, onClose, onSuccess }: CreateIPAsset
     setImagePreview("")
     setCreatedAsset(null)
     setError(null)
+    setCustomPrivateKey("")
+    setShowPrivateKey(false)
     onClose()
   }
 
@@ -186,39 +248,82 @@ export function CreateIPAssetModal({ isOpen, onClose, onSuccess }: CreateIPAsset
           </DialogTitle>
         </DialogHeader>
 
-        {/* Environment Validation Warning */}
-        {!envValidation.isValid && (
-          <div className="bg-red-900/20 border border-red-700 rounded-lg p-4 mb-4">
-            <div className="flex items-start gap-2">
-              <AlertCircle className="h-5 w-5 text-red-400 mt-0.5" />
-              <div>
-                <h4 className="text-red-400 font-medium">Environment Setup Required</h4>
-                <ul className="text-red-300 text-sm mt-2 space-y-1">
-                  {envValidation.errors.map((error, index) => (
-                    <li key={index}>• {error}</li>
-                  ))}
-                </ul>
-                <p className="text-red-300 text-sm mt-2">
-                  Please add these environment variables to your .env.local file and restart the application.
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Wallet Info */}
-        {walletAddress && (
-          <div className="bg-blue-900/20 border border-blue-700 rounded-lg p-3 mb-4">
-            <div className="flex items-center gap-2">
-              <Wallet className="h-4 w-4 text-blue-400" />
-              <span className="text-blue-400 text-sm">Connected Wallet:</span>
-              <span className="text-white text-sm font-mono">{walletAddress}</span>
-            </div>
-          </div>
-        )}
-
         {step === 1 && (
           <div className="space-y-6">
+            {/* Custom Wallet Private Key Input */}
+            <div className="bg-gray-800 border border-gray-700 rounded-lg p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <Key className="h-5 w-5 text-blue-400" />
+                <h3 className="text-white font-medium">Wallet Configuration</h3>
+              </div>
+
+              <div className="space-y-3">
+                <div className="space-y-2">
+                  <Label className="text-white">Custom Private Key (Optional)</Label>
+                  <div className="relative">
+                    <Input
+                      type={showPrivateKey ? "text" : "password"}
+                      value={customPrivateKey}
+                      onChange={(e) => handlePrivateKeyChange(e.target.value)}
+                      placeholder="Enter your wallet private key (64 hex characters)"
+                      className="bg-gray-800 border-gray-600 text-white pr-10"
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
+                      onClick={() => setShowPrivateKey(!showPrivateKey)}
+                    >
+                      {showPrivateKey ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </Button>
+                  </div>
+                  <p className="text-xs text-gray-400">
+                    Leave blank to use {envValidation.hasDummyKey ? "dummy wallet" : "environment wallet"}
+                  </p>
+                </div>
+
+                {/* Wallet Status */}
+                {walletAddress && (
+                  <div
+                    className={`${usingCustomWallet ? "bg-green-900/20 border-green-800" : "bg-blue-900/20 border-blue-800"} border rounded-lg p-3`}
+                  >
+                    <div className="flex items-center gap-2 mb-2">
+                      <Wallet className={`h-4 w-4 ${usingCustomWallet ? "text-green-400" : "text-blue-400"}`} />
+                      <span className={`text-sm font-medium ${usingCustomWallet ? "text-green-400" : "text-blue-400"}`}>
+                        {usingCustomWallet
+                          ? "Using Custom Wallet"
+                          : envValidation.hasDummyKey
+                            ? "Using Dummy Wallet"
+                            : "Using Environment Wallet"}
+                      </span>
+                    </div>
+                    <p className={`text-xs ${usingCustomWallet ? "text-green-300" : "text-blue-300"}`}>
+                      Address: {walletAddress}
+                    </p>
+                    {!usingCustomWallet && envValidation.hasDummyKey && (
+                      <p className="text-xs text-blue-300 mt-1">This is a test wallet for demonstration purposes.</p>
+                    )}
+                  </div>
+                )}
+
+                {/* Environment Validation Warning */}
+                {!envValidation.isValid && !envValidation.hasDummyKey && !customPrivateKey && (
+                  <div className="bg-red-900/20 border border-red-700 rounded-lg p-3">
+                    <div className="flex items-start gap-2">
+                      <AlertCircle className="h-4 w-4 text-red-400 mt-0.5" />
+                      <div>
+                        <h4 className="text-red-400 font-medium text-sm">Environment Setup Required</h4>
+                        <p className="text-red-300 text-xs mt-1">
+                          Please enter a custom private key or set up environment variables.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
             {/* Image Upload */}
             <div className="space-y-2">
               <Label className="text-white">Asset Image</Label>
@@ -282,7 +387,7 @@ export function CreateIPAssetModal({ isOpen, onClose, onSuccess }: CreateIPAsset
               <Label className="text-white">Description *</Label>
               <Textarea
                 value={formData.description}
-                onChange={(e:any) => handleInputChange("description", e.target.value)}
+                onChange={(e: any) => handleInputChange("description", e.target.value)}
                 placeholder="Describe your IP asset"
                 className="bg-gray-800 border-gray-600 text-white min-h-[100px]"
               />
@@ -292,7 +397,7 @@ export function CreateIPAssetModal({ isOpen, onClose, onSuccess }: CreateIPAsset
               <Label className="text-white">NFT Description</Label>
               <Textarea
                 value={formData.nftDescription}
-                onChange={(e:any) => handleInputChange("nftDescription", e.target.value)}
+                onChange={(e: any) => handleInputChange("nftDescription", e.target.value)}
                 placeholder="Description for the ownership NFT"
                 className="bg-gray-800 border-gray-600 text-white"
               />
@@ -372,7 +477,12 @@ export function CreateIPAssetModal({ isOpen, onClose, onSuccess }: CreateIPAsset
               </Button>
               <Button
                 onClick={() => setStep(2)}
-                disabled={!formData.title || !formData.description || !envValidation.isValid}
+                disabled={
+                  !formData.title ||
+                  !formData.description ||
+                  (!customPrivateKey && !envValidation.isValid && !envValidation.hasDummyKey) ||
+                  (customPrivateKey && !validatePrivateKey(customPrivateKey))
+                }
                 className="bg-blue-600 hover:bg-blue-700 text-white"
               >
                 Next: Review
@@ -442,6 +552,34 @@ export function CreateIPAssetModal({ isOpen, onClose, onSuccess }: CreateIPAsset
               </CardContent>
             </Card>
 
+            {/* Wallet Mode Indicator */}
+            <div
+              className={`${usingCustomWallet ? "bg-green-900/20 border-green-800" : "bg-blue-900/20 border-blue-800"} border rounded-lg p-4`}
+            >
+              <div className="flex items-start gap-2">
+                <Key className={`h-5 w-5 ${usingCustomWallet ? "text-green-400" : "text-blue-400"} mt-0.5`} />
+                <div>
+                  <h4 className={`${usingCustomWallet ? "text-green-400" : "text-blue-400"} font-medium`}>
+                    {usingCustomWallet
+                      ? "Using Custom Wallet"
+                      : envValidation.hasDummyKey
+                        ? "Using Dummy Wallet"
+                        : "Using Environment Wallet"}
+                  </h4>
+                  <p className={`${usingCustomWallet ? "text-green-300" : "text-blue-300"} text-sm mt-1`}>
+                    {usingCustomWallet
+                      ? "Your IP asset will be created with your provided wallet. Real transaction fees will apply."
+                      : envValidation.hasDummyKey
+                        ? "Your IP asset will be created with a test wallet for demonstration purposes."
+                        : "Your IP asset will be created with the environment wallet."}
+                  </p>
+                  <p className={`${usingCustomWallet ? "text-green-300" : "text-blue-300"} text-xs mt-1`}>
+                    Wallet: {walletAddress}
+                  </p>
+                </div>
+              </div>
+            </div>
+
             {error && (
               <div className="bg-red-900/20 border border-red-700 rounded-lg p-4">
                 <div className="flex items-start gap-2">
@@ -462,8 +600,8 @@ export function CreateIPAssetModal({ isOpen, onClose, onSuccess }: CreateIPAsset
                   <ul className="text-yellow-300 text-sm mt-2 space-y-1">
                     <li>• This will create a real NFT and register it as an IP Asset on Story Protocol</li>
                     <li>• Your image and metadata will be uploaded to IPFS</li>
-                    <li>• Real blockchain transaction fees will apply</li>
-                    <li>• Make sure you have sufficient testnet funds in your wallet</li>
+                    {usingCustomWallet && <li>• Real blockchain transaction fees will apply</li>}
+                    {usingCustomWallet && <li>• Make sure you have sufficient testnet funds in your wallet</li>}
                     <li>• Once created, the IP Asset cannot be deleted</li>
                   </ul>
                 </div>
@@ -476,7 +614,7 @@ export function CreateIPAssetModal({ isOpen, onClose, onSuccess }: CreateIPAsset
               </Button>
               <Button
                 onClick={createIPAssetReal}
-                disabled={loading || !envValidation.isValid}
+                disabled={loading}
                 className="bg-green-600 hover:bg-green-700 text-white"
               >
                 {loading ? (
@@ -493,7 +631,7 @@ export function CreateIPAssetModal({ isOpen, onClose, onSuccess }: CreateIPAsset
         )}
 
         {step === 3 && createdAsset && (
-          <div className="space-y-6 text-center ">
+          <div className="space-y-6 text-center">
             <div className="flex justify-center">
               <CheckCircle className="h-16 w-16 text-green-400" />
             </div>
@@ -501,12 +639,18 @@ export function CreateIPAssetModal({ isOpen, onClose, onSuccess }: CreateIPAsset
             <div>
               <h3 className="text-2xl font-bold text-white mb-2">IP Asset Created Successfully!</h3>
               <p className="text-gray-300">Your IP has been registered on Story Protocol</p>
+              <Badge
+                className={`mt-2 ${createdAsset.usingCustomWallet ? "bg-green-600/30 text-green-300 border-green-500/30" : "bg-blue-600/30 text-blue-300 border-blue-500/30"}`}
+              >
+                <Info className="w-3 h-3 mr-1" />
+                {createdAsset.usingCustomWallet ? "Created with Custom Wallet" : "Created with Sample Wallet"}
+              </Badge>
             </div>
 
             <Card className="bg-gray-800 border-gray-700">
               <CardContent className="p-6 text-left">
                 <div className="space-y-3">
-                  <div className="flex items-center">
+                  <div className="flex items-center justify-between">
                     <span className="text-gray-400">IP Asset ID:</span>
                     <div className="flex items-center gap-2">
                       <span className="text-white font-mono text-sm">{createdAsset.ipId}</span>
@@ -520,9 +664,9 @@ export function CreateIPAssetModal({ isOpen, onClose, onSuccess }: CreateIPAsset
                     </div>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-400">Tx Hash:</span>
+                    <span className="text-gray-400">Transaction Hash:</span>
                     <div className="flex items-center gap-2">
-                      <span className="text-white font-mono text-sm">{createdAsset.txHash.substring(0,30)}..</span>
+                      <span className="text-white font-mono text-sm">{createdAsset.txHash.substring(0, 30)}...</span>
                       <Button
                         variant="ghost"
                         size="sm"
@@ -535,6 +679,10 @@ export function CreateIPAssetModal({ isOpen, onClose, onSuccess }: CreateIPAsset
                   <div>
                     <span className="text-gray-400">Token ID: </span>
                     <span className="text-white">{createdAsset.tokenId}</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-400">Wallet Address: </span>
+                    <span className="text-white font-mono text-sm">{createdAsset.walletAddress}</span>
                   </div>
                   <div>
                     <span className="text-gray-400">NFT Contract: </span>

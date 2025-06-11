@@ -33,6 +33,7 @@ export interface CreateIPAssetResult {
   nftMetadataUri: string
   walletAddress: string
   usingCustomWallet: boolean
+  walletSource?: string // Added for tracking wallet source
 }
 
 // SPG NFT Contract address (public collection for testing)

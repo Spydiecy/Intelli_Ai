@@ -21,8 +21,10 @@ import {
   Eye,
   EyeOff,
   Info,
+  Shield,
 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
+import { useWallet } from "@/contexts/WalletContext"
 
 import {
   createIPAsset,
@@ -56,6 +58,9 @@ export function CreateIPAssetModal({ isOpen, onClose, onSuccess }: CreateIPAsset
   const [showPrivateKey, setShowPrivateKey] = useState(false)
   const [usingCustomWallet, setUsingCustomWallet] = useState(false)
 
+  // Get wallet context
+  const { connected, publicKey, openConnectModal } = useWallet()
+
   // Form data
   const [formData, setFormData] = useState({
     title: "",
@@ -84,6 +89,20 @@ export function CreateIPAssetModal({ isOpen, onClose, onSuccess }: CreateIPAsset
     }
   }, [])
 
+  // Update form when Tomo wallet connects/disconnects
+  useEffect(() => {
+    if (connected && publicKey) {
+      setFormData((prev) => ({ ...prev, creatorAddress: publicKey }))
+      setWalletAddress(publicKey)
+      setUsingCustomWallet(false) // Prefer Tomo wallet over custom
+    } else if (!connected && !customPrivateKey) {
+      // Reset to default wallet if no Tomo wallet and no custom key
+      const address = getWalletAddress()
+      setWalletAddress(address)
+      setFormData((prev) => ({ ...prev, creatorAddress: address }))
+    }
+  }, [connected, publicKey, customPrivateKey])
+
   // Update wallet address when custom private key changes
   useEffect(() => {
     if (customPrivateKey && validatePrivateKey(customPrivateKey)) {
@@ -91,13 +110,13 @@ export function CreateIPAssetModal({ isOpen, onClose, onSuccess }: CreateIPAsset
       setWalletAddress(address)
       setUsingCustomWallet(true)
       setFormData((prev) => ({ ...prev, creatorAddress: address }))
-    } else if (!customPrivateKey) {
+    } else if (!customPrivateKey && !connected) {
       const address = getWalletAddress()
       setWalletAddress(address)
       setUsingCustomWallet(false)
       setFormData((prev) => ({ ...prev, creatorAddress: address }))
     }
-  }, [customPrivateKey])
+  }, [customPrivateKey, connected])
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
@@ -149,13 +168,23 @@ export function CreateIPAssetModal({ isOpen, onClose, onSuccess }: CreateIPAsset
     setError(null)
 
     try {
-      // Validate that we have either custom key or environment key
-      if (!customPrivateKey && !envValidation.isValid && !envValidation.hasDummyKey) {
-        throw new Error("Please enter a private key or ensure environment variables are set up correctly.")
+      // Validate wallet connection - prioritize Tomo wallet
+      if (!connected && !customPrivateKey && !envValidation.isValid && !envValidation.hasDummyKey) {
+        throw new Error("Please connect your Tomo wallet, enter a private key, or ensure environment variables are set up correctly.")
       }
 
-      // Validate custom private key if provided
-      if (customPrivateKey && !validatePrivateKey(customPrivateKey)) {
+      // If Tomo wallet is connected, use it
+      let effectiveCreatorAddress = formData.creatorAddress
+      let effectivePrivateKey: string | undefined = customPrivateKey
+      let walletSource = "Environment"
+
+      if (connected && publicKey) {
+        effectiveCreatorAddress = publicKey
+        effectivePrivateKey = undefined // Don't use custom key when Tomo is connected
+        walletSource = "Tomo Wallet"
+      } else if (customPrivateKey && validatePrivateKey(customPrivateKey)) {
+        walletSource = "Custom Key"
+      } else {
         throw new Error("Invalid private key format. Must be 64 hexadecimal characters.")
       }
 
@@ -181,25 +210,35 @@ export function CreateIPAssetModal({ isOpen, onClose, onSuccess }: CreateIPAsset
         nftName: formData.nftName || formData.title,
         nftDescription: formData.nftDescription || formData.description,
         creatorName: formData.creatorName || "Anonymous Creator",
-        creatorAddress: formData.creatorAddress,
+        creatorAddress: effectiveCreatorAddress,
         creatorDescription: formData.creatorDescription,
         socialMedia: socialMedia.length > 0 ? socialMedia : undefined,
-        customPrivateKey: customPrivateKey || undefined, // Pass custom key if provided
+        customPrivateKey: effectivePrivateKey || undefined, // Pass custom key only if no Tomo wallet
       }
 
-      // Create the IP Asset using real SDK
-      console.log("Creating IP Asset with params:", params)
+      console.log("Creating IP Asset with params:", {
+        ...params,
+        customPrivateKey: effectivePrivateKey ? "[REDACTED]" : undefined, // Don't log private key
+        walletSource,
+        effectiveAddress: effectiveCreatorAddress
+      })
+      
       const result = await createIPAsset(params)
-      setCreatedAsset(result)
+      
+      // Ensure the result shows the correct wallet address used
+      const enhancedResult = {
+        ...result,
+        walletAddress: effectiveCreatorAddress, // Use the actual connected/effective address
+        walletSource
+      }
+      
+      setCreatedAsset(enhancedResult)
       setStep(3) // Success step
 
-    
     } catch (error) {
       console.error("Failed to create IP Asset:", error)
       const errorMessage = error instanceof Error ? error.message : "Unknown error occurred"
       setError(errorMessage)
-
-
     } finally {
       setLoading(false)
     }
@@ -239,7 +278,7 @@ export function CreateIPAssetModal({ isOpen, onClose, onSuccess }: CreateIPAsset
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-gray-900 border-gray-700">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-black/95 border-white/20 backdrop-blur-sm">
         <DialogHeader>
           <DialogTitle className="text-white flex items-center gap-2">
             {step === 1 && "Create IP Asset - Basic Information"}
@@ -251,13 +290,46 @@ export function CreateIPAssetModal({ isOpen, onClose, onSuccess }: CreateIPAsset
         {step === 1 && (
           <div className="space-y-6">
             {/* Custom Wallet Private Key Input */}
-            <div className="bg-gray-800 border border-gray-700 rounded-lg p-4">
+            <div className="bg-black/50 border border-white/20 rounded-lg p-4 backdrop-blur-sm">
               <div className="flex items-center gap-2 mb-3">
-                <Key className="h-5 w-5 text-blue-400" />
+                <Key className="h-5 w-5 text-white/60" />
                 <h3 className="text-white font-medium">Wallet Configuration</h3>
               </div>
 
               <div className="space-y-3">
+                {/* Tomo Wallet Status */}
+                {connected && publicKey ? (
+                  <div className="bg-green-900/20 border border-green-500/30 rounded-lg p-3">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Wallet className="h-4 w-4 text-green-400" />
+                      <span className="text-sm font-medium text-green-400">Tomo Wallet Connected</span>
+                      <Badge className="bg-green-600/20 text-green-300 border-green-500/30">Primary</Badge>
+                    </div>
+                    <p className="text-xs text-green-300">Address: {publicKey}</p>
+                    <p className="text-xs text-green-300/80 mt-1">This address will be used for asset creation.</p>
+                  </div>
+                ) : (
+                  <div className="bg-yellow-900/20 border border-yellow-500/30 rounded-lg p-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <AlertCircle className="h-4 w-4 text-yellow-400" />
+                        <span className="text-sm font-medium text-yellow-400">Tomo Wallet Not Connected</span>
+                      </div>
+                      <Button
+                        onClick={openConnectModal}
+                        size="sm"
+                        className="bg-yellow-600/20 hover:bg-yellow-600/30 text-yellow-300 border border-yellow-500/30"
+                      >
+                        <Wallet className="h-4 w-4 mr-2" />
+                        Connect Wallet
+                      </Button>
+                    </div>
+                    <p className="text-xs text-yellow-300/80 mt-2">
+                      Connect your Tomo wallet for secure asset creation, or use a custom private key below.
+                    </p>
+                  </div>
+                )}
+
                 <div className="space-y-2">
                   <Label className="text-white">Custom Private Key (Optional)</Label>
                   <div className="relative">
@@ -266,56 +338,64 @@ export function CreateIPAssetModal({ isOpen, onClose, onSuccess }: CreateIPAsset
                       value={customPrivateKey}
                       onChange={(e) => handlePrivateKeyChange(e.target.value)}
                       placeholder="Enter your wallet private key (64 hex characters)"
-                      className="bg-gray-800 border-gray-600 text-white pr-10"
+                      className="bg-black/50 border-white/20 text-white pr-10 placeholder:text-white/40"
+                      disabled={Boolean(connected && publicKey)} // Disable if Tomo wallet is connected
                     />
                     <Button
                       type="button"
                       variant="ghost"
                       size="sm"
-                      className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
+                      className="absolute right-2 top-1/2 transform -translate-y-1/2 text-white/60 hover:text-white"
                       onClick={() => setShowPrivateKey(!showPrivateKey)}
+                      disabled={Boolean(connected && publicKey)}
                     >
                       {showPrivateKey ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </Button>
                   </div>
-                  <p className="text-xs text-gray-400">
-                    Leave blank to use {envValidation.hasDummyKey ? "dummy wallet" : "environment wallet"}
+                  <p className="text-xs text-white/60">
+                    {connected && publicKey 
+                      ? "Tomo wallet takes precedence over custom key"
+                      : `Leave blank to use ${envValidation.hasDummyKey ? "dummy wallet" : "environment wallet"}`
+                    }
                   </p>
                 </div>
 
-                {/* Wallet Status */}
-                {walletAddress && (
-                  <div
-                    className={`${usingCustomWallet ? "bg-green-900/20 border-green-800" : "bg-blue-900/20 border-blue-800"} border rounded-lg p-3`}
-                  >
+                {/* Custom Wallet Status */}
+                {!connected && customPrivateKey && walletAddress && (
+                  <div className="bg-blue-900/20 border border-blue-500/30 rounded-lg p-3">
                     <div className="flex items-center gap-2 mb-2">
-                      <Wallet className={`h-4 w-4 ${usingCustomWallet ? "text-green-400" : "text-blue-400"}`} />
-                      <span className={`text-sm font-medium ${usingCustomWallet ? "text-green-400" : "text-blue-400"}`}>
-                        {usingCustomWallet
-                          ? "Using Custom Wallet"
-                          : envValidation.hasDummyKey
-                            ? "Using Dummy Wallet"
-                            : "Using Environment Wallet"}
+                      <Wallet className="h-4 w-4 text-blue-400" />
+                      <span className="text-sm font-medium text-blue-400">Using Custom Wallet</span>
+                    </div>
+                    <p className="text-xs text-blue-300">Address: {walletAddress}</p>
+                  </div>
+                )}
+
+                {/* Default Wallet Status */}
+                {!connected && !customPrivateKey && walletAddress && (
+                  <div className="bg-white/10 border border-white/20 rounded-lg p-3">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Wallet className="h-4 w-4 text-white/60" />
+                      <span className="text-sm font-medium text-white/80">
+                        {envValidation.hasDummyKey ? "Using Dummy Wallet" : "Using Environment Wallet"}
                       </span>
                     </div>
-                    <p className={`text-xs ${usingCustomWallet ? "text-green-300" : "text-blue-300"}`}>
-                      Address: {walletAddress}
-                    </p>
-                    {!usingCustomWallet && envValidation.hasDummyKey && (
-                      <p className="text-xs text-blue-300 mt-1">This is a test wallet for demonstration purposes.</p>
+                    <p className="text-xs text-white/60">Address: {walletAddress}</p>
+                    {envValidation.hasDummyKey && (
+                      <p className="text-xs text-white/50 mt-1">This is a test wallet for demonstration purposes.</p>
                     )}
                   </div>
                 )}
 
                 {/* Environment Validation Warning */}
-                {!envValidation.isValid && !envValidation.hasDummyKey && !customPrivateKey && (
-                  <div className="bg-red-900/20 border border-red-700 rounded-lg p-3">
+                {!envValidation.isValid && !envValidation.hasDummyKey && !customPrivateKey && !connected && (
+                  <div className="bg-red-900/20 border border-red-500/30 rounded-lg p-3">
                     <div className="flex items-start gap-2">
                       <AlertCircle className="h-4 w-4 text-red-400 mt-0.5" />
                       <div>
-                        <h4 className="text-red-400 font-medium text-sm">Environment Setup Required</h4>
+                        <h4 className="text-red-400 font-medium text-sm">Wallet Setup Required</h4>
                         <p className="text-red-300 text-xs mt-1">
-                          Please enter a custom private key or set up environment variables.
+                          Please connect your Tomo wallet, enter a custom private key, or set up environment variables.
                         </p>
                       </div>
                     </div>
@@ -327,7 +407,7 @@ export function CreateIPAssetModal({ isOpen, onClose, onSuccess }: CreateIPAsset
             {/* Image Upload */}
             <div className="space-y-2">
               <Label className="text-white">Asset Image</Label>
-              <div className="border-2 border-dashed border-gray-600 rounded-lg p-6 text-center">
+              <div className="border-2 border-dashed border-white/20 rounded-lg p-6 text-center backdrop-blur-sm">
                 {imagePreview ? (
                   <div className="relative">
                     <img
@@ -335,14 +415,14 @@ export function CreateIPAssetModal({ isOpen, onClose, onSuccess }: CreateIPAsset
                       alt="Preview"
                       className="max-w-full h-48 object-cover mx-auto rounded-lg"
                     />
-                    <Button variant="destructive" size="sm" className="absolute top-2 right-2" onClick={removeImage}>
+                    <Button variant="destructive" size="sm" className="absolute top-2 right-2 bg-red-600/80 hover:bg-red-600 backdrop-blur-sm" onClick={removeImage}>
                       <X className="h-4 w-4" />
                     </Button>
                   </div>
                 ) : (
                   <div>
-                    <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-400 mb-2">Upload your IP asset image (Max 10MB)</p>
+                    <Upload className="h-12 w-12 text-white/40 mx-auto mb-4" />
+                    <p className="text-white/60 mb-2">Upload your IP asset image (Max 10MB)</p>
                     <Input
                       type="file"
                       accept="image/*"
@@ -352,7 +432,7 @@ export function CreateIPAssetModal({ isOpen, onClose, onSuccess }: CreateIPAsset
                     />
                     <Label
                       htmlFor="image-upload"
-                      className="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg inline-block"
+                      className="cursor-pointer bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg inline-block border border-white/20 backdrop-blur-sm transition-colors"
                     >
                       Choose Image
                     </Label>
@@ -369,7 +449,7 @@ export function CreateIPAssetModal({ isOpen, onClose, onSuccess }: CreateIPAsset
                   value={formData.title}
                   onChange={(e) => handleInputChange("title", e.target.value)}
                   placeholder="Enter asset title"
-                  className="bg-gray-800 border-gray-600 text-white"
+                  className="bg-black/50 border-white/20 text-white placeholder:text-white/40"
                 />
               </div>
               <div className="space-y-2">
@@ -378,7 +458,7 @@ export function CreateIPAssetModal({ isOpen, onClose, onSuccess }: CreateIPAsset
                   value={formData.nftName}
                   onChange={(e) => handleInputChange("nftName", e.target.value)}
                   placeholder="NFT ownership name"
-                  className="bg-gray-800 border-gray-600 text-white"
+                  className="bg-black/50 border-white/20 text-white placeholder:text-white/40"
                 />
               </div>
             </div>
@@ -389,7 +469,7 @@ export function CreateIPAssetModal({ isOpen, onClose, onSuccess }: CreateIPAsset
                 value={formData.description}
                 onChange={(e: any) => handleInputChange("description", e.target.value)}
                 placeholder="Describe your IP asset"
-                className="bg-gray-800 border-gray-600 text-white min-h-[100px]"
+                className="bg-black/50 border-white/20 text-white placeholder:text-white/40 min-h-[100px]"
               />
             </div>
 
@@ -399,12 +479,12 @@ export function CreateIPAssetModal({ isOpen, onClose, onSuccess }: CreateIPAsset
                 value={formData.nftDescription}
                 onChange={(e: any) => handleInputChange("nftDescription", e.target.value)}
                 placeholder="Description for the ownership NFT"
-                className="bg-gray-800 border-gray-600 text-white"
+                className="bg-black/50 border-white/20 text-white placeholder:text-white/40"
               />
             </div>
 
             {/* Creator Information */}
-            <div className="border-t border-gray-700 pt-6">
+            <div className="border-t border-white/20 pt-6">
               <h3 className="text-lg font-semibold text-white mb-4">Creator Information</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
@@ -413,7 +493,7 @@ export function CreateIPAssetModal({ isOpen, onClose, onSuccess }: CreateIPAsset
                     value={formData.creatorName}
                     onChange={(e) => handleInputChange("creatorName", e.target.value)}
                     placeholder="Your name or organization"
-                    className="bg-gray-800 border-gray-600 text-white"
+                    className="bg-black/50 border-white/20 text-white placeholder:text-white/40"
                   />
                 </div>
                 <div className="space-y-2">
@@ -422,7 +502,7 @@ export function CreateIPAssetModal({ isOpen, onClose, onSuccess }: CreateIPAsset
                     value={formData.creatorAddress}
                     onChange={(e) => handleInputChange("creatorAddress", e.target.value)}
                     placeholder="0x..."
-                    className="bg-gray-800 border-gray-600 text-white"
+                    className="bg-black/50 border-white/20 text-white placeholder:text-white/40"
                   />
                 </div>
               </div>
@@ -433,7 +513,7 @@ export function CreateIPAssetModal({ isOpen, onClose, onSuccess }: CreateIPAsset
                   value={formData.creatorDescription}
                   onChange={(e) => handleInputChange("creatorDescription", e.target.value)}
                   placeholder="Brief description about the creator"
-                  className="bg-gray-800 border-gray-600 text-white"
+                  className="bg-black/50 border-white/20 text-white placeholder:text-white/40"
                 />
               </div>
 
@@ -444,7 +524,7 @@ export function CreateIPAssetModal({ isOpen, onClose, onSuccess }: CreateIPAsset
                     value={formData.twitterUrl}
                     onChange={(e) => handleInputChange("twitterUrl", e.target.value)}
                     placeholder="https://twitter.com/username"
-                    className="bg-gray-800 border-gray-600 text-white"
+                    className="bg-black/50 border-white/20 text-white placeholder:text-white/40"
                   />
                 </div>
                 <div className="space-y-2">
@@ -453,14 +533,14 @@ export function CreateIPAssetModal({ isOpen, onClose, onSuccess }: CreateIPAsset
                     value={formData.websiteUrl}
                     onChange={(e) => handleInputChange("websiteUrl", e.target.value)}
                     placeholder="https://yourwebsite.com"
-                    className="bg-gray-800 border-gray-600 text-white"
+                    className="bg-black/50 border-white/20 text-white placeholder:text-white/40"
                   />
                 </div>
               </div>
             </div>
 
             {error && (
-              <div className="bg-red-900/20 border border-red-700 rounded-lg p-4">
+              <div className="bg-red-900/20 border border-red-500/30 rounded-lg p-4 backdrop-blur-sm">
                 <div className="flex items-start gap-2">
                   <AlertCircle className="h-5 w-5 text-red-400 mt-0.5" />
                   <div>
@@ -472,23 +552,23 @@ export function CreateIPAssetModal({ isOpen, onClose, onSuccess }: CreateIPAsset
             )}
 
             <div className="flex justify-end gap-2 pt-4">
-              <Button variant="outline" onClick={handleClose} className="border-gray-600 text-gray-300">
+              <Button variant="outline" onClick={handleClose} className="border-white/20 text-white/80 hover:bg-white/10">
                 Cancel
               </Button>
               <Button
                 onClick={() => setStep(2)}
-                disabled={
-
-                  (!formData.title ||
-                    !formData.description ||
-                    (!customPrivateKey && !envValidation.isValid && !envValidation.hasDummyKey) ||
-                    (customPrivateKey && !validatePrivateKey(customPrivateKey))
-                  )|| false
-                
-                }
-                className="bg-blue-600 hover:bg-blue-700 text-white"
+                disabled={Boolean(
+                  !formData.title ||
+                  !formData.description ||
+                  (!connected && !customPrivateKey && !envValidation.isValid && !envValidation.hasDummyKey) ||
+                  (customPrivateKey && !validatePrivateKey(customPrivateKey))
+                )}
+                className="bg-white/20 hover:bg-white/30 text-white border border-white/20 backdrop-blur-sm disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Next: Review
+                {(!connected && !customPrivateKey && !envValidation.isValid && !envValidation.hasDummyKey) 
+                  ? "Connect Wallet to Continue" 
+                  : "Next: Review"
+                }
               </Button>
             </div>
           </div>
@@ -496,7 +576,7 @@ export function CreateIPAssetModal({ isOpen, onClose, onSuccess }: CreateIPAsset
 
         {step === 2 && (
           <div className="space-y-6">
-            <Card className="bg-gray-800 border-gray-700">
+            <Card className="bg-black/50 border-white/20 backdrop-blur-sm">
               <CardContent className="p-6">
                 <h3 className="text-lg font-semibold text-white mb-4">Review Your IP Asset</h3>
 
@@ -511,15 +591,15 @@ export function CreateIPAssetModal({ isOpen, onClose, onSuccess }: CreateIPAsset
                     )}
                     <div className="space-y-2">
                       <div>
-                        <span className="text-gray-400">Title: </span>
+                        <span className="text-white/60">Title: </span>
                         <span className="text-white">{formData.title}</span>
                       </div>
                       <div>
-                        <span className="text-gray-400">NFT Name: </span>
+                        <span className="text-white/60">NFT Name: </span>
                         <span className="text-white">{formData.nftName || formData.title}</span>
                       </div>
                       <div>
-                        <span className="text-gray-400">Creator: </span>
+                        <span className="text-white/60">Creator: </span>
                         <span className="text-white">{formData.creatorName || "Anonymous"}</span>
                       </div>
                     </div>
@@ -528,24 +608,24 @@ export function CreateIPAssetModal({ isOpen, onClose, onSuccess }: CreateIPAsset
                   <div className="space-y-4">
                     <div>
                       <h4 className="text-white font-medium mb-2">Description</h4>
-                      <p className="text-gray-300 text-sm">{formData.description}</p>
+                      <p className="text-white/70 text-sm">{formData.description}</p>
                     </div>
 
                     {formData.creatorDescription && (
                       <div>
                         <h4 className="text-white font-medium mb-2">Creator Info</h4>
-                        <p className="text-gray-300 text-sm">{formData.creatorDescription}</p>
+                        <p className="text-white/70 text-sm">{formData.creatorDescription}</p>
                       </div>
                     )}
 
                     <div className="flex flex-wrap gap-2">
                       {formData.twitterUrl && (
-                        <Badge variant="outline" className="border-blue-500 text-blue-400">
+                        <Badge variant="outline" className="border-white/30 text-white/80">
                           Twitter
                         </Badge>
                       )}
                       {formData.websiteUrl && (
-                        <Badge variant="outline" className="border-green-500 text-green-400">
+                        <Badge variant="outline" className="border-white/30 text-white/80">
                           Website
                         </Badge>
                       )}
@@ -612,19 +692,21 @@ export function CreateIPAssetModal({ isOpen, onClose, onSuccess }: CreateIPAsset
             </div>
 
             <div className="flex justify-end gap-2 pt-4">
-              <Button variant="outline" onClick={() => setStep(1)} className="border-gray-600 text-gray-300">
+              <Button variant="outline" onClick={() => setStep(1)} className="border-white/20 text-white/80 hover:bg-white/10">
                 Back
               </Button>
               <Button
                 onClick={createIPAssetReal}
-                disabled={loading}
-                className="bg-green-600 hover:bg-green-700 text-white"
+                disabled={loading || (!connected && !customPrivateKey && !envValidation.isValid && !envValidation.hasDummyKey)}
+                className="bg-white/20 hover:bg-white/30 text-white border border-white/20 backdrop-blur-sm disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? (
                   <>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                     Creating IP Asset...
                   </>
+                ) : (!connected && !customPrivateKey && !envValidation.isValid && !envValidation.hasDummyKey) ? (
+                  "Connect Wallet to Create"
                 ) : (
                   "Create IP Asset"
                 )}
@@ -634,77 +716,117 @@ export function CreateIPAssetModal({ isOpen, onClose, onSuccess }: CreateIPAsset
         )}
 
         {step === 3 && createdAsset && (
-          <div className="space-y-6 text-center">
-            <div className="flex justify-center">
-              <CheckCircle className="h-16 w-16 text-green-400" />
-            </div>
-
-            <div>
+          <div className="space-y-6">
+            {/* Success Header */}
+            <div className="text-center">
+              <div className="flex justify-center mb-4">
+                <CheckCircle className="h-16 w-16 text-green-400" />
+              </div>
               <h3 className="text-2xl font-bold text-white mb-2">IP Asset Created Successfully!</h3>
-              <p className="text-gray-300">Your IP has been registered on Story Protocol</p>
+              <p className="text-white/60">Your IP has been registered on Story Protocol</p>
               <Badge
-                className={`mt-2 ${createdAsset.usingCustomWallet ? "bg-green-600/30 text-green-300 border-green-500/30" : "bg-blue-600/30 text-blue-300 border-blue-500/30"}`}
+                className={`mt-3 ${
+                  createdAsset.walletSource === "Tomo Wallet" 
+                    ? "bg-green-600/20 text-green-300 border-green-500/30"
+                    : createdAsset.walletSource === "Custom Key"
+                    ? "bg-blue-600/20 text-blue-300 border-blue-500/30"
+                    : "bg-white/20 text-white/80 border-white/20"
+                }`}
               >
                 <Info className="w-3 h-3 mr-1" />
-                {createdAsset.usingCustomWallet ? "Created with Custom Wallet" : "Created with Sample Wallet"}
+                Created with {createdAsset.walletSource === "Tomo Wallet" ? "Tomo Wallet" : 
+                             createdAsset.walletSource === "Custom Key" ? "Custom Wallet" : "Environment Wallet"}
               </Badge>
             </div>
 
-            <Card className="bg-gray-800 border-gray-700">
-              <CardContent className="p-6 text-left">
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-gray-400">IP Asset ID:</span>
-                    <div className="flex items-center gap-2">
-                      <span className="text-white font-mono text-sm">{createdAsset.ipId}</span>
+            {/* Asset Information Card */}
+            <Card className="bg-black/50 border-white/20 backdrop-blur-sm">
+              <CardContent className="p-6">
+                <h4 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                  <Shield className="w-5 h-5" />
+                  Asset Details
+                </h4>
+                <div className="space-y-4">
+                  {/* IP Asset ID */}
+                  <div className="flex flex-col gap-1">
+                    <span className="text-sm text-white/60">IP Asset ID</span>
+                    <div className="flex items-center gap-2 bg-black/30 p-3 rounded-lg border border-white/10">
+                      <span className="text-white font-mono text-sm flex-1 break-all">{createdAsset.ipId}</span>
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => copyToClipboard(createdAsset.ipId, "IP Asset ID")}
+                        className="text-white/60 hover:text-white hover:bg-white/10 flex-shrink-0"
                       >
                         <Copy className="h-4 w-4" />
                       </Button>
                     </div>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-gray-400">Transaction Hash:</span>
-                    <div className="flex items-center gap-2">
-                      <span className="text-white font-mono text-sm">{createdAsset.txHash.substring(0, 30)}...</span>
+
+                  {/* Transaction Hash */}
+                  <div className="flex flex-col gap-1">
+                    <span className="text-sm text-white/60">Transaction Hash</span>
+                    <div className="flex items-center gap-2 bg-black/30 p-3 rounded-lg border border-white/10">
+                      <span className="text-white font-mono text-sm flex-1 break-all">{createdAsset.txHash}</span>
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => copyToClipboard(createdAsset.txHash, "Transaction Hash")}
+                        className="text-white/60 hover:text-white hover:bg-white/10 flex-shrink-0"
                       >
                         <Copy className="h-4 w-4" />
                       </Button>
                     </div>
                   </div>
-                  <div>
-                    <span className="text-gray-400">Token ID: </span>
-                    <span className="text-white">{createdAsset.tokenId}</span>
+
+                  {/* Quick Info Grid */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                    <div className="flex flex-col gap-1">
+                      <span className="text-sm text-white/60">Token ID</span>
+                      <span className="text-white font-semibold">{createdAsset.tokenId}</span>
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <span className="text-sm text-white/60">Wallet Used</span>
+                      <div className="flex items-center gap-2 bg-black/30 p-3 rounded-lg border border-white/10">
+                        <span className="text-white font-mono text-sm flex-1 break-all">{createdAsset.walletAddress}</span>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => copyToClipboard(createdAsset.walletAddress, "Wallet Address")}
+                          className="text-white/60 hover:text-white hover:bg-white/10 flex-shrink-0"
+                        >
+                          <Copy className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <span className="text-gray-400">Wallet Address: </span>
-                    <span className="text-white font-mono text-sm">{createdAsset.walletAddress}</span>
-                  </div>
-                  <div>
-                    <span className="text-gray-400">NFT Contract: </span>
-                    <span className="text-white font-mono text-sm">{createdAsset.spgNftContract}</span>
+
+                  {/* NFT Contract */}
+                  <div className="flex flex-col gap-1">
+                    <span className="text-sm text-white/60">NFT Contract Address</span>
+                    <div className="bg-black/30 p-3 rounded-lg border border-white/10">
+                      <span className="text-white font-mono text-sm break-all">{createdAsset.spgNftContract}</span>
+                    </div>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            <div className="flex justify-center gap-2">
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row justify-center gap-3">
               <Button
                 variant="outline"
                 onClick={() => window.open(createdAsset.explorerUrl, "_blank")}
-                className="border-gray-600 text-gray-300"
+                className="border-white/20 text-white/80 hover:bg-white/10 backdrop-blur-sm"
               >
                 <ExternalLink className="h-4 w-4 mr-2" />
                 View on Explorer
               </Button>
-              <Button onClick={handleSuccess} className="bg-blue-600 hover:bg-blue-700 text-white">
+              <Button 
+                onClick={handleSuccess} 
+                className="bg-white/20 hover:bg-white/30 text-white border border-white/20 backdrop-blur-sm"
+              >
+                <CheckCircle className="h-4 w-4 mr-2" />
                 Done
               </Button>
             </div>

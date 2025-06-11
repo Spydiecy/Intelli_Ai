@@ -10,6 +10,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { CreateIPAssetModal } from "@/components/create-ip-asset-modal"
+import { useWallet } from "@/contexts/WalletContext"
 import { Search, Sparkles, Database, RefreshCw, Eye, Users, GitBranch, Shield, ExternalLink, Plus, Filter, ChevronLeft, ChevronRight } from 'lucide-react'
 import Image from "next/image"
 import Link from "next/link"
@@ -30,6 +31,9 @@ export default function IPAssetsPage() {
   const [filterType, setFilterType] = useState<string>("all")
   const [sortBy, setSortBy] = useState<string>("recent")
   const itemsPerPage = 6
+
+  // Get wallet context
+  const { connected, openConnectModal } = useWallet()
 
   useEffect(() => {
     loadAssets()
@@ -138,11 +142,17 @@ export default function IPAssetsPage() {
           </div>
           <div className="flex items-center gap-4">
             <Button
-              onClick={() => setCreateModalOpen(true)}
+              onClick={() => {
+                if (connected) {
+                  setCreateModalOpen(true)
+                } else {
+                  openConnectModal()
+                }
+              }}
               className="bg-white/20 hover:bg-white/30 text-white border border-white/20 backdrop-blur-sm"
             >
               <Plus className="w-4 h-4 mr-2" />
-              Create IP Asset
+              {connected ? "Create IP Asset" : "Connect Wallet to Create"}
             </Button>
             <Button
               onClick={loadAssets}
@@ -532,11 +542,17 @@ export default function IPAssetsPage() {
             <h3 className="text-xl font-semibold text-white/80 mb-2">No IP Assets Found</h3>
             <p className="text-white/60 mb-6">Try adjusting your search criteria or create a new IP asset</p>
             <Button
-              onClick={() => setCreateModalOpen(true)}
+              onClick={() => {
+                if (connected) {
+                  setCreateModalOpen(true)
+                } else {
+                  openConnectModal()
+                }
+              }}
               className="bg-white/20 hover:bg-white/30 text-white border border-white/20 backdrop-blur-sm"
             >
               <Plus className="w-4 h-4 mr-2" />
-              Create Your First IP Asset
+              {connected ? "Create Your First IP Asset" : "Connect Wallet to Create Asset"}
             </Button>
           </motion.div>
         )}

@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge"
 import { ArrowUpDown, Settings, Info, Zap, Shield, Clock, TrendingUp, Sparkles, AlertTriangle, RefreshCw } from "lucide-react"
 import { motion } from "framer-motion"
+import { useWallet } from "@/contexts/WalletContext"
 import {
   type Token,
   type SupportedChain,
@@ -22,6 +23,9 @@ import {
 } from "@/lib/debridge-api"
 
 export default function SwapPage() {
+  // Wallet connection
+  const { connected, publicKey: walletAddress, openConnectModal } = useWallet()
+
   // State for swap configuration
   const [supportedChains, setSupportedChains] = useState<SupportedChain[]>([])
   const [fromChain, setFromChain] = useState<SupportedChain | null>(null)
@@ -169,15 +173,17 @@ export default function SwapPage() {
   const handleSwap = async () => {
     if (!estimation || !fromToken || !toToken || !fromChain || !toChain) return
 
+    // Check if wallet is connected
+    if (!connected || !walletAddress) {
+      setError("Please connect your wallet to perform a swap")
+      return
+    }
+
     try {
       setLoading(true)
       setError(null)
 
-      // For demo purposes, we'll create a mock wallet address
-      // In a real app, this would come from the connected wallet
-      const mockWalletAddress = "0x742d35Cc6634C0532925a3b8D4C9db96C4b4d8b6"
-
-      // Create the actual cross-chain swap transaction with all required parameters
+      // Create the actual cross-chain swap transaction with the connected wallet address
       const swapTransaction = await debridgeApi.createDLNOrder({
         srcChainId: fromChain.chainId,
         srcChainTokenIn: fromToken.address,
@@ -185,10 +191,10 @@ export default function SwapPage() {
         dstChainId: toChain.chainId,
         dstChainTokenOut: toToken.address,
         dstChainTokenOutAmount: "auto",
-        dstChainTokenOutRecipient: mockWalletAddress,
-        senderAddress: mockWalletAddress,
-        srcChainOrderAuthorityAddress: mockWalletAddress,
-        dstChainOrderAuthorityAddress: mockWalletAddress,
+        dstChainTokenOutRecipient: walletAddress,
+        senderAddress: walletAddress,
+        srcChainOrderAuthorityAddress: walletAddress,
+        dstChainOrderAuthorityAddress: walletAddress,
         enableEstimate: true,
       })
 
@@ -261,6 +267,8 @@ export default function SwapPage() {
   }
 
   const canSwap =
+    connected &&
+    walletAddress &&
     estimation &&
     fromToken &&
     toToken &&
@@ -282,6 +290,18 @@ export default function SwapPage() {
             <p className="text-white/60">
               Bridge tokens seamlessly between Story Protocol and other supported chains using the official deBridge integration.
             </p>
+            {/* Wallet Status */}
+            {connected && walletAddress && (
+              <div className="mt-4 flex items-center gap-2">
+                <Badge className="bg-green-600/20 text-green-300 border-green-500/30">
+                  <div className="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
+                  Connected
+                </Badge>
+                <span className="text-white/60 text-sm font-mono">
+                  {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
+                </span>
+              </div>
+            )}
           </div>
           <div className="flex items-center gap-4">
             <Button
@@ -567,19 +587,6 @@ export default function SwapPage() {
                     </div>
                   )}
 
-                  {estimation.estimation.costsDetails && estimation.estimation.costsDetails.length > 0 && (
-                    <>
-                      {estimation.estimation.costsDetails.map((cost, index) => (
-                        <div key={index} className="flex items-center justify-between text-sm">
-                          <span className="text-white/60 capitalize">{cost.type.replace(/([A-Z])/g, " $1")}</span>
-                          <span className="text-white">
-                            {debridgeApi.formatAmount(cost.amountIn, fromToken?.decimals || 18)} {fromToken?.symbol}
-                          </span>
-                        </div>
-                      ))}
-                    </>
-                  )}
-
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-white/60">Estimated Time</span>
                     <span className="text-white flex items-center gap-1">
@@ -589,13 +596,6 @@ export default function SwapPage() {
                         : "2-5 minutes"}
                     </span>
                   </div>
-
-                  {estimation.fixFee && (
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-white/60">Fixed Fee</span>
-                      <span className="text-white">{estimation.fixFee} ETH</span>
-                    </div>
-                  )}
 
                   {estimation.estimation.srcChainTokenIn.approximateUsdValue && (
                     <div className="flex items-center justify-between text-sm">
@@ -610,18 +610,20 @@ export default function SwapPage() {
 
               {/* Bridge Button */}
               <Button
-                onClick={handleSwap}
-                disabled={loading || !canSwap}
+                onClick={!connected ? openConnectModal : handleSwap}
+                disabled={loading || (connected && !canSwap)}
                 className="w-full h-12 bg-white/20 hover:bg-white/30 text-white font-semibold disabled:opacity-50 border border-white/20 hover:border-white/30 transition-all backdrop-blur-sm"
               >
                 {loading ? <LoadingSpinner size="sm" className="mr-2" /> : <Zap className="w-4 h-4 mr-2" />}
                 {loading
                   ? "Processing Bridge..."
-                  : !canSwap
-                    ? "Enter Amount"
-                    : fromChain && toChain && fromChain.chainId === toChain.chainId
-                      ? "Select Different Chains"
-                      : "Bridge Tokens"}
+                  : !connected
+                    ? "Connect Wallet"
+                    : !canSwap
+                      ? "Enter Amount"
+                      : fromChain && toChain && fromChain.chainId === toChain.chainId
+                        ? "Select Different Chains"
+                        : "Bridge Tokens"}
               </Button>
             </CardContent>
           </Card>

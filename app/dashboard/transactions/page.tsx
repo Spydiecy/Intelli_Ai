@@ -150,7 +150,7 @@ export default function TransactionsPage() {
         className="flex flex-col md:flex-row gap-4 mb-8"
       >
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/40 w-5 h-5" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/40 w-5 h-5 z-10 pointer-events-none" />
           <Input
             placeholder="Search by action type, IP ID, transaction hash, or initiator..."
             value={searchTerm}

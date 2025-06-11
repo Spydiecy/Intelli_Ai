@@ -10,7 +10,8 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Search, DollarSign, RefreshCw, ExternalLink, Sparkles } from "lucide-react"
+import { Search, DollarSign, Database, RefreshCw, ArrowUpRight, ArrowDownRight, ExternalLink, Sparkles, Filter, ChevronLeft, ChevronRight, Copy } from "lucide-react"
+import Link from "next/link"
 import { motion } from "framer-motion"
 import { shortenAddress, formatTimestamp, formatAmount } from "@/lib/utils"
 
@@ -27,6 +28,9 @@ export default function RoyaltiesPage() {
   const [apiResponse, setApiResponse] = useState<any>(null)
   const [error, setError] = useState<string | null>(null)
   const [activeFilter, setActiveFilter] = useState<string | null>(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [showFilters, setShowFilters] = useState(false)
+  const itemsPerPage = 10
 
   useEffect(() => {
     loadRoyalties()
@@ -87,147 +91,470 @@ export default function RoyaltiesPage() {
       royalty.token.toLowerCase().includes(searchTerm.toLowerCase()),
   )
 
+  // Pagination logic
+  const totalPages = Math.ceil(filteredRoyalties.length / itemsPerPage)
+  const startIndex = (currentPage - 1) * itemsPerPage
+  const endIndex = startIndex + itemsPerPage
+  const currentRoyalties = filteredRoyalties.slice(startIndex, endIndex)
+
+  // Reset to first page when search changes
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [searchTerm])
+
   const handleViewResponse = (royalty: RoyaltyPay) => {
     setSelectedRoyalty(royalty)
     setShowApiModal(true)
   }
 
+  const copyToClipboard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text)
+      // You could add a toast notification here
+    } catch (err) {
+      console.error('Failed to copy: ', err)
+    }
+  }
+
   const totalAmount = royalties.reduce((sum, r) => sum + Number.parseFloat(r.amount || "0"), 0)
 
+  // Format large numbers for total volume
+  const formatLargeNumber = (num: number) => {
+    if (num >= 1000000000) {
+      return `${(num / 1000000000).toFixed(2)}B`
+    } else if (num >= 1000000) {
+      return `${(num / 1000000).toFixed(2)}M`
+    } else if (num >= 1000) {
+      return `${(num / 1000).toFixed(2)}K`
+    } else if (num >= 1) {
+      return num.toFixed(2)
+    }
+    return num.toFixed(6)
+  }
+
+  // Format token amounts with proper Wei-like conversion
+  const formatTokenAmount = (amount: string | number) => {
+    const num = Number(amount || 0)
+    
+    // Handle very small numbers
+    if (num < 0.000001) {
+      return `${num.toExponential(2)} IP`
+    }
+    
+    // Assuming 18 decimal places like ETH (convert from Wei-like units)
+    const actualAmount = num / Math.pow(10, 18)
+    
+    if (actualAmount >= 1000000000) {
+      return `${(actualAmount / 1000000000).toFixed(2)}B IP`
+    } else if (actualAmount >= 1000000) {
+      return `${(actualAmount / 1000000).toFixed(2)}M IP`
+    } else if (actualAmount >= 1000) {
+      return `${(actualAmount / 1000).toFixed(2)}K IP`
+    } else if (actualAmount >= 1) {
+      return `${actualAmount.toFixed(2)} IP`
+    } else if (actualAmount >= 0.01) {
+      return `${actualAmount.toFixed(4)} IP`
+    }
+    return `${actualAmount.toFixed(6)} IP`
+  }
+
   return (
-    <div className="min-h-screen bg-black">
-
+    <div className="space-y-8">
       {/* Header */}
-      <div className="bg-gradient-to-r from-purple-900 via-black to-purple-900 text-white">
-        <div className="container mx-auto px-4 py-16">
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="text-center"
-          >
-            <div className="flex items-center justify-center mb-6">
-              <DollarSign className="w-12 h-12 text-purple-400 mr-4" />
-              <h1 className="text-5xl font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-red-400 bg-clip-text text-transparent">
-                Royalties Explorer
-              </h1>
-            </div>
-            <p className="text-xl text-gray-300 mb-8 max-w-3xl mx-auto">
-              Track royalty payments across the Story Protocol ecosystem. View payment flows between IP assets and
-              analyze revenue streams.
+      <div className="relative">
+        <div className="flex justify-between items-start mb-8">
+          <div>
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-white to-white/80 text-transparent bg-clip-text mb-2">
+              Royalties Explorer
+            </h1>
+            <p className="text-white/60">
+              Track royalty payments across the Story Protocol ecosystem. View payment flows between IP assets and analyze revenue streams.
             </p>
-          </motion.div>
-        </div>
-      </div>
-
-      {/* Search and Controls */}
-      <div className="container mx-auto px-4 py-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="flex flex-col md:flex-row gap-4 mb-8"
-        >
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-            <Input
-              placeholder="Search by payer IP, receiver IP, sender, or token..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 bg-gray-800 border-gray-700 text-white placeholder:text-gray-500"
-            />
           </div>
-          <div className="flex gap-2">
+          <div className="flex items-center gap-4">
             <Button
               onClick={loadRoyalties}
               disabled={loading}
-              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
+              variant="outline"
+              size="icon"
+              className="border-white/20 hover:bg-white/10 text-white"
             >
-              <RefreshCw className={`w-4 h-4 mr-2 ${loading ? "animate-spin" : ""}`} />
-              Refresh
-            </Button>
-            <Button
-              onClick={() => window.open("https://example.com", "_blank")}
-              className="bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white"
-            >
-              <ExternalLink className="w-4 h-4 mr-2" />
-              External Link
+              <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
             </Button>
           </div>
-        </motion.div>
+        </div>
       </div>
+      {/* Search and Controls */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.2 }}
+        className="flex flex-col md:flex-row gap-4 mb-8"
+      >
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/40 w-5 h-5" />
+          <Input
+            placeholder="Search by payer IP, receiver IP, sender, or token..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10 bg-black/50 border-white/20 text-white placeholder:text-white/40 backdrop-blur-sm hover:border-white/30 transition-colors"
+          />
+        </div>
+        <div className="flex gap-2">
+          <Button
+            onClick={() => setShowFilters(!showFilters)}
+            variant="outline"
+            className="border-white/20 hover:bg-white/10 text-white gap-2"
+          >
+            <Filter className="w-4 h-4" />
+            Filters
+          </Button>
+          <Button
+            onClick={() => setShowApiModal(true)}
+            variant="outline"
+            className="border-white/20 hover:bg-white/10 text-white gap-2"
+          >
+            <Database className="w-4 h-4" />
+            View API Response
+          </Button>
+        </div>
+      </motion.div>
 
-      {/* Royalties List */}
-      <div className="container mx-auto px-4">
-        {loading ? (
-          <div className="flex justify-center">
-            <LoadingSpinner />
-          </div>
-        ) : error ? (
-          <div className="text-red-500 text-center">{error}</div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredRoyalties.map((royalty:any) => (
-              <Card key={royalty.id} className="bg-gray-800 text-white">
-                <CardHeader>
-                  <CardTitle>
-                    {shortenAddress(royalty.payerIpId)} → {shortenAddress(royalty.receiverIpId)}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex justify-between items-center mb-4">
-                    <span>Sender:</span>
-                    <span>{shortenAddress(royalty.sender)}</span>
-                  </div>
-                  <div className="flex justify-between items-center mb-4">
-                    <span>Token:</span>
-                    <span>{royalty.token.substring(0,4)}..{royalty.token.substring(39)}</span>
-                  </div>
-                  <div className="flex justify-between items-center mb-4">
-                    <span>Amount:</span>
-                    <span>{royalty.amount}</span>
-                  </div>
-                  <div className="flex justify-between items-center mb-4">
-                    <span>Timestamp:</span>
-                    <span>{formatTimestamp(royalty.timestamp)}</span>
-                  </div>
-                  <Button
-                    onClick={() => handleViewResponse(royalty)}
-                    className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white"
-                  >
-                    <Sparkles className="w-4 h-4 mr-2" />
-                    View Response
-                  </Button>
-                </CardContent>
-              </Card>
+      {/* Quick Filters */}
+      {showFilters && (
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+          exit={{ opacity: 0, height: 0 }}
+          className="bg-black/30 border border-white/10 rounded-lg p-4 backdrop-blur-sm mb-6"
+        >
+          <div className="flex flex-wrap gap-2">
+            <Button
+              size="sm"
+              variant={searchTerm === "" ? "default" : "outline"}
+              onClick={() => setSearchTerm("")}
+              className={searchTerm === "" ? "bg-white/20 text-white" : "border-white/20 text-white hover:bg-white/10"}
+            >
+              All Royalties
+            </Button>
+            {Array.from(new Set(royalties.map(r => r.token))).slice(0, 6).map((token) => (
+              <Button
+                key={token}
+                size="sm"
+                variant={searchTerm === token ? "default" : "outline"}
+                onClick={() => setSearchTerm(token)}
+                className={searchTerm === token ? "bg-white/20 text-white" : "border-white/20 text-white hover:bg-white/10"}
+              >
+                {shortenAddress(token, 6, 4)}
+              </Button>
             ))}
           </div>
-        )}
-      </div>
-
-      {/* API Response Modal */}
-      {selectedRoyalty && (
-        <ApiResponseModal
-          isOpen={showApiModal}
-          onClose={() => setShowApiModal(false)}
-          response={apiResponse}
-          royalty={selectedRoyalty}
-        />
+        </motion.div>
       )}
 
-      {/* Total Amount */}
-      <div className="container mx-auto px-4 py-8">
+      {/* Active Filter */}
+      {activeFilter && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="flex justify-center items-center"
+          className="mb-6 bg-black/20 border border-white/10 rounded-lg p-4 flex items-center justify-between backdrop-blur-sm"
         >
-          <Badge className="bg-gradient-to-r from-green-600 to-blue-600 text-white">
-            Total Amount: {totalAmount}
-          </Badge>
+          <div className="flex items-center">
+            <Sparkles className="w-5 h-5 text-white/60 mr-2" />
+            <span className="text-white/80">AI Filter: {activeFilter}</span>
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => {
+              setActiveFilter(null)
+              setSearchTerm("")
+            }}
+            className="text-white/60 hover:text-white hover:bg-white/10"
+          >
+            <ExternalLink className="w-4 h-4 mr-2" />
+            Clear
+          </Button>
         </motion.div>
-      </div>
+      )}
+
+      {/* Error Display */}
+      {error && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-red-900/20 border border-red-500/30 rounded-lg p-4 mb-8 backdrop-blur-sm"
+        >
+          <h3 className="text-red-400 font-semibold mb-2">Error</h3>
+          <p className="text-red-300">{error}</p>
+          <Button onClick={loadRoyalties} className="mt-4 bg-red-600 hover:bg-red-700 text-white">
+            Try Again
+          </Button>
+        </motion.div>
+      )}
+
+      {/* Stats */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.4 }}
+        className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8"
+      >
+        <Card className="bg-black/20 border-white/10 hover:border-white/20 transition-all backdrop-blur-sm">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-white/60 text-sm">Total Royalties</p>
+                <p className="text-2xl font-bold text-white">{royalties.length}</p>
+              </div>
+              <DollarSign className="h-8 w-8 text-white/60" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-black/20 border-white/10 hover:border-white/20 transition-all backdrop-blur-sm">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-white/60 text-sm">Filtered Results</p>
+                <p className="text-2xl font-bold text-white">{filteredRoyalties.length}</p>
+              </div>
+              <Search className="h-8 w-8 text-white/60" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-black/20 border-white/10 hover:border-white/20 transition-all backdrop-blur-sm">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-white/60 text-sm">Total Volume</p>
+                <p className="text-lg font-bold text-white">{formatLargeNumber(totalAmount)}</p>
+              </div>
+              <ArrowUpRight className="h-8 w-8 text-white/60" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-black/20 border-white/10 hover:border-white/20 transition-all backdrop-blur-sm">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-white/60 text-sm">Token Types</p>
+                <p className="text-2xl font-bold text-white">
+                  {new Set(royalties.map((r) => r.token)).size}
+                </p>
+              </div>
+              <Database className="h-8 w-8 text-white/60" />
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
+
+      {/* Royalties Grid */}
+      {loading ? (
+        <div className="flex justify-center items-center py-20">
+          <LoadingSpinner size="lg" />
+          <span className="ml-4 text-white/60">Loading royalties...</span>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {currentRoyalties.map((royalty, index) => (
+            <motion.div
+              key={royalty.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+            >
+              <Card className="bg-black/20 border-white/10 hover:border-white/20 transition-all duration-300 backdrop-blur-sm">
+                <CardHeader className="pb-3">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-lg text-white">Royalty Payment</CardTitle>
+                    <Badge className="bg-white/10 text-white border-white/20 px-3 py-1">
+                      <DollarSign className="w-3 h-3 mr-1" />
+                      <span className="font-mono text-sm">{formatTokenAmount(royalty.amount || 0)}</span>
+                    </Badge>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {/* Payer and Receiver Section */}
+                  <div className="bg-white/5 p-3 rounded border border-white/10">
+                    <div className="flex items-center gap-3">
+                      <div className="flex-1 min-w-0">
+                        <div className="text-xs text-white/60 mb-1 font-medium">PAYER IP</div>
+                        <div className="flex items-center gap-2">
+                          <div className="text-white font-mono text-xs">{shortenAddress(royalty.payerIpId, 8, 6)}</div>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => copyToClipboard(royalty.payerIpId)}
+                            className="h-5 w-5 p-0 text-white/40 hover:text-white hover:bg-white/10"
+                          >
+                            <Copy className="w-3 h-3" />
+                          </Button>
+                        </div>
+                      </div>
+                      <ArrowDownRight className="w-4 h-4 text-white/40 flex-shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <div className="text-xs text-white/60 mb-1 font-medium">RECEIVER IP</div>
+                        <div className="flex items-center gap-2">
+                          <div className="text-white font-mono text-xs">{shortenAddress(royalty.receiverIpId, 8, 6)}</div>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => copyToClipboard(royalty.receiverIpId)}
+                            className="h-5 w-5 p-0 text-white/40 hover:text-white hover:bg-white/10"
+                          >
+                            <Copy className="w-3 h-3" />
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Transaction Details */}
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <label className="text-white/60 font-medium text-xs uppercase tracking-wide">Sender</label>
+                      <div className="flex items-center gap-2">
+                        <p className="text-white font-mono text-xs">{shortenAddress(royalty.sender, 8, 6)}</p>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => copyToClipboard(royalty.sender)}
+                          className="h-6 w-6 p-0 text-white/40 hover:text-white hover:bg-white/10"
+                        >
+                          <Copy className="w-3 h-3" />
+                        </Button>
+                      </div>
+                    </div>
+                    <div>
+                      <label className="text-white/60 font-medium text-xs uppercase tracking-wide">Token</label>
+                      <div className="flex items-center gap-2">
+                        <p className="text-white font-mono text-xs">{shortenAddress(royalty.token, 8, 6)}</p>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => copyToClipboard(royalty.token)}
+                          className="h-6 w-6 p-0 text-white/40 hover:text-white hover:bg-white/10"
+                        >
+                          <Copy className="w-3 h-3" />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <label className="text-white/60 font-medium text-xs uppercase tracking-wide">Timestamp</label>
+                    <p className="text-white text-sm">{formatTimestamp(royalty.blockTimestamp)}</p>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex gap-2 pt-2 border-t border-white/10">
+                    <a 
+                      href={`https://aeneid.storyscan.io/address/${royalty.receiverIpId}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1"
+                    >
+                      <Button size="sm" variant="outline" className="w-full border-white/20 text-white hover:bg-white/10">
+                        <ArrowUpRight className="w-4 h-4 mr-1" />
+                        View in Explorer
+                      </Button>
+                    </a>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => handleViewResponse(royalty)}
+                      className="text-white/60 hover:text-white hover:bg-white/10"
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
+        </div>
+      )}
+
+      {/* Pagination */}
+      {!loading && filteredRoyalties.length > itemsPerPage && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex items-center justify-between mt-8 pt-6 border-t border-white/10"
+        >
+          <div className="text-sm text-white/60">
+            Showing {startIndex + 1}-{Math.min(endIndex, filteredRoyalties.length)} of {filteredRoyalties.length} entries
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+              disabled={currentPage === 1}
+              className="border-white/20 text-white hover:bg-white/10 disabled:opacity-50"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </Button>
+            
+            <div className="flex items-center gap-1">
+              {Array.from({ length: totalPages }, (_, i) => i + 1)
+                .filter(page => 
+                  page === 1 || 
+                  page === totalPages || 
+                  Math.abs(page - currentPage) <= 1
+                )
+                .map((page, index, array) => (
+                  <div key={page} className="flex items-center">
+                    {index > 0 && array[index - 1] !== page - 1 && (
+                      <span className="text-white/40 px-1">...</span>
+                    )}
+                    <Button
+                      variant={currentPage === page ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setCurrentPage(page)}
+                      className={`min-w-8 h-8 p-0 ${
+                        currentPage === page 
+                          ? "bg-white/20 text-white border-white/30" 
+                          : "border-white/20 text-white hover:bg-white/10"
+                      }`}
+                    >
+                      {page}
+                    </Button>
+                  </div>
+                ))}
+            </div>
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+              disabled={currentPage === totalPages}
+              className="border-white/20 text-white hover:bg-white/10 disabled:opacity-50"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </Button>
+          </div>
+        </motion.div>
+      )}
+
+      {!loading && filteredRoyalties.length === 0 && !error && (
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-20">
+          <DollarSign className="w-16 h-16 text-white/40 mx-auto mb-4" />
+          <h3 className="text-xl font-semibold text-white/60 mb-2">No Royalties Found</h3>
+          <p className="text-white/40">Try adjusting your search criteria</p>
+        </motion.div>
+      )}
+
+      {/* API Response Modal */}
+      <ApiResponseModal
+        isOpen={showApiModal}
+        onClose={() => setShowApiModal(false)}
+        title={selectedRoyalty ? `Royalty: ${formatTokenAmount(selectedRoyalty.amount || 0)}` : "Royalties API Response"}
+        data={selectedRoyalty || apiResponse}
+      />
     </div>
   )
 }

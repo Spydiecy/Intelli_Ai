@@ -11,7 +11,8 @@ import {
   Home,
   ArrowLeft,
   Coins,
-  Repeat
+  Repeat,
+  Shield
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useEffect } from "react"
@@ -32,6 +33,11 @@ export function DashboardSidebar({ open, setOpen }: DashboardSidebarProps) {
       label: "Home",
       icon: Home,
       href: "/dashboard"
+    },
+    {
+      label: "IP Assets",
+      icon: Shield,
+      href: "/dashboard/ip-assets"
     },
     {
       label: "AI Chat",

@@ -30,7 +30,7 @@ import {
   Info,
   TrendingUp,
 } from "lucide-react"
-import { geminiAgent } from "@/lib/gemini-agent"
+import { gaiaAgent } from "@/lib/gaia-agent"
 import { api, type IPAsset, type Transaction, type RoyaltyPay } from "@/lib/api"
 import { CreateIPAssetModal } from "@/components/create-ip-asset-modal"
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts"
@@ -43,7 +43,7 @@ interface Message {
   title?: string
 }
 
-interface GeminiResponse {
+interface GaiaResponse {
   type: string
   parameters?: any
   explanation?: string
@@ -66,10 +66,6 @@ interface PriceData {
   date: string
 }
 
-interface CoinGeckoResponse {
-  prices: [number, number][]
-}
-
 // Mock wallet address for demo
 const MOCK_WALLET = "0x742d35Cc6634C0532925a3b8D4C9db96C4b4d8b1"
 
@@ -81,9 +77,6 @@ const copyToClipboard = (text: string) => {
 // CoinGecko API integration
 const fetchStoryPriceHistory = async (days = 30): Promise<PriceData[]> => {
   try {
-    // Using a mock API call since we can't directly access CoinGecko in this environment
-    // In real implementation, you would use: https://api.coingecko.com/api/v3/coins/story/market_chart?vs_currency=usd&days=${days}
-
     // Mock data for demonstration
     const mockData: PriceData[] = []
     const now = Date.now()
@@ -492,14 +485,12 @@ function IPAssetsDisplay({
 
     // Security status filter (mock implementation)
     if (appliedFilters.maliciousFilter !== "all") {
-      // Mock security filtering - in real app, this would check actual security data
-      filtered = filtered.filter(() => Math.random() > 0.3) // Randomly filter some assets
+      filtered = filtered.filter(() => Math.random() > 0.3)
     }
 
     // Content category filter (mock implementation)
     if (appliedFilters.informationalFilter !== "all") {
-      // Mock category filtering - in real app, this would check actual category data
-      filtered = filtered.filter(() => Math.random() > 0.2) // Randomly filter some assets
+      filtered = filtered.filter(() => Math.random() > 0.2)
     }
 
     setFilteredAssets(filtered)
@@ -690,7 +681,7 @@ function TransactionsDisplay({
   )
 }
 
-// Other display components remain the same...
+// Royalties Display Component
 function RoyaltiesDisplay({ royalties, title }: { royalties: RoyaltyPay[]; title: string }) {
   if (!royalties || royalties.length === 0) {
     return (
@@ -793,7 +784,7 @@ export default function AiChatPage() {
     {
       role: "system",
       content:
-        "Hello! I'm your Story Protocol AI assistant. I can help you explore IP assets, transactions, royalties, cross-chain swaps, price history, and more. What would you like to do?",
+        "Hello! I'm your Story Protocol AI assistant powered by Gaia Network. I can help you explore IP assets, transactions, royalties, cross-chain swaps, price history, and more. What would you like to do?",
     },
   ])
   const [input, setInput] = useState("")
@@ -822,16 +813,16 @@ export default function AiChatPage() {
     setLoading(true)
 
     try {
-      const geminiResponse: GeminiResponse = await geminiAgent(input)
-      console.log("Gemini Response:", geminiResponse)
+      const gaiaResponse: GaiaResponse = await gaiaAgent(input)
+      console.log("Gaia Response:", gaiaResponse)
 
       // Handle different response types
-      if (geminiResponse.type === "ip_assets") {
+      if (gaiaResponse.type === "ip_assets") {
         try {
           const assetsData = await api.listIPAssets()
           setMessages((prev) => [
             ...prev,
-            { role: "system", content: geminiResponse.explanation || "Here are the latest IP assets:" },
+            { role: "system", content: gaiaResponse.explanation || "Here are the latest IP assets:" },
             {
               role: "system",
               content: "DATA_DISPLAY",
@@ -850,22 +841,28 @@ export default function AiChatPage() {
             },
           ])
         }
-      } else if (geminiResponse.type === "filter_ip_assets" || input.toLowerCase().includes("filter ip assets")) {
+      } else if (gaiaResponse.type === "filter_ip_assets" || input.toLowerCase().includes("filter ip assets")) {
         setFilterModalOpen(true)
         setMessages((prev) => [
           ...prev,
-          { role: "system", content: "Opening advanced filter options for IP assets...Take 1-2 Minutes" },
+          { role: "system", content: "Opening advanced filter options for IP assets..." },
         ])
       } else if (
-        geminiResponse.type === "create_ip_asset" ||
+        gaiaResponse.type === "create_ip_asset" ||
         (input.toLowerCase().includes("create") && input.toLowerCase().includes("ip asset"))
       ) {
         setCreateModalOpen(true)
         setMessages((prev) => [...prev, { role: "system", content: "Opening IP Asset creation interface..." }])
-      } else if (input.toLowerCase().includes("bridge") && !input.toLowerCase().includes("cross-chain")) {
+      } else if (
+        gaiaResponse.type === "bridge" ||
+        (input.toLowerCase().includes("bridge") && !input.toLowerCase().includes("cross-chain"))
+      ) {
         router.push("/dashboard/bridge")
         setMessages((prev) => [...prev, { role: "system", content: "Redirecting to bridge page..." }])
-      } else if (input.toLowerCase().includes("price history") && input.toLowerCase().includes("story")) {
+      } else if (
+        gaiaResponse.type === "price_history" ||
+        (input.toLowerCase().includes("price history") && input.toLowerCase().includes("story"))
+      ) {
         try {
           const priceData = await fetchStoryPriceHistory(30)
           setMessages((prev) => [
@@ -889,12 +886,12 @@ export default function AiChatPage() {
             },
           ])
         }
-      } else if (geminiResponse.type === "transactions") {
+      } else if (gaiaResponse.type === "transactions") {
         try {
           const transactionsData = await api.listLatestTransactions()
           setMessages((prev) => [
             ...prev,
-            { role: "system", content: geminiResponse.explanation || "Here are the latest transactions:" },
+            { role: "system", content: gaiaResponse.explanation || "Here are the latest transactions:" },
             {
               role: "system",
               content: "DATA_DISPLAY",
@@ -913,12 +910,12 @@ export default function AiChatPage() {
             },
           ])
         }
-      } else if (geminiResponse.type === "royalties") {
+      } else if (gaiaResponse.type === "royalties") {
         try {
           const royaltiesData = await api.listRoyaltyPays()
           setMessages((prev) => [
             ...prev,
-            { role: "system", content: geminiResponse.explanation || "Here are the royalty payments:" },
+            { role: "system", content: gaiaResponse.explanation || "Here are the royalty payments:" },
             {
               role: "system",
               content: "DATA_DISPLAY",
@@ -944,7 +941,7 @@ export default function AiChatPage() {
           {
             role: "system",
             content:
-              geminiResponse.explanation ||
+              gaiaResponse.explanation ||
               "I'm not sure how to help with that. Please try asking about IP assets, transactions, royalties, cross-chain swaps, price history, or filtering options.",
           },
         ])
@@ -1012,7 +1009,7 @@ export default function AiChatPage() {
       {
         role: "system",
         content:
-          "Hello! I'm your Story Protocol AI assistant. I can help you explore IP assets, transactions, royalties, cross-chain swaps, price history, and more. What would you like to do?",
+          "Hello! I'm your Story Protocol AI assistant powered by Gaia Network. I can help you explore IP assets, transactions, royalties, cross-chain swaps, price history, and more. What would you like to do?",
       },
     ])
     setCurrentFilters({
@@ -1041,6 +1038,9 @@ export default function AiChatPage() {
           <h1 className="text-3xl font-bold bg-gradient-to-r from-white to-white/80 text-transparent bg-clip-text">
             Story Protocol AI Assistant
           </h1>
+          <Badge variant="outline" className="text-xs border-green-500/20 text-green-400">
+            Powered by Gaia Network
+          </Badge>
           <div className="flex items-center gap-2">
             <Button
               variant="ghost"

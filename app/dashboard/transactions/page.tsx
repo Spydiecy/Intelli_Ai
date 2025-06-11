@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Search, Activity, Database, RefreshCw, ArrowUpRight, ExternalLink, Sparkles } from 'lucide-react'
+import { Search, Activity, Database, RefreshCw, ArrowUpRight, ExternalLink, Sparkles, ChevronLeft, ChevronRight, Filter, Copy } from 'lucide-react'
 import Link from "next/link"
 import { motion } from "framer-motion"
 import { shortenAddress, formatTimestamp } from "@/lib/utils"
@@ -28,6 +28,9 @@ export default function TransactionsPage() {
   const [apiResponse, setApiResponse] = useState<any>(null)
   const [error, setError] = useState<string | null>(null)
   const [activeFilter, setActiveFilter] = useState<string | null>(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [showFilters, setShowFilters] = useState(false)
+  const itemsPerPage = 10
 
   useEffect(() => {
     loadTransactions()
@@ -88,253 +91,401 @@ export default function TransactionsPage() {
       tx.initiator.toLowerCase().includes(searchTerm.toLowerCase()),
   )
 
+  // Pagination logic
+  const totalPages = Math.ceil(filteredTransactions.length / itemsPerPage)
+  const startIndex = (currentPage - 1) * itemsPerPage
+  const endIndex = startIndex + itemsPerPage
+  const currentTransactions = filteredTransactions.slice(startIndex, endIndex)
+
+  // Reset to first page when search changes
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [searchTerm])
+
   const handleViewResponse = (transaction: Transaction) => {
     setSelectedTransaction(transaction)
     setShowApiModal(true)
   }
 
+  const copyToClipboard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text)
+      // You could add a toast notification here
+    } catch (err) {
+      console.error('Failed to copy: ', err)
+    }
+  }
+
   return (
-    <div className="min-h-screen bg-black">
-
+    <div className="space-y-8">
       {/* Header */}
-      <div className="bg-gradient-to-r from-green-900 via-black to-green-900 text-white">
-        <div className="container mx-auto px-4 py-16">
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="text-center"
-          >
-            <div className="flex items-center justify-center mb-6">
-              <Activity className="w-12 h-12 text-green-400 mr-4" />
-              <h1 className="text-5xl font-bold bg-gradient-to-r from-green-400 via-blue-400 to-cyan-400 bg-clip-text text-transparent">
-                Transactions Explorer
-              </h1>
-            </div>
-            <p className="text-xl text-gray-300 mb-8 max-w-3xl mx-auto">
-              Explore all transactions on the Story Protocol blockchain. View transaction details, initiators, and
-              related IP assets.
+      <div className="relative">
+        <div className="flex justify-between items-start mb-8">
+          <div>
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-white to-white/80 text-transparent bg-clip-text mb-2">
+              Transactions Explorer
+            </h1>
+            <p className="text-white/60">
+              Explore all transactions on the Story Protocol blockchain. View transaction details, initiators, and related IP assets.
             </p>
-          </motion.div>
-        </div>
-      </div>
-
-      {/* Search and Controls */}
-      <div className="container mx-auto px-4 py-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="flex flex-col md:flex-row gap-4 mb-8"
-        >
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-            <Input
-              placeholder="Search by action type, IP ID, transaction hash, or initiator..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 bg-gray-800 border-gray-700 text-white placeholder:text-gray-500"
-            />
           </div>
-          <div className="flex gap-2">
+          <div className="flex items-center gap-4">
             <Button
               onClick={loadTransactions}
               disabled={loading}
-              className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white"
-            >
-              <RefreshCw className={`w-4 h-4 mr-2 ${loading ? "animate-spin" : ""}`} />
-              Refresh
-            </Button>
-            <Button
-              onClick={() => setShowApiModal(true)}
               variant="outline"
-              className="border-gray-700 text-gray-300 hover:bg-gray-800"
+              size="icon"
+              className="border-white/20 hover:bg-white/10 text-white"
             >
-              <Database className="w-4 h-4 mr-2" />
-              View API Response
+              <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
             </Button>
           </div>
-        </motion.div>
-
-        {/* Active Filter */}
-        {activeFilter && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-6 bg-gray-800 border border-green-500/30 rounded-lg p-4 flex items-center justify-between"
+        </div>
+      </div>
+      {/* Search and Controls */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.2 }}
+        className="flex flex-col md:flex-row gap-4 mb-8"
+      >
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/40 w-5 h-5" />
+          <Input
+            placeholder="Search by action type, IP ID, transaction hash, or initiator..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10 bg-black/50 border-white/20 text-white placeholder:text-white/40 backdrop-blur-sm hover:border-white/30 transition-colors"
+          />
+        </div>
+        <div className="flex gap-2">
+          <Button
+            onClick={() => setShowFilters(!showFilters)}
+            variant="outline"
+            className="border-white/20 hover:bg-white/10 text-white gap-2"
           >
-            <div className="flex items-center">
-              <Sparkles className="w-5 h-5 text-green-400 mr-2" />
-              <span className="text-gray-300">AI Filter: {activeFilter}</span>
-            </div>
+            <Filter className="w-4 h-4" />
+            Filters
+          </Button>
+          <Button
+            onClick={() => setShowApiModal(true)}
+            variant="outline"
+            className="border-white/20 hover:bg-white/10 text-white gap-2"
+          >
+            <Database className="w-4 h-4" />
+            View API Response
+          </Button>
+        </div>
+      </motion.div>
+
+      {/* Quick Filters */}
+      {showFilters && (
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+          exit={{ opacity: 0, height: 0 }}
+          className="bg-black/30 border border-white/10 rounded-lg p-4 backdrop-blur-sm mb-6"
+        >
+          <div className="flex flex-wrap gap-2">
             <Button
-              variant="ghost"
               size="sm"
-              onClick={() => {
-                setActiveFilter(null)
-                setSearchTerm("")
-              }}
-              className="text-gray-400 hover:text-gray-200"
+              variant={searchTerm === "" ? "default" : "outline"}
+              onClick={() => setSearchTerm("")}
+              className={searchTerm === "" ? "bg-white/20 text-white" : "border-white/20 text-white hover:bg-white/10"}
             >
-              <ExternalLink className="w-4 h-4 mr-2" />
-              Clear
+              All Transactions
             </Button>
-          </motion.div>
-        )}
+            {/* Action Type Filters */}
+            {Array.from(new Set(transactions.map(t => t.actionType))).slice(0, 6).map((actionType) => (
+              <Button
+                key={actionType}
+                size="sm"
+                variant={searchTerm === actionType ? "default" : "outline"}
+                onClick={() => setSearchTerm(actionType)}
+                className={searchTerm === actionType ? "bg-white/20 text-white" : "border-white/20 text-white hover:bg-white/10"}
+              >
+                {actionType}
+              </Button>
+            ))}
+          </div>
+        </motion.div>
+      )}
 
-        {/* Error Display */}
-        {error && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-red-900/20 border border-red-700 rounded-lg p-4 mb-8"
-          >
-            <h3 className="text-red-400 font-semibold mb-2">Error</h3>
-            <p className="text-red-300">{error}</p>
-            <Button onClick={loadTransactions} className="mt-4 bg-red-600 hover:bg-red-700 text-white">
-              Try Again
-            </Button>
-          </motion.div>
-        )}
-
-        {/* Stats */}
+      {/* Active Filter */}
+      {activeFilter && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8"
+          className="mb-6 bg-black/20 border border-white/10 rounded-lg p-4 flex items-center justify-between backdrop-blur-sm"
         >
-          <Card className="gradient-card-green">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="text-2xl font-bold text-white">{transactions.length}</div>
-                  <div className="text-sm text-green-300">Total Transactions</div>
-                </div>
-                <Activity className="w-8 h-8 text-green-400" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="gradient-card-blue">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="text-2xl font-bold text-white">{filteredTransactions.length}</div>
-                  <div className="text-sm text-blue-300">Filtered Results</div>
-                </div>
-                <Search className="w-8 h-8 text-blue-400" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="gradient-card-purple">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="text-2xl font-bold text-white">
-                    {new Set(transactions.map((t) => t.actionType)).size}
-                  </div>
-                  <div className="text-sm text-purple-300">Action Types</div>
-                </div>
-                <Database className="w-8 h-8 text-purple-400" />
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
-
-        {/* Transactions Grid */}
-        {loading ? (
-          <div className="flex justify-center items-center py-20">
-            <LoadingSpinner size="lg" />
-            <span className="ml-4 text-gray-400">Loading transactions...</span>
+          <div className="flex items-center">
+            <Sparkles className="w-5 h-5 text-white/60 mr-2" />
+            <span className="text-white/80">AI Filter: {activeFilter}</span>
           </div>
-        ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {filteredTransactions.map((transaction, index) => (
-              <motion.div
-                key={transaction.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-              >
-                <Card className="bg-gray-900 border border-gray-800 hover:border-green-500/50 transition-all duration-300">
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="text-lg text-white">{transaction.actionType}</CardTitle>
-                      <Badge className="bg-green-600/20 text-green-300 border-green-500/30">
-                        <Activity className="w-3 h-3 mr-1" />
-                        Transaction
-                      </Badge>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="grid grid-cols-1 gap-3 text-sm">
-                      <div>
-                        <label className="text-gray-400 font-medium">IP ID</label>
-                        <p className="text-white font-mono text-xs bg-gray-800 p-2 rounded border border-gray-700">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => {
+              setActiveFilter(null)
+              setSearchTerm("")
+            }}
+            className="text-white/60 hover:text-white hover:bg-white/10"
+          >
+            <ExternalLink className="w-4 h-4 mr-2" />
+            Clear
+          </Button>
+        </motion.div>
+      )}
+
+      {/* Error Display */}
+      {error && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-red-900/20 border border-red-500/30 rounded-lg p-4 mb-8 backdrop-blur-sm"
+        >
+          <h3 className="text-red-400 font-semibold mb-2">Error</h3>
+          <p className="text-red-300">{error}</p>
+          <Button onClick={loadTransactions} className="mt-4 bg-red-600 hover:bg-red-700 text-white">
+            Try Again
+          </Button>
+        </motion.div>
+      )}
+
+      {/* Stats */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.4 }}
+        className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8"
+      >
+        <Card className="bg-black/20 border-white/10 hover:border-white/20 transition-all backdrop-blur-sm">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-white/60 text-sm">Total Transactions</p>
+                <p className="text-2xl font-bold text-white">{transactions.length}</p>
+              </div>
+              <Activity className="h-8 w-8 text-white/60" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-black/20 border-white/10 hover:border-white/20 transition-all backdrop-blur-sm">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-white/60 text-sm">Filtered Results</p>
+                <p className="text-2xl font-bold text-white">{filteredTransactions.length}</p>
+              </div>
+              <Search className="h-8 w-8 text-white/60" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-black/20 border-white/10 hover:border-white/20 transition-all backdrop-blur-sm">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-white/60 text-sm">Action Types</p>
+                <p className="text-2xl font-bold text-white">
+                  {new Set(transactions.map((t) => t.actionType)).size}
+                </p>
+              </div>
+              <Database className="h-8 w-8 text-white/60" />
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
+
+      {/* Transactions Grid */}
+      {loading ? (
+        <div className="flex justify-center items-center py-20">
+          <LoadingSpinner size="lg" />
+          <span className="ml-4 text-white/60">Loading transactions...</span>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {currentTransactions.map((transaction, index) => (
+            <motion.div
+              key={transaction.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+            >
+              <Card className="bg-black/20 border-white/10 hover:border-white/20 transition-all duration-300 backdrop-blur-sm">
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-lg text-white">{transaction.actionType}</CardTitle>
+                    <Badge className="bg-white/10 text-white/80 border-white/20">
+                      <Activity className="w-3 h-3 mr-1" />
+                      Transaction
+                    </Badge>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 gap-3 text-sm">
+                    <div>
+                      <label className="text-white/60 font-medium">IP ID</label>
+                      <div className="flex items-center gap-2">
+                        <p className="text-white font-mono text-xs bg-black/20 p-2 rounded border border-white/10 flex-1">
                           {shortenAddress(transaction.ipId, 12, 8)}
                         </p>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => copyToClipboard(transaction.ipId)}
+                          className="text-white/60 hover:text-white hover:bg-white/10 p-1 h-8 w-8"
+                        >
+                          <Copy className="w-3 h-3" />
+                        </Button>
                       </div>
-                      <div>
-                        <label className="text-gray-400 font-medium">Transaction Hash</label>
-                        <p className="text-white font-mono text-xs bg-gray-800 p-2 rounded border border-gray-700">
+                    </div>
+                    <div>
+                      <label className="text-white/60 font-medium">Transaction Hash</label>
+                      <div className="flex items-center gap-2">
+                        <p className="text-white font-mono text-xs bg-black/20 p-2 rounded border border-white/10 flex-1">
                           {shortenAddress(transaction.txHash, 12, 8)}
                         </p>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => copyToClipboard(transaction.txHash)}
+                          className="text-white/60 hover:text-white hover:bg-white/10 p-1 h-8 w-8"
+                        >
+                          <Copy className="w-3 h-3" />
+                        </Button>
                       </div>
-                      <div>
-                        <label className="text-gray-400 font-medium">Initiator</label>
-                        <p className="text-white font-mono text-xs bg-gray-800 p-2 rounded border border-gray-700">
+                    </div>
+                    <div>
+                      <label className="text-white/60 font-medium">Initiator</label>
+                      <div className="flex items-center gap-2">
+                        <p className="text-white font-mono text-xs bg-black/20 p-2 rounded border border-white/10 flex-1">
                           {shortenAddress(transaction.initiator, 12, 8)}
                         </p>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => copyToClipboard(transaction.initiator)}
+                          className="text-white/60 hover:text-white hover:bg-white/10 p-1 h-8 w-8"
+                        >
+                          <Copy className="w-3 h-3" />
+                        </Button>
                       </div>
-                      <div className="grid grid-cols-2 gap-3">
-                        <div>
-                          <label className="text-gray-400 font-medium">Block</label>
-                          <p className="text-white">{transaction.blockNumber}</p>
-                        </div>
-                        <div>
-                          <label className="text-gray-400 font-medium">Resource Type</label>
-                          <p className="text-white">{transaction.resourceType}</p>
-                        </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-white/60 font-medium">Block</label>
+                        <p className="text-white">{transaction.blockNumber}</p>
                       </div>
                       <div>
-                        <label className="text-gray-400 font-medium">Timestamp</label>
-                        <p className="text-white">{formatTimestamp(transaction.blockTimestamp)}</p>
+                        <label className="text-white/60 font-medium">Resource Type</label>
+                        <p className="text-white">{transaction.resourceType}</p>
                       </div>
                     </div>
-
-                    <div className="flex gap-2 pt-2 border-t border-gray-700">
-                      <Link href={`/dashboard/transactions/?search=${transaction.ipId}`}>
-                        <Button size="sm" variant="outline" className="border-gray-700 text-gray-300 hover:bg-gray-800">
-                          <ArrowUpRight className="w-4 h-4 mr-1" />
-                          View IP Asset
-                        </Button>
-                      </Link>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => handleViewResponse(transaction)}
-                        className="text-gray-400 hover:text-gray-300 hover:bg-gray-800"
-                      >
-                        <ExternalLink className="w-4 h-4" />
-                      </Button>
+                    <div>
+                      <label className="text-white/60 font-medium">Timestamp</label>
+                      <p className="text-white">{formatTimestamp(transaction.blockTimestamp)}</p>
                     </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        )}
+                  </div>
 
-        {!loading && filteredTransactions.length === 0 && !error && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-20">
-            <Activity className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-400 mb-2">No Transactions Found</h3>
-            <p className="text-gray-500">Try adjusting your search criteria</p>
-          </motion.div>
-        )}
-      </div>
+                  <div className="flex gap-2 pt-2 border-t border-white/10">
+                    <a 
+                      href={`https://aeneid.storyscan.io/tx/${transaction.txHash}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1"
+                    >
+                      <Button size="sm" variant="outline" className="w-full border-white/20 text-white/80 hover:bg-white/10">
+                        <ArrowUpRight className="w-4 h-4 mr-1" />
+                        View Transaction
+                      </Button>
+                    </a>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => handleViewResponse(transaction)}
+                      className="text-white/60 hover:text-white hover:bg-white/10"
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
+        </div>
+      )}
+
+      {/* Pagination */}
+      {!loading && filteredTransactions.length > itemsPerPage && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex items-center justify-between mt-8 pt-6 border-t border-white/10"
+        >
+          <div className="text-sm text-white/60">
+            Showing {startIndex + 1}-{Math.min(endIndex, filteredTransactions.length)} of {filteredTransactions.length} entries
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+              disabled={currentPage === 1}
+              className="border-white/20 text-white hover:bg-white/10 disabled:opacity-50"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </Button>
+            
+            <div className="flex items-center gap-1">
+              {Array.from({ length: totalPages }, (_, i) => i + 1)
+                .filter(page => 
+                  page === 1 || 
+                  page === totalPages || 
+                  Math.abs(page - currentPage) <= 1
+                )
+                .map((page, index, array) => (
+                  <div key={page} className="flex items-center">
+                    {index > 0 && array[index - 1] !== page - 1 && (
+                      <span className="text-white/40 px-1">...</span>
+                    )}
+                    <Button
+                      variant={currentPage === page ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setCurrentPage(page)}
+                      className={`min-w-8 h-8 p-0 ${
+                        currentPage === page 
+                          ? "bg-white/20 text-white border-white/30" 
+                          : "border-white/20 text-white hover:bg-white/10"
+                      }`}
+                    >
+                      {page}
+                    </Button>
+                  </div>
+                ))}
+            </div>
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+              disabled={currentPage === totalPages}
+              className="border-white/20 text-white hover:bg-white/10 disabled:opacity-50"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </Button>
+          </div>
+        </motion.div>
+      )}
+
+      {!loading && filteredTransactions.length === 0 && !error && (
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-20">
+          <Activity className="w-16 h-16 text-white/40 mx-auto mb-4" />
+          <h3 className="text-xl font-semibold text-white/60 mb-2">No Transactions Found</h3>
+          <p className="text-white/40">Try adjusting your search criteria</p>
+        </motion.div>
+      )}
 
       {/* API Response Modal */}
       <ApiResponseModal

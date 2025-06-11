@@ -389,7 +389,7 @@ export default function MintingFeesPage() {
                       {/* Action Buttons */}
                       <div className="flex gap-2 pt-2 border-t border-white/10">
                         <a 
-                          href={`https://www.storyscan.io/address/${fee.receiverIpId}`}
+                          href={`https://aeneid.storyscan.io/address/${fee.receiverIpId}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="flex-1"

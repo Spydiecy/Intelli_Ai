@@ -397,13 +397,27 @@ export default function SwapPage() {
                       {supportedChains.map((chain) => (
                         <SelectItem key={chain.chainId} value={chain.chainId.toString()} className="text-white hover:bg-white/10">
                           <div className="flex items-center gap-2">
-                            {chain.logoURI && (
-                              <img
-                                src={chain.logoURI || "/placeholder.svg"}
-                                alt={chain.chainName}
-                                className="w-4 h-4"
-                              />
-                            )}
+                            <div className="relative w-4 h-4 rounded-full overflow-hidden bg-black/30 border border-white/20 flex items-center justify-center">
+                              {chain.logoURI ? (
+                                <img
+                                  src={chain.logoURI}
+                                  alt={chain.chainName}
+                                  className="w-full h-full object-contain"
+                                  onError={(e) => {
+                                    const target = e.target as HTMLImageElement
+                                    target.style.display = "none"
+                                    const parent = target.parentElement
+                                    if (parent) {
+                                      parent.innerHTML = `<span class="text-xs font-bold text-white/60">${chain.chainName.slice(0, 2).toUpperCase()}</span>`
+                                    }
+                                  }}
+                                />
+                              ) : (
+                                <span className="text-xs font-bold text-white/60">
+                                  {chain.chainName.slice(0, 2).toUpperCase()}
+                                </span>
+                              )}
+                            </div>
                             {chain.chainName}
                           </div>
                         </SelectItem>
@@ -464,13 +478,27 @@ export default function SwapPage() {
                       {supportedChains.map((chain) => (
                         <SelectItem key={chain.chainId} value={chain.chainId.toString()} className="text-white hover:bg-white/10">
                           <div className="flex items-center gap-2">
-                            {chain.logoURI && (
-                              <img
-                                src={chain.logoURI || "/placeholder.svg"}
-                                alt={chain.chainName}
-                                className="w-4 h-4"
-                              />
-                            )}
+                            <div className="relative w-4 h-4 rounded-full overflow-hidden bg-black/30 border border-white/20 flex items-center justify-center">
+                              {chain.logoURI ? (
+                                <img
+                                  src={chain.logoURI}
+                                  alt={chain.chainName}
+                                  className="w-full h-full object-contain"
+                                  onError={(e) => {
+                                    const target = e.target as HTMLImageElement
+                                    target.style.display = "none"
+                                    const parent = target.parentElement
+                                    if (parent) {
+                                      parent.innerHTML = `<span class="text-xs font-bold text-white/60">${chain.chainName.slice(0, 2).toUpperCase()}</span>`
+                                    }
+                                  }}
+                                />
+                              ) : (
+                                <span className="text-xs font-bold text-white/60">
+                                  {chain.chainName.slice(0, 2).toUpperCase()}
+                                </span>
+                              )}
+                            </div>
                             {chain.chainName}
                           </div>
                         </SelectItem>

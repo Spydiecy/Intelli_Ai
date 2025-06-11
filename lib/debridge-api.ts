@@ -1,6 +1,18 @@
 const DEBRIDGE_API_BASE = "https://deswap.debridge.finance/v1.0"
 const DEBRIDGE_STATS_API = "https://stats-api.dln.trade/api"
 
+// Chain logo mapping for popular chains
+const CHAIN_LOGOS: Record<number, string> = {
+  1: "https://cryptologos.cc/logos/ethereum-eth-logo.png", // Ethereum
+  56: "https://cryptologos.cc/logos/bnb-bnb-logo.png", // BSC
+  137: "https://cryptologos.cc/logos/polygon-matic-logo.png", // Polygon
+  43114: "https://cryptologos.cc/logos/avalanche-avax-logo.png", // Avalanche
+  250: "https://cryptologos.cc/logos/fantom-ftm-logo.png", // Fantom
+  42161: "https://bridge.arbitrum.io/logo.png", // Arbitrum
+  10: "https://cryptologos.cc/logos/optimism-ethereum-op-logo.png", // Optimism
+  100000013: "https://docs.story.foundation/img/logo.svg", // Story Protocol
+}
+
 export interface SupportedChain {
   chainId: number
   originalChainId: number
@@ -253,39 +265,35 @@ export const debridgeApi = {
         }
 
         // Add native currency and logo info for known chains
+        // First try to use our predefined logos, then fallback to existing logic
+        if (CHAIN_LOGOS[chain.chainId]) {
+          chainInfo.logoURI = CHAIN_LOGOS[chain.chainId]
+        }
+
         switch (chain.chainId) {
           case 1:
             chainInfo.nativeCurrency = { name: "Ether", symbol: "ETH", decimals: 18 }
-            chainInfo.logoURI = "https://cryptologos.cc/logos/ethereum-eth-logo.svg"
             break
           case 56:
             chainInfo.nativeCurrency = { name: "BNB", symbol: "BNB", decimals: 18 }
-            chainInfo.logoURI = "https://cryptologos.cc/logos/bnb-bnb-logo.svg"
             break
           case 137:
             chainInfo.nativeCurrency = { name: "MATIC", symbol: "MATIC", decimals: 18 }
-            chainInfo.logoURI = "https://cryptologos.cc/logos/polygon-matic-logo.svg"
             break
           case 42161:
             chainInfo.nativeCurrency = { name: "Ether", symbol: "ETH", decimals: 18 }
-            chainInfo.logoURI = "https://cryptologos.cc/logos/arbitrum-arb-logo.svg"
             break
           case STORY_CHAIN_ID:
             chainInfo.nativeCurrency = { name: "IP", symbol: "IP", decimals: 18 }
-            chainInfo.logoURI =
-              "https://tokens.debridge.finance/Logo/100000013/0x0000000000000000000000000000000000000000/small/token-logo.png"
             break
           case 10:
             chainInfo.nativeCurrency = { name: "Ether", symbol: "ETH", decimals: 18 }
-            chainInfo.logoURI = "https://cryptologos.cc/logos/optimism-ethereum-op-logo.svg"
             break
           case 8453:
             chainInfo.nativeCurrency = { name: "Ether", symbol: "ETH", decimals: 18 }
-            chainInfo.logoURI = "https://cryptologos.cc/logos/coinbase-coin-logo.svg"
             break
           case 43114:
             chainInfo.nativeCurrency = { name: "AVAX", symbol: "AVAX", decimals: 18 }
-            chainInfo.logoURI = "https://cryptologos.cc/logos/avalanche-avax-logo.svg"
             break
         }
 

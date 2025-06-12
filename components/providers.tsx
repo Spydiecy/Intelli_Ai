@@ -8,10 +8,12 @@ import { story, storyAeneid } from 'wagmi/chains';
 import { metaMaskWallet, rainbowWallet, walletConnectWallet } from '@tomo-inc/tomo-evm-kit/wallets';
 import '@tomo-inc/tomo-evm-kit/styles.css';
 
+const client_id = process.env.NEXT_PUBLIC_TOMO_CLIENT_ID
+
 const config = getDefaultConfig({
-  clientId: 'your-client-id-here', // Replace with your actual clientId from https://dashboard.tomo.inc/
+  clientId: client_id, // Replace with your actual clientId from https://dashboard.tomo.inc/
   appName: 'Astra IP',
-  projectId: 'your-project-id-here', // Replace with your WalletConnect project ID
+  projectId: '1f59e0d95ce8e20bc084b9d619e08044',
   chains: [story, storyAeneid],
   ssr: true,
   wallets: [

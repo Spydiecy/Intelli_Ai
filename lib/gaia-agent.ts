@@ -43,7 +43,7 @@ const GAIA_API_KEY = process.env.NEXT_PUBLIC_GAIA_API_KEY
 const GAIA_NODE_ID = process.env.NEXT_PUBLIC_GAIA_NODE_ID || "your_node_id"
 const GAIA_MODEL = process.env.NEXT_PUBLIC_GAIA_MODEL || "Llama-3-8B-Instruct-262k-Q5_K_M"
 
-class EnhancedGaiaService {
+class FixedGaiaService {
   private baseUrl: string
   private apiKey: string
   private model: string
@@ -101,58 +101,6 @@ class EnhancedGaiaService {
     return result
   }
 
-  async getEmbeddings(input: string[]): Promise<any> {
-    if (!this.apiKey) {
-      throw new Error("Gaia API key is not configured.")
-    }
-
-    const response = await fetch(`${this.baseUrl}/embeddings`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${this.apiKey}`,
-        accept: "application/json",
-      },
-      body: JSON.stringify({
-        model: "nomic-embed-text-v1.5.f16",
-        input,
-      }),
-    })
-
-    if (!response.ok) {
-      const errorText = await response.text()
-      throw new Error(`Gaia Embeddings API error: ${response.status} - ${errorText}`)
-    }
-
-    return await response.json()
-  }
-
-  async retrieve(messages: GaiaMessage[]): Promise<any> {
-    if (!this.apiKey) {
-      throw new Error("Gaia API key is not configured.")
-    }
-
-    const response = await fetch(`${this.baseUrl}/retrieve`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${this.apiKey}`,
-        accept: "application/json",
-      },
-      body: JSON.stringify({
-        messages,
-        model: "nomic-embed-text-v1.5.f16",
-      }),
-    })
-
-    if (!response.ok) {
-      const errorText = await response.text()
-      throw new Error(`Gaia Retrieve API error: ${response.status} - ${errorText}`)
-    }
-
-    return await response.json()
-  }
-
   updateContext(key: string, value: any) {
     this.context = { ...this.context, [key]: value }
   }
@@ -163,10 +111,10 @@ class EnhancedGaiaService {
 }
 
 // Create singleton instance
-const enhancedGaiaService = new EnhancedGaiaService()
+const fixedGaiaService = new FixedGaiaService()
 
-// Advanced intent detection patterns
-const INTENT_PATTERNS = {
+// Enhanced intent detection patterns with more comprehensive coverage
+const ENHANCED_INTENT_PATTERNS = {
   ip_assets: [
     /show.*ip.*assets?/i,
     /list.*ip.*assets?/i,
@@ -175,6 +123,7 @@ const INTENT_PATTERNS = {
     /get.*ip.*assets?/i,
     /recent.*ip.*assets?/i,
     /latest.*ip.*assets?/i,
+    /ip.*assets?/i,
   ],
   filter_ip_assets: [
     /filter.*ip.*assets?/i,
@@ -196,16 +145,80 @@ const INTENT_PATTERNS = {
     /recent.*transactions?/i,
     /show.*transactions?/i,
     /transaction.*history/i,
+    /list.*transactions?/i,
   ],
-  royalties: [/royalt(y|ies)/i, /royalty.*payments?/i, /earnings?/i, /revenue/i],
-  license_tokens: [/license.*tokens?/i, /licensing/i, /licenses?/i],
-  minting_fees: [/minting.*fees?/i, /mint.*cost/i, /fees?/i],
-  supported_chains: [/supported.*chains?/i, /available.*chains?/i, /chains?/i, /networks?/i],
-  token_list: [/tokens?/i, /token.*list/i, /available.*tokens?/i],
-  swap_estimate: [/swap/i, /cross.*chain/i, /bridge.*tokens?/i, /estimate/i],
-  bridge: [/^bridge$/i, /go.*bridge/i, /bridge.*page/i],
-  price_history: [/price.*history/i, /price.*chart/i, /story.*price/i, /token.*price/i],
+  royalties: [
+    /royalt(y|ies)/i,
+    /royalty.*payments?/i,
+    /earnings?/i,
+    /revenue/i,
+    /show.*royalt/i,
+    /list.*royalt/i,
+  ],
+  license_tokens: [
+    /license.*tokens?/i,
+    /licensing/i,
+    /licenses?/i,
+    /show.*license/i,
+    /display.*license/i,
+    /list.*license/i,
+  ],
+  minting_fees: [
+    /minting.*fees?/i,
+    /mint.*cost/i,
+    /mint.*fees?/i,
+    /fees?/i,
+    /show.*fees?/i,
+    /display.*fees?/i,
+    /list.*fees?/i,
+  ],
+  supported_chains: [
+    /supported.*chains?/i,
+    /available.*chains?/i,
+    /chains?/i,
+    /networks?/i,
+    /show.*chains?/i,
+    /list.*chains?/i,
+    /get.*chains?/i,
+    /display.*chains?/i,
+  ],
+  token_list: [
+    /tokens?.*story/i,
+    /story.*tokens?/i,
+    /get.*tokens?/i,
+    /show.*tokens?/i,
+    /list.*tokens?/i,
+    /available.*tokens?/i,
+    /display.*tokens?/i,
+    /tokens?.*on.*story/i,
+  ],
+  swap_estimate: [
+    /swap/i,
+    /cross.*chain/i,
+    /bridge.*tokens?/i,
+    /estimate/i,
+    /cross.*chain.*swap/i,
+  ],
+  bridge: [/^bridge$/i, /go.*bridge/i, /bridge.*page/i, /open.*bridge/i],
+  price_history: [
+    /price.*history/i,
+    /price.*chart/i,
+    /story.*price/i,
+    /token.*price/i,
+    /show.*price/i,
+    /price.*data/i,
+  ],
   educational: [
+    /what.*is.*cross.*chain.*bridging/i,
+    /explain.*cross.*chain/i,
+    /what.*is.*story.*protocol/i,
+    /how.*does.*story.*work/i,
+    /what.*is.*ip.*licensing/i,
+    /explain.*ip.*licensing/i,
+    /how.*do.*royalties.*work/i,
+    /what.*are.*royalties/i,
+    /benefits.*of.*ip.*licensing/i,
+    /how.*to.*protect.*ip/i,
     /what.*is/i,
     /how.*does/i,
     /explain/i,
@@ -227,9 +240,19 @@ const CONVERSATIONAL_PATTERNS = [
   /help$/i,
 ]
 
-// Enhanced intent detection
-function detectIntent(userInput: string): { type: string; confidence: number } {
+// Enhanced intent detection with better asset ID recognition
+function detectIntent(userInput: string): { type: string; confidence: number; parameters?: any } {
   const input = userInput.toLowerCase().trim()
+
+  // Check for asset ID patterns (Ethereum addresses)
+  const assetIdMatch = input.match(/0x[a-fA-F0-9]{40}/)
+  if (assetIdMatch) {
+    return {
+      type: "asset_detail",
+      confidence: 0.95,
+      parameters: { assetId: assetIdMatch[0] },
+    }
+  }
 
   // Check for conversational patterns first
   for (const pattern of CONVERSATIONAL_PATTERNS) {
@@ -238,22 +261,22 @@ function detectIntent(userInput: string): { type: string; confidence: number } {
     }
   }
 
-  // Check for specific intents
-  for (const [intentType, patterns] of Object.entries(INTENT_PATTERNS)) {
+  // Check for specific intents with enhanced patterns
+  for (const [intentType, patterns] of Object.entries(ENHANCED_INTENT_PATTERNS)) {
     for (const pattern of patterns) {
       if (pattern.test(input)) {
-        return { type: intentType, confidence: 0.8 }
+        return { type: intentType, confidence: 0.85 }
       }
     }
   }
 
-  // Check for asset ID patterns
-  if (/0x[a-fA-F0-9]{40}/.test(input)) {
-    return { type: "asset_detail", confidence: 0.9 }
+  // Check for educational content with lower confidence
+  if (input.includes("what") || input.includes("how") || input.includes("explain")) {
+    return { type: "educational", confidence: 0.6 }
   }
 
   // Default to general if no specific intent found
-  return { type: "general", confidence: 0.3 }
+  return { type: "general", confidence: 0.4 }
 }
 
 // Generate contextual suggestions
@@ -267,7 +290,12 @@ function generateSuggestions(intent: string, userInput: string): string[] {
     ],
     ip_assets: ["Filter IP assets", "Create a new IP asset", "Show transactions", "Show royalty payments"],
     transactions: ["Show IP assets", "Show royalty payments", "Filter transactions by date"],
+    supported_chains: ["Show available tokens", "Bridge tokens", "Cross-chain swaps", "Show IP assets"],
+    token_list: ["Show supported chains", "Bridge tokens", "Show price history", "Show IP assets"],
+    minting_fees: ["Show license tokens", "Create IP asset", "Show royalty payments", "Show transactions"],
+    license_tokens: ["Show minting fees", "Show royalty payments", "Create IP asset", "Show IP assets"],
     educational: ["Show me examples", "Create an IP asset", "Show recent transactions", "What are the benefits?"],
+    asset_detail: ["Show related assets", "View transactions", "Check royalties", "Show license tokens"],
     general: [
       "Show me recent IP assets",
       "List latest transactions",
@@ -279,28 +307,165 @@ function generateSuggestions(intent: string, userInput: string): string[] {
   return suggestions[intent] || suggestions.general
 }
 
+// Educational content database
+const EDUCATIONAL_CONTENT = {
+  "cross-chain bridging": `
+🌉 **Cross-Chain Bridging Explained:**
+
+Cross-chain bridging allows you to transfer assets between different blockchain networks. Here's how it works:
+
+• **Interoperability**: Move tokens and data across different blockchains
+• **Liquidity Access**: Access liquidity pools on multiple networks
+• **Cost Optimization**: Use cheaper networks for certain operations
+• **Risk Distribution**: Spread assets across multiple secure networks
+
+**How it works:**
+1. Lock assets on the source chain
+2. Mint equivalent assets on the destination chain
+3. Burn assets when bridging back
+4. Unlock original assets on source chain
+
+**Benefits:**
+- Access to different DeFi ecosystems
+- Lower transaction fees on some networks
+- Faster transaction times
+- Portfolio diversification across chains
+
+Try asking: "Show supported chains" or "Bridge tokens"
+  `,
+  "story protocol": `
+📚 **Story Protocol Overview:**
+
+Story Protocol is a blockchain designed specifically for intellectual property management and monetization.
+
+**Key Features:**
+• **IP Registration**: Register and protect your intellectual property on-chain
+• **Programmable Licensing**: Create flexible, automated licensing agreements
+• **Royalty Distribution**: Automatic royalty payments to creators and licensors
+• **Composable IP**: Build upon existing IP with clear licensing terms
+
+**Use Cases:**
+- Digital art and NFTs
+- Music and media licensing
+- Software and code licensing
+- Brand and trademark management
+- Academic and research IP
+
+**Benefits:**
+- Transparent ownership records
+- Automated royalty payments
+- Global accessibility
+- Reduced legal complexity
+
+Try asking: "Show me recent IP assets" or "Create a new IP asset"
+  `,
+  "ip licensing": `
+🎓 **IP Licensing Benefits:**
+
+Intellectual Property licensing allows you to monetize your creations while maintaining ownership.
+
+**Key Benefits:**
+• **Revenue Generation**: Earn ongoing royalties from your IP
+• **Market Expansion**: Allow others to use your IP in different markets
+• **Risk Mitigation**: Share development and marketing risks
+• **Brand Building**: Increase visibility and recognition
+
+**Types of Licenses:**
+- Exclusive: Only one licensee can use the IP
+- Non-exclusive: Multiple licensees can use the IP
+- Sole: Only licensor and one licensee can use the IP
+
+**Royalty Models:**
+- Fixed fee per use
+- Percentage of revenue
+- Tiered pricing based on usage
+- Hybrid models
+
+Try asking: "Show license tokens" or "Show royalty payments"
+  `,
+  "royalties": `
+💰 **How Royalties Work:**
+
+Royalties are payments made to IP owners for the use of their intellectual property.
+
+**Types of Royalties:**
+• **Usage-based**: Pay per use or view
+• **Revenue-based**: Percentage of sales/revenue
+• **Time-based**: Fixed payments over time
+• **Hybrid**: Combination of different models
+
+**On Story Protocol:**
+- Automated smart contract payments
+- Transparent tracking and reporting
+- Multi-party royalty splits
+- Cross-chain royalty distribution
+
+**Benefits for Creators:**
+- Passive income generation
+- Fair compensation for IP use
+- Transparent payment tracking
+- Global reach and accessibility
+
+Try asking: "Show royalty payments" or "Create an IP asset"
+  `,
+}
+
 // Main enhanced agent function
-export async function enhancedGaiaAgent(userInput: string): Promise<GaiaAgentResponse> {
+export async function fixedGaiaAgent(userInput: string): Promise<GaiaAgentResponse> {
   try {
     // Detect intent first
-    const { type: detectedIntent, confidence } = detectIntent(userInput)
+    const { type: detectedIntent, confidence, parameters } = detectIntent(userInput)
+    console.log("Detected intent:", detectedIntent, "Confidence:", confidence, "Parameters:", parameters)
 
-    // Handle conversational queries differently
+    // Handle educational queries with built-in content
+    if (detectedIntent === "educational") {
+      const educationalResponse = handleEducationalQuery(userInput)
+      if (educationalResponse) {
+        return educationalResponse
+      }
+    }
+
+    // Handle conversational queries
     if (detectedIntent === "conversational" || confidence < 0.5) {
       return await handleConversationalQuery(userInput, detectedIntent, confidence)
     }
 
-    // Handle structured queries
-    if (confidence >= 0.8) {
-      return await handleStructuredQuery(userInput, detectedIntent, confidence)
+    // Handle structured queries with high confidence
+    if (confidence >= 0.7) {
+      return {
+        type: detectedIntent,
+        parameters,
+        explanation: getIntentExplanation(detectedIntent),
+        confidence,
+        suggestions: generateSuggestions(detectedIntent, userInput),
+      }
     }
 
-    // For medium confidence, try both approaches
+    // For medium confidence, try AI assistance
     return await handleHybridQuery(userInput, detectedIntent, confidence)
   } catch (error) {
-    console.error("Error in enhancedGaiaAgent:", error)
+    console.error("Error in fixedGaiaAgent:", error)
     return handleFallback(userInput)
   }
+}
+
+// Handle educational queries with built-in content
+function handleEducationalQuery(userInput: string): GaiaAgentResponse | null {
+  const input = userInput.toLowerCase()
+
+  for (const [topic, content] of Object.entries(EDUCATIONAL_CONTENT)) {
+    if (input.includes(topic.replace("-", " ")) || input.includes(topic)) {
+      return {
+        type: "educational",
+        explanation: content,
+        conversational: true,
+        confidence: 0.9,
+        suggestions: generateSuggestions("educational", userInput),
+      }
+    }
+  }
+
+  return null
 }
 
 // Handle conversational queries
@@ -309,21 +474,76 @@ async function handleConversationalQuery(
   intent: string,
   confidence: number,
 ): Promise<GaiaAgentResponse> {
-  const conversationalPrompt = `You are a helpful AI assistant for Story Protocol, a blockchain platform for intellectual property. 
+  // Handle simple greetings and responses without AI call
+  const input = userInput.toLowerCase().trim()
+
+  if (input.match(/^(hi|hello|hey)$/i)) {
+    return {
+      type: "conversational",
+      explanation:
+        "Hello! I'm your Story Protocol AI assistant. I can help you with IP assets, transactions, royalties, and more. What would you like to explore?",
+      conversational: true,
+      confidence: 0.9,
+      suggestions: ["Show recent IP assets", "What is Story Protocol?", "Create an IP asset", "Show transactions"],
+    }
+  }
+
+  if (input.match(/^(thanks?|thank you)$/i)) {
+    return {
+      type: "conversational",
+      explanation: "You're welcome! Is there anything else I can help you with regarding Story Protocol?",
+      conversational: true,
+      confidence: 0.9,
+      suggestions: ["Show IP assets", "Show transactions", "What can you do?", "Show royalty payments"],
+    }
+  }
+
+  if (input.match(/what.*can.*you.*do/i)) {
+    return {
+      type: "conversational",
+      explanation: `I can help you with many Story Protocol tasks:
+
+🔍 **Data & Analytics:**
+• Show IP assets and filter them
+• Display transactions and royalty payments
+• Show license tokens and minting fees
+• View supported chains and available tokens
+
+🎨 **Asset Management:**
+• Create new IP assets
+• View asset details
+• Track asset relationships
+
+📊 **Market Data:**
+• Show price history for Story token
+• Cross-chain bridging information
+
+🎓 **Education:**
+• Explain Story Protocol concepts
+• Guide you through IP licensing
+• Help understand royalties and fees
+
+Just ask me anything like "Show recent IP assets" or "What is cross-chain bridging?"`,
+      conversational: true,
+      confidence: 0.9,
+      suggestions: ["Show recent IP assets", "Create an IP asset", "Show transactions", "What is Story Protocol?"],
+    }
+  }
+
+  // For other conversational queries, try AI if available
+  try {
+    const conversationalPrompt = `You are a helpful AI assistant for Story Protocol, a blockchain platform for intellectual property. 
 
 User said: "${userInput}"
 
-Respond naturally and conversationally. If the user is asking about Story Protocol features, explain them clearly. If it's a greeting or general question, respond appropriately while staying in character as a Story Protocol assistant.
+Respond naturally and conversationally. Keep responses concise but informative. Always be helpful and friendly.`
 
-Keep responses concise but informative. Always be helpful and friendly.`
-
-  try {
     const messages: GaiaMessage[] = [
       { role: "system", content: conversationalPrompt },
       { role: "user", content: userInput },
     ]
 
-    const response = await enhancedGaiaService.chatCompletion(messages, { temperature: 0.8 })
+    const response = await fixedGaiaService.chatCompletion(messages, { temperature: 0.8 })
 
     if (response.choices && response.choices.length > 0) {
       const content = response.choices[0].message.content.trim()
@@ -343,92 +563,30 @@ Keep responses concise but informative. Always be helpful and friendly.`
   return handleFallback(userInput)
 }
 
-// Handle structured queries (commands/actions)
-async function handleStructuredQuery(
-  userInput: string,
-  intent: string,
-  confidence: number,
-): Promise<GaiaAgentResponse> {
-  const structuredPrompt = `You are an AI assistant for Story Protocol. Analyze this user request and respond with a JSON object.
-
-User request: "${userInput}"
-Detected intent: "${intent}"
-
-Respond with JSON containing:
-- type: "${intent}"
-- parameters: any relevant parameters (e.g., asset ID, filters, etc.)
-- explanation: brief explanation of what you'll help with
-
-Valid types: ip_assets, filter_ip_assets, create_ip_asset, transactions, royalties, license_tokens, minting_fees, supported_chains, token_list, swap_estimate, asset_detail, educational, bridge, price_history
-
-Respond with valid JSON only.`
-
-  try {
-    const messages: GaiaMessage[] = [
-      { role: "system", content: structuredPrompt },
-      { role: "user", content: userInput },
-    ]
-
-    const response = await enhancedGaiaService.chatCompletion(messages, { temperature: 0.3 })
-
-    if (response.choices && response.choices.length > 0) {
-      const content = response.choices[0].message.content.trim()
-
-      try {
-        const parsed = JSON.parse(content)
-        return {
-          ...parsed,
-          confidence,
-          suggestions: generateSuggestions(intent, userInput),
-        } as GaiaAgentResponse
-      } catch (parseError) {
-        console.warn("Failed to parse structured response:", content)
-        // Fall back to intent-based response
-        return {
-          type: intent,
-          explanation: getIntentExplanation(intent),
-          confidence,
-          suggestions: generateSuggestions(intent, userInput),
-        }
-      }
-    }
-  } catch (error) {
-    console.error("Error in structured query:", error)
-  }
-
-  return {
-    type: intent,
-    explanation: getIntentExplanation(intent),
-    confidence,
-    suggestions: generateSuggestions(intent, userInput),
-  }
-}
-
 // Handle hybrid queries (medium confidence)
 async function handleHybridQuery(userInput: string, intent: string, confidence: number): Promise<GaiaAgentResponse> {
-  const hybridPrompt = `You are an AI assistant for Story Protocol. The user said: "${userInput}"
+  try {
+    const hybridPrompt = `You are an AI assistant for Story Protocol. The user said: "${userInput}"
 
-This could be either a conversational question or a request for specific action. 
+Analyze if this is a request for specific data/action or a general question.
 
-If it's a conversational question, respond naturally and helpfully.
-If it's a request for action, respond with JSON format:
+For data requests, respond with JSON:
 {
   "type": "action_type",
   "parameters": {},
   "explanation": "brief explanation"
 }
 
-Available action types: ip_assets, filter_ip_assets, create_ip_asset, transactions, royalties, license_tokens, minting_fees, supported_chains, token_list, swap_estimate, asset_detail, educational, bridge, price_history
+For general questions, respond naturally.
 
-Choose the most appropriate response format.`
+Available action types: ip_assets, filter_ip_assets, create_ip_asset, transactions, royalties, license_tokens, minting_fees, supported_chains, token_list, swap_estimate, asset_detail, educational, bridge, price_history`
 
-  try {
     const messages: GaiaMessage[] = [
       { role: "system", content: hybridPrompt },
       { role: "user", content: userInput },
     ]
 
-    const response = await enhancedGaiaService.chatCompletion(messages, { temperature: 0.6 })
+    const response = await fixedGaiaService.chatCompletion(messages, { temperature: 0.6 })
 
     if (response.choices && response.choices.length > 0) {
       const content = response.choices[0].message.content.trim()
@@ -459,12 +617,44 @@ Choose the most appropriate response format.`
   return handleFallback(userInput)
 }
 
-// Fallback handler
+// Enhanced fallback handler
 function handleFallback(userInput: string): GaiaAgentResponse {
   const lowerInput = userInput.toLowerCase()
 
-  // Enhanced fallback logic
-  if (lowerInput.includes("ip asset") && lowerInput.includes("filter")) {
+  // Enhanced fallback logic with better pattern matching
+  if (lowerInput.includes("supported") && lowerInput.includes("chain")) {
+    return {
+      type: "supported_chains",
+      explanation: "I'll show you the supported blockchain networks.",
+      suggestions: ["Show available tokens", "Bridge tokens", "Cross-chain swaps", "Show IP assets"],
+    }
+  } else if (lowerInput.includes("token") && (lowerInput.includes("story") || lowerInput.includes("list"))) {
+    return {
+      type: "token_list",
+      explanation: "I'll show you the available tokens on Story Protocol.",
+      parameters: { chainId: 1315    },
+      suggestions: ["Show supported chains", "Bridge tokens", "Show price history", "Show IP assets"],
+    }
+  } else if (lowerInput.includes("minting") && lowerInput.includes("fee")) {
+    return {
+      type: "minting_fees",
+      explanation: "I'll show you the minting fees for license tokens.",
+      suggestions: ["Show license tokens", "Create IP asset", "Show royalty payments", "Show transactions"],
+    }
+  } else if (lowerInput.includes("license") && lowerInput.includes("token")) {
+    return {
+      type: "license_tokens",
+      explanation: "I'll show you the license tokens.",
+      suggestions: ["Show minting fees", "Show royalty payments", "Create IP asset", "Show IP assets"],
+    }
+  } else if (lowerInput.includes("cross") && lowerInput.includes("chain")) {
+    return {
+      type: "educational",
+      explanation: EDUCATIONAL_CONTENT["cross-chain bridging"],
+      conversational: true,
+      suggestions: ["Show supported chains", "Bridge tokens", "Show available tokens", "Show IP assets"],
+    }
+  } else if (lowerInput.includes("ip asset") && lowerInput.includes("filter")) {
     return {
       type: "filter_ip_assets",
       explanation: "I'll help you filter IP assets with advanced options.",
@@ -506,17 +696,11 @@ function handleFallback(userInput: string): GaiaAgentResponse {
       explanation: "Redirecting to bridge page.",
       suggestions: ["Cross-chain transfer", "Supported chains", "Bridge fees", "Transaction status"],
     }
-  } else if (lowerInput.includes("what") || lowerInput.includes("how") || lowerInput.includes("explain")) {
-    return {
-      type: "educational",
-      explanation: "I can help explain Story Protocol concepts. What would you like to learn about?",
-      suggestions: ["IP licensing", "Royalty system", "Asset creation", "Protocol benefits"],
-    }
   } else {
     return {
       type: "conversational",
       explanation:
-        "I'm here to help with Story Protocol! You can ask me about IP assets, transactions, royalties, creating assets, or general questions about the protocol.",
+        "I'm here to help with Story Protocol! You can ask me about IP assets, transactions, royalties, creating assets, supported chains, tokens, minting fees, or general questions about the protocol.",
       conversational: true,
       suggestions: ["Show recent IP assets", "What is Story Protocol?", "Create an IP asset", "Show transactions"],
     }
@@ -532,7 +716,7 @@ function getIntentExplanation(intent: string): string {
     transactions: "I'll show you the latest transactions.",
     royalties: "I'll show you royalty payments.",
     license_tokens: "I'll show you license tokens.",
-    minting_fees: "I'll show you minting fees.",
+    minting_fees: "I'll show you minting fees for license tokens.",
     supported_chains: "I'll show you supported blockchain networks.",
     token_list: "I'll show you available tokens.",
     swap_estimate: "I'll help you estimate cross-chain swaps.",
@@ -545,8 +729,8 @@ function getIntentExplanation(intent: string): string {
   return explanations[intent] || "I'll help you with that."
 }
 
-// Export the enhanced service
-export { enhancedGaiaService }
+// Export the fixed service
+export { fixedGaiaService }
 
 // Backward compatibility
-export const gaiaAgent = enhancedGaiaAgent
+export const gaiaAgent = fixedGaiaAgent

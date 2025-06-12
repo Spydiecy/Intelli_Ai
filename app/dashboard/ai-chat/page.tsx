@@ -29,9 +29,18 @@ import {
   Shield,
   Info,
   TrendingUp,
+  Coins,
 } from "lucide-react"
 import { gaiaAgent } from "@/lib/gaia-agent"
-import { api, type IPAsset, type Transaction, type RoyaltyPay } from "@/lib/api"
+import {
+  api,
+  type IPAsset,
+  type Transaction,
+  type RoyaltyPay,
+  type LicenseToken,
+  type LicenseMintingFeePaid,
+} from "@/lib/api"
+import { debridgeApi, type SupportedChain, type Token } from "@/lib/debridge-api"
 import { CreateIPAssetModal } from "@/components/create-ip-asset-modal"
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts"
 
@@ -47,6 +56,7 @@ interface GaiaResponse {
   type: string
   parameters?: any
   explanation?: string
+  conversational?: boolean
 }
 
 interface FilterState {
@@ -100,6 +110,276 @@ const fetchStoryPriceHistory = async (days = 30): Promise<PriceData[]> => {
     console.error("Error fetching price data:", error)
     return []
   }
+}
+
+// Chains Display Component
+function ChainsDisplay({ chains, title }: { chains: SupportedChain[]; title: string }) {
+  if (!chains || chains.length === 0) {
+    return (
+      <Card className="w-full bg-black/40 border-white/20 backdrop-blur-sm">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-white flex items-center gap-2">
+            <Coins className="h-5 w-5" />
+            {title}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center py-8">
+            <Coins className="h-12 w-12 mx-auto mb-4 text-white/40" />
+            <p className="text-white/60">No chains found</p>
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  return (
+    <Card className="w-full bg-black/40 border-white/20 backdrop-blur-sm">
+      <CardHeader className="pb-2">
+        <CardTitle className="text-white flex items-center gap-2">
+          <Coins className="h-5 w-5" />
+          {title}
+        </CardTitle>
+        <p className="text-white/60 text-sm">{chains.length} supported chains</p>
+      </CardHeader>
+      <CardContent>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          {chains.map((chain, idx) => (
+            <div
+              key={chain.chainId || idx}
+              className="p-3 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center">
+                  {chain.logoURI ? (
+                    <img
+                      src={chain.logoURI || "/placeholder.svg"}
+                      alt={chain.chainName}
+                      className="w-6 h-6 rounded-full"
+                    />
+                  ) : (
+                    <span className="text-white text-xs font-bold">{chain.chainName?.slice(0, 2).toUpperCase()}</span>
+                  )}
+                </div>
+                <div>
+                  <p className="font-medium text-white text-sm">{chain.chainName}</p>
+                  <p className="text-xs text-white/60">ID: {chain.chainId}</p>
+                  {chain.nativeCurrency && <p className="text-xs text-white/40">{chain.nativeCurrency.symbol}</p>}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
+
+// Tokens Display Component
+function TokensDisplay({ tokens, title }: { tokens: Token[]; title: string }) {
+  if (!tokens || tokens.length === 0) {
+    return (
+      <Card className="w-full bg-black/40 border-white/20 backdrop-blur-sm">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-white flex items-center gap-2">
+            <Coins className="h-5 w-5" />
+            {title}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center py-8">
+            <Coins className="h-12 w-12 mx-auto mb-4 text-white/40" />
+            <p className="text-white/60">No tokens found</p>
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  return (
+    <Card className="w-full bg-black/40 border-white/20 backdrop-blur-sm">
+      <CardHeader className="pb-2">
+        <CardTitle className="text-white flex items-center gap-2">
+          <Coins className="h-5 w-5" />
+          {title}
+        </CardTitle>
+        <p className="text-white/60 text-sm">{tokens.length} tokens available</p>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-3">
+          {tokens.slice(0, 10).map((token, idx) => (
+            <div
+              key={token.address || idx}
+              className="p-4 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-r from-orange-500 to-red-500 flex items-center justify-center border border-white/20">
+                    {token.logoURI ? (
+                      <img
+                        src={token.logoURI || "/placeholder.svg"}
+                        alt={token.symbol}
+                        className="w-8 h-8 rounded-full"
+                      />
+                    ) : (
+                      <span className="text-white text-sm font-bold">{token.symbol?.slice(0, 2)}</span>
+                    )}
+                  </div>
+                  <div>
+                    <p className="font-medium text-white">{token.symbol}</p>
+                    <p className="text-xs text-white/60">{token.name}</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-6 w-6 p-0"
+                      onClick={() => copyToClipboard(token.address || "")}
+                    >
+                      <Copy className="h-3 w-3 text-white/40 hover:text-white/80" />
+                    </Button>
+                  </div>
+                  <p className="text-xs text-white/60">Decimals: {token.decimals}</p>
+                  <p className="text-xs text-white/60">{token.isNative ? "Native" : "Token"}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
+
+// License Tokens Display Component
+function LicenseTokensDisplay({ tokens, title }: { tokens: LicenseToken[]; title: string }) {
+  if (!tokens || tokens.length === 0) {
+    return (
+      <Card className="w-full bg-black/40 border-white/20 backdrop-blur-sm">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-white flex items-center gap-2">
+            <FileText className="h-5 w-5" />
+            {title}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center py-8">
+            <FileText className="h-12 w-12 mx-auto mb-4 text-white/40" />
+            <p className="text-white/60">No license tokens found</p>
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  return (
+    <Card className="w-full bg-black/40 border-white/20 backdrop-blur-sm">
+      <CardHeader className="pb-2">
+        <CardTitle className="text-white flex items-center gap-2">
+          <FileText className="h-5 w-5" />
+          {title}
+        </CardTitle>
+        <p className="text-white/60 text-sm">{tokens.length} license tokens</p>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-3">
+          {tokens.slice(0, 10).map((token, idx) => (
+            <div
+              key={token.owner || idx}
+              className="p-4 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-full bg-blue-500/10 text-blue-500 border border-blue-500/20">
+                    <FileText className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-white">License Token</p>
+                    <p className="text-xs text-white/60">Owner: {token.owner?.slice(0, 10)}...</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="flex items-center gap-2">
+                    <Badge variant={token.transferable === "true" ? "default" : "secondary"} className="text-xs">
+                      {token.transferable === "true" ? "Transferable" : "Non-transferable"}
+                    </Badge>
+                  </div>
+                  <p className="text-xs text-white/60">Block: {token.blockNumber}</p>
+                  <p className="text-xs text-white/60">
+                    {token.blockTime ? new Date(token.blockTime).toLocaleDateString() : "N/A"}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
+
+// Minting Fees Display Component
+function MintingFeesDisplay({ fees, title }: { fees: LicenseMintingFeePaid[]; title: string }) {
+  if (!fees || fees.length === 0) {
+    return (
+      <Card className="w-full bg-black/40 border-white/20 backdrop-blur-sm">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-white flex items-center gap-2">
+            <DollarSign className="h-5 w-5" />
+            {title}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center py-8">
+            <DollarSign className="h-12 w-12 mx-auto mb-4 text-white/40" />
+            <p className="text-white/60">No minting fees found</p>
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  return (
+    <Card className="w-full bg-black/40 border-white/20 backdrop-blur-sm">
+      <CardHeader className="pb-2">
+        <CardTitle className="text-white flex items-center gap-2">
+          <DollarSign className="h-5 w-5" />
+          {title}
+        </CardTitle>
+        <p className="text-white/60 text-sm">{fees.length} fee payments</p>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-3">
+          {fees.slice(0, 10).map((fee, idx) => (
+            <div
+              key={fee.payer || idx}
+              className="p-4 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-full bg-yellow-500/10 text-yellow-500 border border-yellow-500/20">
+                    <DollarSign className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-white">{(Number(fee.amount) / 1e18).toFixed(6)} tokens</p>
+                    <p className="text-xs text-white/60">Payer: {fee.payer?.slice(0, 10)}...</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="text-xs text-white/60">Block: {fee.blockNumber}</p>
+                  <p className="text-xs text-white/60">
+                    {fee.blockTimestamp ? new Date(fee.blockTimestamp).toLocaleDateString() : "N/A"}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
+  )
 }
 
 // Advanced Filter Modal Component
@@ -816,7 +1096,7 @@ export default function AiChatPage() {
       const gaiaResponse: GaiaResponse = await gaiaAgent(input)
       console.log("Gaia Response:", gaiaResponse)
 
-      // Handle different response types
+      // Handle different response types with comprehensive coverage
       if (gaiaResponse.type === "ip_assets") {
         try {
           const assetsData = await api.listIPAssets()
@@ -934,6 +1214,146 @@ export default function AiChatPage() {
             },
           ])
         }
+      } else if (gaiaResponse.type === "supported_chains") {
+        try {
+          const chainsData = await debridgeApi.getSupportedChains()
+          setMessages((prev) => [
+            ...prev,
+            { role: "system", content: gaiaResponse.explanation || "Here are the supported chains:" },
+            {
+              role: "system",
+              content: "DATA_DISPLAY",
+              data: chainsData || [],
+              dataType: "chains",
+              title: "Supported Chains",
+            },
+          ])
+        } catch (error: any) {
+          console.error("Error fetching supported chains:", error)
+          setMessages((prev) => [
+            ...prev,
+            {
+              role: "system",
+              content: `Sorry, I couldn't fetch supported chains. Error: ${error.message || "Unknown error"}. Please try again.`,
+            },
+          ])
+        }
+      } else if (gaiaResponse.type === "token_list") {
+        try {
+          const chainId = gaiaResponse.parameters?.chainId || 1
+          const tokensData = await debridgeApi.getTokenList(chainId)
+          setMessages((prev) => [
+            ...prev,
+            { role: "system", content: gaiaResponse.explanation || `Here are the tokens for chain ${chainId}:` },
+            {
+              role: "system",
+              content: "DATA_DISPLAY",
+              data: tokensData || [],
+              dataType: "tokens",
+              title: `Tokens on Chain ${chainId}`,
+            },
+          ])
+        } catch (error: any) {
+          console.error("Error fetching tokens:", error)
+          setMessages((prev) => [
+            ...prev,
+            {
+              role: "system",
+              content: `Sorry, I couldn't fetch tokens data. Error: ${error.message || "Unknown error"}. Please try again.`,
+            },
+          ])
+        }
+      } else if (gaiaResponse.type === "license_tokens") {
+        try {
+          const licenseData = await api.listLicenseTokens()
+          setMessages((prev) => [
+            ...prev,
+            { role: "system", content: gaiaResponse.explanation || "Here are the license tokens:" },
+            {
+              role: "system",
+              content: "DATA_DISPLAY",
+              data: licenseData.data || [],
+              dataType: "license_tokens",
+              title: "License Tokens",
+            },
+          ])
+        } catch (error: any) {
+          console.error("Error fetching license tokens:", error)
+          setMessages((prev) => [
+            ...prev,
+            {
+              role: "system",
+              content: `Sorry, I couldn't fetch license tokens data. Error: ${error.message || "Unknown error"}. Please try again.`,
+            },
+          ])
+        }
+      } else if (gaiaResponse.type === "minting_fees") {
+        try {
+          const feesData = await api.listLicenseMintingFees()
+          setMessages((prev) => [
+            ...prev,
+            { role: "system", content: gaiaResponse.explanation || "Here are the minting fees:" },
+            {
+              role: "system",
+              content: "DATA_DISPLAY",
+              data: feesData.data || [],
+              dataType: "minting_fees",
+              title: "License Minting Fees",
+            },
+          ])
+        } catch (error: any) {
+          console.error("Error fetching minting fees:", error)
+          setMessages((prev) => [
+            ...prev,
+            {
+              role: "system",
+              content: `Sorry, I couldn't fetch minting fees data. Error: ${error.message || "Unknown error"}. Please try again.`,
+            },
+          ])
+        }
+      } else if (gaiaResponse.type === "asset_detail") {
+        try {
+          const assetId = gaiaResponse.parameters?.assetId
+          if (assetId) {
+            const assetData = await api.getIPAsset(assetId)
+            if (assetData.data) {
+              setMessages((prev) => [
+                ...prev,
+                { role: "system", content: `Here are the details for IP Asset ${assetId}:` },
+                {
+                  role: "system",
+                  content: "DATA_DISPLAY",
+                  data: [assetData.data],
+                  dataType: "ip_assets",
+                  title: "IP Asset Details",
+                },
+              ])
+            } else {
+              setMessages((prev) => [
+                ...prev,
+                { role: "system", content: `No asset found with ID ${assetId}. Please check the asset ID.` },
+              ])
+            }
+          }
+        } catch (error: any) {
+          console.error("Error fetching asset details:", error)
+          setMessages((prev) => [
+            ...prev,
+            {
+              role: "system",
+              content: `Sorry, I couldn't fetch asset details. Error: ${error.message || "Unknown error"}. Please check the asset ID.`,
+            },
+          ])
+        }
+      } else if (gaiaResponse.type === "conversational" || gaiaResponse.conversational) {
+        // Handle conversational responses
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: "system",
+            content: gaiaResponse.explanation || "I'm here to help with Story Protocol!",
+          },
+        ])
       } else {
         // General response
         setMessages((prev) => [
@@ -1109,6 +1529,18 @@ export default function AiChatPage() {
                   )}
                   {message.dataType === "royalties" && (
                     <RoyaltiesDisplay royalties={message.data} title={message.title || "Data"} />
+                  )}
+                  {message.dataType === "chains" && (
+                    <ChainsDisplay chains={message.data} title={message.title || "Data"} />
+                  )}
+                  {message.dataType === "tokens" && (
+                    <TokensDisplay tokens={message.data} title={message.title || "Data"} />
+                  )}
+                  {message.dataType === "license_tokens" && (
+                    <LicenseTokensDisplay tokens={message.data} title={message.title || "Data"} />
+                  )}
+                  {message.dataType === "minting_fees" && (
+                    <MintingFeesDisplay fees={message.data} title={message.title || "Data"} />
                   )}
                   {message.dataType === "price_history" && (
                     <PriceHistoryChart data={message.data} title={message.title || "Price History"} />

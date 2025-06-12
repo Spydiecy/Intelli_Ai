@@ -74,8 +74,11 @@ export function DashboardSidebar({ open, setOpen }: DashboardSidebarProps) {
     )}>
       <div className="flex flex-col h-full">
         <div className="flex items-center justify-between p-5 border-b border-white/10">
-          <div className={cn("flex items-center", !open && "hidden")}>
+          <div className={cn("flex items-center gap-2", !open && "hidden")}>
             <span className="text-xl font-bold bg-gradient-to-b from-white to-white/70 text-transparent bg-clip-text">IntelliAI</span>
+            <div className="px-2 py-0.5 bg-orange-500/20 border border-orange-500/40 rounded-full text-xs text-orange-300 font-medium">
+              Beta
+            </div>
           </div>
           <button 
             onClick={() => setOpen(!open)}

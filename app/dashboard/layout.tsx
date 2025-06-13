@@ -57,7 +57,7 @@ export default function DashboardLayout({
             </div>
           </div>
           
-          <main className="mx-auto p-6 mr-6 mt-6">
+          <main className="mx-auto pl-2 mr-6 ">
             {children}
           </main>
         </div>

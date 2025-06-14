@@ -94,7 +94,9 @@ USER QUERY: {userQuery}
 FETCHED DATA: {fetchedData}
 INTENT: {intent}
 CURRENT TIMESTAMP: {currentTimestamp}
-
+ do not include complete address write short form of address in ..
+everything in black theme if any image url comes then show the image also wiht src of the link given  .
+in list all ip assest only list the ip assest details with image in table format not more then 10 in length in black theme.
 Generate COMPLETE ANALYTICAL HTML response:
 `
 

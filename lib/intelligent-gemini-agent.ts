@@ -1,9 +1,5 @@
-import { GoogleGenerativeAI } from "@google/generative-ai"
-
-const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_KEY || "")
-
 // ENHANCED MASTER PROMPT with time-based analytics and performance insights
-const ENHANCED_MASTER_GEMINI_PROMPT = `
+const ENHANCED_MASTER_PERPLEXITY_PROMPT = `
 You are an EXPERT Story Protocol AI Assistant and Analytics HTML Generator. You MUST follow these rules EXACTLY:
 
 ## CRITICAL RULES:
@@ -18,7 +14,7 @@ You are an EXPERT Story Protocol AI Assistant and Analytics HTML Generator. You 
 - Start with: <div class="space-y-6 p-4">
 - End with: </div>
 - Use proper Tailwind classes for colors, spacing, typography
-- Include icons using SVG (stroke-width="2")
+- Include icons using SVG (strokeWidth="2")
 - Make cards interactive with hover effects
 - Add summary statistics at the top
 
@@ -57,6 +53,7 @@ You are an EXPERT Story Protocol AI Assistant and Analytics HTML Generator. You 
 - Numbers: Add commas for thousands
 - Percentages: Show with 2 decimal places
 - Rankings: Use 🥇🥈🥉 for top 3, then numbers
+- Remember my time is given in unix date so convert it into today's date and time.
 
 ## EXAMPLE ENHANCED STRUCTURE:
 <div class="space-y-6 p-4">
@@ -87,6 +84,11 @@ You are an EXPERT Story Protocol AI Assistant and Analytics HTML Generator. You 
 - Filter by time when requested
 - Calculate totals and averages
 - Use actual data, never placeholders
+- Do not include complete address write short form of address in ..
+- Everything in black theme if any image url comes then show the image also with src of the link given
+- In list all ip assets only list the ip asset details with image in table format not more than 10 in length in black theme
+- Do not show any dummy data. only real data show all data
+- Generate COMPLETE ANALYTICAL HTML response
 
 Now process this request with ADVANCED ANALYTICS:
 
@@ -94,10 +96,6 @@ USER QUERY: {userQuery}
 FETCHED DATA: {fetchedData}
 INTENT: {intent}
 CURRENT TIMESTAMP: {currentTimestamp}
- do not include complete address write short form of address in ..
-everything in black theme if any image url comes then show the image also wiht src of the link given  .
-in list all ip assest only list the ip assest details with image in table format not more then 10 in length in black theme.
-Generate COMPLETE ANALYTICAL HTML response:
 `
 
 interface APIResponse {
@@ -110,6 +108,38 @@ interface AgentResponse {
   content: string
   htmlContent: string
   data?: any
+  perplexityResponse?: any
+}
+
+interface PerplexityResponse {
+  id: string
+  model: string
+  created: number
+  usage: {
+    prompt_tokens: number
+    completion_tokens: number
+    total_tokens: number
+    search_context_size: string
+  }
+  citations: string[]
+  search_results: Array<{
+    title: string
+    url: string
+    date: string | null
+  }>
+  object: string
+  choices: Array<{
+    index: number
+    finish_reason: string
+    message: {
+      role: string
+      content: string
+    }
+    delta: {
+      role: string
+      content: string
+    }
+  }>
 }
 
 // Enhanced API wrapper with better error handling and retry logic
@@ -146,7 +176,8 @@ function analyzeIntent(userQuery: string): {
   // Time-based queries
   const isToday = query.includes("today") || query.includes("today's")
   const isRecent = query.includes("recent") || query.includes("latest") || query.includes("last")
-  const isHighest = query.includes("highest") || query.includes("top") || query.includes("best") || query.includes("most")
+  const isHighest =
+    query.includes("highest") || query.includes("top") || query.includes("best") || query.includes("most")
 
   // Create asset intent
   if (query.includes("create") && (query.includes("asset") || query.includes("ip"))) {
@@ -154,7 +185,7 @@ function analyzeIntent(userQuery: string): {
       intent: "create_asset",
       apis: [],
       parameters: {},
-      queryType: "creation"
+      queryType: "creation",
     }
   }
 
@@ -166,58 +197,58 @@ function analyzeIntent(userQuery: string): {
         intent: "asset_details",
         apis: ["getIPAsset", "listRoyaltyPays", "listLatestTransactions"],
         parameters: { assetId, limit: 20 },
-        queryType: "detail"
+        queryType: "detail",
       }
     }
-    
+
     if (isHighest || query.includes("earning") || query.includes("performance")) {
       return {
         intent: "top_assets_analysis",
         apis: ["listIPAssets", "listRoyaltyPays"],
         parameters: { limit: 50 },
         queryType: "analytics",
-        analyticsType: "performance"
+        analyticsType: "performance",
       }
     }
-    
+
     return {
       intent: "list_assets",
       apis: ["listIPAssets"],
       parameters: { limit: 30 },
-      queryType: "list"
+      queryType: "list",
     }
   }
 
   // Royalty-related queries with enhanced analytics
   if (query.includes("royalt") || query.includes("earning") || query.includes("payment")) {
     const limit = userQuery.match(/last\s+(\d+)/i)?.[1] || (isToday ? "100" : "50")
-    
+
     if (isToday) {
       return {
         intent: "todays_royalties",
         apis: ["listRoyaltyPays"],
-        parameters: { limit: parseInt(limit) },
+        parameters: { limit: Number.parseInt(limit) },
         queryType: "analytics",
         timeFilter: "today",
-        analyticsType: "time_based"
+        analyticsType: "time_based",
       }
     }
-    
+
     if (isHighest) {
       return {
         intent: "highest_royalties",
         apis: ["listRoyaltyPays"],
-        parameters: { limit: parseInt(limit) },
+        parameters: { limit: Number.parseInt(limit) },
         queryType: "analytics",
-        analyticsType: "performance"
+        analyticsType: "performance",
       }
     }
 
     return {
       intent: "royalty_analysis",
       apis: ["listRoyaltyPays"],
-      parameters: { limit: parseInt(limit) },
-      queryType: "analytics"
+      parameters: { limit: Number.parseInt(limit) },
+      queryType: "analytics",
     }
   }
 
@@ -229,10 +260,10 @@ function analyzeIntent(userQuery: string): {
       return {
         intent: "todays_transactions",
         apis: ["listLatestTransactions"],
-        parameters: { limit: parseInt(limit) },
+        parameters: { limit: Number.parseInt(limit) },
         queryType: "analytics",
         timeFilter: "today",
-        analyticsType: "time_based"
+        analyticsType: "time_based",
       }
     }
 
@@ -240,17 +271,17 @@ function analyzeIntent(userQuery: string): {
       return {
         intent: "highest_transactions",
         apis: ["listLatestTransactions"],
-        parameters: { limit: parseInt(limit) },
+        parameters: { limit: Number.parseInt(limit) },
         queryType: "analytics",
-        analyticsType: "performance"
+        analyticsType: "performance",
       }
     }
 
     return {
       intent: "transaction_history",
       apis: ["listLatestTransactions"],
-      parameters: { limit: parseInt(limit) },
-      queryType: "list"
+      parameters: { limit: Number.parseInt(limit) },
+      queryType: "list",
     }
   }
 
@@ -262,10 +293,10 @@ function analyzeIntent(userQuery: string): {
       return {
         intent: "todays_fees",
         apis: ["listLicenseMintingFees"],
-        parameters: { limit: parseInt(limit) },
+        parameters: { limit: Number.parseInt(limit) },
         queryType: "analytics",
         timeFilter: "today",
-        analyticsType: "time_based"
+        analyticsType: "time_based",
       }
     }
 
@@ -273,27 +304,221 @@ function analyzeIntent(userQuery: string): {
       return {
         intent: "highest_fees",
         apis: ["listLicenseMintingFees"],
-        parameters: { limit: parseInt(limit) },
+        parameters: { limit: Number.parseInt(limit) },
         queryType: "analytics",
-        analyticsType: "performance"
+        analyticsType: "performance",
       }
     }
 
     return {
       intent: "minting_fees",
       apis: ["listLicenseMintingFees"],
-      parameters: { limit: parseInt(limit) },
-      queryType: "analytics"
+      parameters: { limit: Number.parseInt(limit) },
+      queryType: "analytics",
     }
   }
 
-  // Default to assets with enhanced parameters
+  // Default to general query (use Perplexity for general questions)
   return {
-    intent: "list_assets",
-    apis: ["listIPAssets"],
+    intent: "general_query",
+    apis: [],
     parameters: { limit: 25 },
-    queryType: "list"
+    queryType: "general",
   }
+}
+
+// Perplexity AI API call function
+async function callPerplexityAI(prompt: string): Promise<PerplexityResponse> {
+  try {
+    console.log("Calling Perplexity AI...")
+
+    const options = {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.NEXT_PUBLIC_PER_KEY}",
+        "Content-Type": "application/json`,
+      },
+      body: JSON.stringify({
+        search_mode: "web",
+        reasoning_effort: "medium",
+        temperature: 0.2,
+        top_p: 0.9,
+        return_images: false,
+        return_related_questions: false,
+        top_k: 0,
+        stream: false,
+        presence_penalty: 0,
+        frequency_penalty: 0,
+        web_search_options: {
+          search_context_size: "low",
+        },
+        model: "sonar",
+        messages: [
+          {
+            content: prompt,
+            role: "user",
+          },
+        ],
+      }),
+    }
+
+    const response = await fetch("https://api.perplexity.ai/chat/completions", options)
+
+    if (!response.ok) {
+      throw new Error(`Perplexity API Error: ${response.status} ${response.statusText}`)
+    }
+
+    const data = await response.json()
+    console.log("Perplexity AI response:", data)
+
+    return data
+  } catch (error: any) {
+    console.error("Perplexity AI error:", error)
+    throw error
+  }
+}
+
+// Generate beautiful HTML for Perplexity response with web results
+function generatePerplexityHTML(perplexityResponse: PerplexityResponse, userQuery: string): string {
+  const { choices, citations, search_results, usage } = perplexityResponse
+  const content = choices[0]?.message?.content || "No response available"
+
+  return `
+    <div class="space-y-6 p-4">
+      <!-- Header -->
+      <div class="text-center">
+        <h1 class="text-2xl font-bold text-white mb-2">🔍 Perplexity AI Research Results</h1>
+        <p class="text-white/70">Query: "${userQuery}"</p>
+      </div>
+
+      <!-- AI Response -->
+      <div class="p-6 bg-gradient-to-r from-purple-500/10 to-blue-500/10 rounded-xl border border-purple-500/20">
+        <div class="flex items-center gap-2 mb-4">
+          <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+          </svg>
+          <h2 class="text-xl font-semibold text-purple-300">AI Analysis</h2>
+        </div>
+        <div class="text-white/90 leading-relaxed whitespace-pre-wrap">${content}</div>
+      </div>
+
+      <!-- Usage Stats -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+          <div class="flex items-center gap-2 mb-2">
+            <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+            </svg>
+            <span class="text-blue-300 font-semibold">Tokens Used</span>
+          </div>
+          <p class="text-white text-2xl font-bold">${usage.total_tokens.toLocaleString()}</p>
+          <p class="text-blue-300/70 text-sm">Total tokens</p>
+        </div>
+
+        <div class="p-4 bg-green-500/10 border border-green-500/20 rounded-lg">
+          <div class="flex items-center gap-2 mb-2">
+            <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+            <span class="text-green-300 font-semibold">Sources Found</span>
+          </div>
+          <p class="text-white text-2xl font-bold">${search_results.length}</p>
+          <p class="text-green-300/70 text-sm">Web sources</p>
+        </div>
+
+        <div class="p-4 bg-orange-500/10 border border-orange-500/20 rounded-lg">
+          <div class="flex items-center gap-2 mb-2">
+            <svg class="w-5 h-5 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
+            </svg>
+            <span class="text-orange-300 font-semibold">Citations</span>
+          </div>
+          <p class="text-white text-2xl font-bold">${citations.length}</p>
+          <p class="text-orange-300/70 text-sm">References</p>
+        </div>
+      </div>
+
+      <!-- Web Search Results -->
+      ${
+        search_results.length > 0
+          ? `
+      <div class="space-y-4">
+        <h3 class="text-xl font-semibold text-white flex items-center gap-2">
+          <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9v-9m0-9v9"></path>
+          </svg>
+          Web Search Results
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          ${search_results
+            .map(
+              (result, index) => `
+            <div class="p-4 bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 transition-colors">
+              <div class="flex items-start justify-between mb-2">
+                <span class="text-xs text-white/50 bg-white/10 px-2 py-1 rounded">#${index + 1}</span>
+                ${result.date ? `<span class="text-xs text-white/50">${result.date}</span>` : ""}
+              </div>
+              <h4 class="text-white font-medium mb-2 line-clamp-2">${result.title}</h4>
+              <a 
+                href="${result.url}" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 text-sm transition-colors"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                </svg>
+                Visit Source
+              </a>
+            </div>
+          `,
+            )
+            .join("")}
+        </div>
+      </div>
+      `
+          : ""
+      }
+
+      <!-- Citations -->
+      ${
+        citations.length > 0
+          ? `
+      <div class="space-y-4">
+        <h3 class="text-xl font-semibold text-white flex items-center gap-2">
+          <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+          </svg>
+          Citations & References
+        </h3>
+        <div class="space-y-2">
+          ${citations
+            .map(
+              (citation, index) => `
+            <div class="flex items-center gap-3 p-3 bg-green-500/5 border border-green-500/10 rounded-lg">
+              <span class="text-green-400 font-mono text-sm">[${index + 1}]</span>
+              <a 
+                href="${citation}" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                class="text-green-300 hover:text-green-200 text-sm transition-colors flex-1 truncate"
+              >
+                ${citation}
+              </a>
+              <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+              </svg>
+            </div>
+          `,
+            )
+            .join("")}
+        </div>
+      </div>
+      `
+          : ""
+      }
+    </div>
+  `
 }
 
 export async function enhancedIntelligentAgent(userQuery: string, api: any): Promise<AgentResponse> {
@@ -304,7 +529,21 @@ export async function enhancedIntelligentAgent(userQuery: string, api: any): Pro
     const intentData = analyzeIntent(userQuery)
     console.log("Enhanced intent analysis:", intentData)
 
-    // Step 2: Fetch data from APIs with enhanced parameters
+    // Step 2: Check if it's a general query (use Perplexity) or specific data query
+    if (intentData.queryType === "general" || intentData.apis.length === 0) {
+      console.log("Using Perplexity AI for general query...")
+      const perplexityResponse = await callPerplexityAI(userQuery)
+      const htmlContent = generatePerplexityHTML(perplexityResponse, userQuery)
+
+      return {
+        content: `Perplexity AI research complete for: ${userQuery}`,
+        htmlContent,
+        data: {},
+        perplexityResponse,
+      }
+    }
+
+    // Step 3: Fetch data from APIs for specific Story Protocol queries
     const fetchedData: Record<string, APIResponse> = {}
 
     for (const apiName of intentData.apis) {
@@ -317,9 +556,9 @@ export async function enhancedIntelligentAgent(userQuery: string, api: any): Pro
               api.listIPAssets({
                 pagination: { limit: params.limit || 30, offset: 0 },
                 orderBy: "blockNumber",
-                orderDirection: "desc"
+                orderDirection: "desc",
               }),
-            "listIPAssets"
+            "listIPAssets",
           )
           break
 
@@ -333,12 +572,12 @@ export async function enhancedIntelligentAgent(userQuery: string, api: any): Pro
           const royaltyOptions: any = {
             pagination: { limit: params.limit || 50, offset: 0 },
             orderBy: "blockNumber",
-            orderDirection: "desc"
+            orderDirection: "desc",
           }
 
           if (params.assetId) {
             royaltyOptions.where = {
-              OR: [{ payerIpId: params.assetId }, { receiverIpId: params.assetId }]
+              OR: [{ payerIpId: params.assetId }, { receiverIpId: params.assetId }],
             }
           }
 
@@ -349,7 +588,7 @@ export async function enhancedIntelligentAgent(userQuery: string, api: any): Pro
           const txOptions: any = {
             pagination: { limit: params.limit || 50, offset: 0 },
             orderBy: "blockNumber",
-            orderDirection: "desc"
+            orderDirection: "desc",
           }
 
           if (params.assetId) {
@@ -365,9 +604,9 @@ export async function enhancedIntelligentAgent(userQuery: string, api: any): Pro
               api.listLicenseMintingFees({
                 pagination: { limit: params.limit || 30, offset: 0 },
                 orderBy: "blockNumber",
-                orderDirection: "desc"
+                orderDirection: "desc",
               }),
-            "listLicenseMintingFees"
+            "listLicenseMintingFees",
           )
           break
       }
@@ -375,30 +614,14 @@ export async function enhancedIntelligentAgent(userQuery: string, api: any): Pro
 
     console.log("All enhanced fetched data:", fetchedData)
 
-    // Step 3: Generate enhanced HTML response using the master prompt
-    const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash",
-      generationConfig: {
-        temperature: 0.2, // Lower temperature for more consistent analytics
-        topK: 40,
-        topP: 0.95,
-        maxOutputTokens: 8192
-      }
-    })
-
-    const currentTimestamp = Math.floor(Date.now() / 1000)
-    const prompt = ENHANCED_MASTER_GEMINI_PROMPT
-      .replace("{userQuery}", userQuery)
+    // Step 4: Use Perplexity AI to analyze the blockchain data
+    const dataAnalysisPrompt = `${ENHANCED_MASTER_PERPLEXITY_PROMPT.replace("{userQuery}", userQuery)
       .replace("{fetchedData}", JSON.stringify(fetchedData, null, 2))
       .replace("{intent}", intentData.intent)
-      .replace("{currentTimestamp}", currentTimestamp.toString())
+      .replace("{currentTimestamp}", Math.floor(Date.now() / 1000).toString())}`
 
-    console.log("Sending enhanced prompt to Gemini...")
-    const result = await model.generateContent(prompt)
-    const response = await result.response
-    let htmlContent = response.text()
-
-    console.log("Raw enhanced Gemini response:", htmlContent)
+    const perplexityResponse = await callPerplexityAI(dataAnalysisPrompt)
+    let htmlContent = perplexityResponse.choices[0]?.message?.content || ""
 
     // Clean and extract HTML
     htmlContent = htmlContent
@@ -432,7 +655,8 @@ export async function enhancedIntelligentAgent(userQuery: string, api: any): Pro
     return {
       content: `Enhanced analysis complete for: ${userQuery}`,
       htmlContent,
-      data: fetchedData
+      data: fetchedData,
+      perplexityResponse,
     }
   } catch (error: any) {
     console.error("Enhanced agent error:", error)
@@ -444,17 +668,18 @@ export async function enhancedIntelligentAgent(userQuery: string, api: any): Pro
           <div class="p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
             <div class="flex items-center gap-2 mb-2">
               <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
               </svg>
-              <span class="text-red-400 font-semibold">Enhanced Processing Error</span>
+              <span class="text-red-400 font-semibold">Perplexity Processing Error</span>
             </div>
             <p class="text-red-300 mb-2">${error.message}</p>
-            <p class="text-red-300/70 text-sm">The enhanced analytics engine encountered an issue. Please try a different query or contact support.</p>
+            <p class="text-red-300/70 text-sm">The Perplexity AI engine encountered an issue. Please try a different query or contact support.</p>
             <div class="mt-3 p-3 bg-red-500/5 rounded border border-red-500/10">
               <p class="text-red-300/80 text-xs">Debug info: ${JSON.stringify({ error: error.message, timestamp: new Date().toISOString() })}</p>
             </div>
           </div>
         </div>
-      `
+      `,
     }
   }
+}

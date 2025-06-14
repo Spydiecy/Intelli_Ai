@@ -335,8 +335,8 @@ async function callPerplexityAI(prompt: string): Promise<PerplexityResponse> {
     const options = {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${process.env.NEXT_PUBLIC_PER_KEY}",
-        "Content-Type": "application/json`,
+        "Authorization": `Bearer ${process.env.NEXT_PUBLIC_PER_KEY}`,
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         search_mode: "web",

@@ -425,7 +425,7 @@ export function CreateIPAssetModal({ isOpen, onClose, onSuccess }: CreateIPAsset
                     <p className="text-white/60 mb-2">Upload your IP asset image (Max 10MB)</p>
                     <Input
                       type="file"
-                      accept="image/*"
+                      
                       onChange={handleImageUpload}
                       className="hidden"
                       id="image-upload"

@@ -681,10 +681,12 @@ export default function EnhancedAIChatPage() {
     { text: "Show today's royalties", category: "Analytics", icon: "💰", description: "Today's royalty payments in IP tokens" },
     { text: "Show today's transactions", category: "Analytics", icon: "⚡", description: "Today's blockchain activity" },
     { text: "Show top earning assets", category: "Analytics", icon: "🏆", description: "Assets by total revenue" },
-    { text: "Platform analytics overview", category: "Analytics", icon: "📊", description: "Complete platform statistics" },
+    { text: "Show Latest 5 Transactions", category: "Analytics", icon: "📊", description: "Complete platform statistics" },
+      { text: "Show Royalties of this asset {Asset_address}", category: "Analytics", icon: "📊", description: "Complete platform statistics" },
+       { text: "Show Minting Fees of this asset {Asset_address}", category: "Analytics", icon: "📊", description: "Complete platform statistics" },
   ]
 
-  const displayedSuggestions = showAllSuggestions ? querySuggestions : querySuggestions.slice(0, 10)
+  const displayedSuggestions = showAllSuggestions ? querySuggestions : querySuggestions
   const suggestionsByCategory = displayedSuggestions.reduce(
     (acc, suggestion) => {
       if (!acc[suggestion.category]) acc[suggestion.category] = []

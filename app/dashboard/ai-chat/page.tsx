@@ -107,11 +107,7 @@ export default function EnhancedAIChatPage() {
       htmlContent: `
         <div class="space-y-6">
           <div class="text-center">
-            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-white flex items-center justify-center">
-              <svg class="w-8 h-8 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-              </svg>
-            </div>
+        
             <h1 class="text-2xl font-bold text-white mb-2">Enhanced Story Protocol AI</h1>
             <p class="text-gray-400">Real-time analytics • Voice input • IP Token calculations • Gaia AI</p>
           </div>
@@ -688,7 +684,7 @@ export default function EnhancedAIChatPage() {
     { text: "Platform analytics overview", category: "Analytics", icon: "📊", description: "Complete platform statistics" },
   ]
 
-  const displayedSuggestions = showAllSuggestions ? querySuggestions : querySuggestions.slice(0, 6)
+  const displayedSuggestions = showAllSuggestions ? querySuggestions : querySuggestions.slice(0, 10)
   const suggestionsByCategory = displayedSuggestions.reduce(
     (acc, suggestion) => {
       if (!acc[suggestion.category]) acc[suggestion.category] = []
@@ -776,8 +772,7 @@ export default function EnhancedAIChatPage() {
               )}
             </div>
             <div className="text-right">
-              <div className="text-sm text-gray-500">Messages</div>
-              <div className="text-lg font-semibold text-white">{messages.length}</div>
+              <div className="text-sm text-gray-500">Msg. {messages.length}</div>
             </div>
             <Button
               onClick={() => setMessages([messages[0]])}
@@ -958,14 +953,7 @@ export default function EnhancedAIChatPage() {
                 </div>
               )}
             </div>
-            <Button
-              onClick={() => setShowAllSuggestions(!showAllSuggestions)}
-              variant="ghost"
-              size="sm"
-              className="text-sm text-gray-400 hover:text-white hover:bg-gray-800 border border-gray-700"
-            >
-              {showAllSuggestions ? "Show Less" : `Show All (${querySuggestions.length})`}
-            </Button>
+           
           </div>
 
           <div className="space-y-6">

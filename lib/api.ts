@@ -150,6 +150,20 @@ export const api = {
     })
     return response.json()
   },
+    async listIPAssetsAll(options: any = {}) {
+    const response = await fetch(`${API_BASE_URL}/api/v3/assets`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({
+        options: {
+          orderBy: "blockNumber",
+          orderDirection: "desc",
+          ...options,
+        },
+      }),
+    })
+    return response.json()
+  },
 
   async getIPAsset(assetId: string) {
     const response = await fetch(`${API_BASE_URL}/api/v3/assets/${assetId}`, {

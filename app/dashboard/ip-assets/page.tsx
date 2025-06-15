@@ -43,7 +43,7 @@ export default function IPAssetsPage() {
     try {
       setLoading(true)
       setError(null)
-      const response = await api.listIPAssets()
+      const response = await api.listIPAssetsAll()
       if (response.error) {
         setError(response.error)
         setAssets([])

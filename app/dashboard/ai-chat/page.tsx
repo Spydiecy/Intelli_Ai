@@ -214,6 +214,16 @@ export default function EnhancedAIChatPage() {
           const transcript = event.results[0][0].transcript
           setInput(transcript)
           setVoiceRecognition(prev => ({ ...prev, isListening: false }))
+          
+          // Auto-send the message after a short delay to show the transcript
+          setTimeout(() => {
+            if (transcript.trim()) {
+              setInput(transcript)
+              // Trigger send message automatically
+              const sendEvent = new Event('voiceSend')
+              document.dispatchEvent(sendEvent)
+            }
+          }, 500)
         }
 
         recognition.onerror = () => {
@@ -255,6 +265,35 @@ export default function EnhancedAIChatPage() {
       }
     }
   }, [openConnectModal, connectWallet])
+
+  // Keyboard shortcuts for voice input and auto-send
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Ctrl/Cmd + Shift + M to toggle voice input
+      if ((event.ctrlKey || event.metaKey) && event.shiftKey && event.key === 'M') {
+        event.preventDefault()
+        if (voiceRecognition.isSupported) {
+          if (voiceRecognition.isListening) {
+            stopVoiceRecognition()
+          } else {
+            startVoiceRecognition()
+          }
+        }
+      }
+    }
+
+    const handleVoiceSend = () => {
+      handleSendMessage()
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    document.addEventListener('voiceSend', handleVoiceSend)
+    
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+      document.removeEventListener('voiceSend', handleVoiceSend)
+    }
+  }, [voiceRecognition.isListening, voiceRecognition.isSupported, input])
 
   const addMessage = (
     role: "user" | "assistant",
@@ -819,6 +858,23 @@ export default function EnhancedAIChatPage() {
 
       {/* Enhanced Input Area */}
       <div className="bg-black/80 backdrop-blur-sm border-t border-gray-800 p-6 shrink-0">
+        {/* Voice Recognition Status */}
+        {voiceRecognition.isListening && (
+          <div className="mb-4 flex items-center justify-center">
+            <div className="flex items-center gap-3 px-6 py-3 bg-red-500/10 border border-red-500/20 rounded-full backdrop-blur-sm">
+              <div className="relative">
+                <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+                <div className="absolute top-0 left-0 w-3 h-3 bg-red-500 rounded-full animate-ping opacity-75"></div>
+              </div>
+              <span className="text-red-400 text-sm font-medium">🎤 Listening... Speak clearly!</span>
+              <div className="relative">
+                <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+                <div className="absolute top-0 left-0 w-3 h-3 bg-red-500 rounded-full animate-ping opacity-75"></div>
+              </div>
+            </div>
+          </div>
+        )}
+        
         <div className="relative">
           <div className="flex items-end gap-4 p-4 border border-gray-700 rounded-lg bg-black focus-within:border-white focus-within:bg-gray-900 transition-all duration-300">
             <Textarea
@@ -831,7 +887,9 @@ export default function EnhancedAIChatPage() {
                 }
               }}
               placeholder={
-                createAssetFlow.active
+                voiceRecognition.isListening
+                  ? "🎤 Listening... Speak now!"
+                  : createAssetFlow.active
                   ? "Enter the requested information..."
                   : "Ask me anything about Story Protocol, create IP assets, or general questions!"
               }
@@ -840,15 +898,51 @@ export default function EnhancedAIChatPage() {
               disabled={loading}
             />
 
-            <Button
-              onClick={handleSendMessage}
-              disabled={!input.trim() || loading}
-              size="lg"
-              className="bg-white hover:bg-gray-200 text-black border-0 px-6 py-3 rounded-lg font-medium transition-all duration-300"
-            >
-              <Send className="h-4 w-4" />
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                onClick={voiceRecognition.isListening ? stopVoiceRecognition : startVoiceRecognition}
+                disabled={loading || !voiceRecognition.isSupported}
+                size="lg"
+                variant="outline"
+                className={`px-3 py-3 rounded-lg border-2 transition-all duration-300 ${
+                  voiceRecognition.isListening
+                    ? "bg-red-500 hover:bg-red-600 border-red-500 text-white animate-pulse"
+                    : "bg-gray-800 hover:bg-gray-700 border-gray-600 text-gray-300 hover:text-white hover:border-gray-500"
+                }`}
+                title={
+                  !voiceRecognition.isSupported
+                    ? "Voice recognition not supported in this browser"
+                    : voiceRecognition.isListening
+                    ? "Stop voice input (Ctrl+Shift+M)"
+                    : "Start voice input (Ctrl+Shift+M)"
+                }
+              >
+                {voiceRecognition.isListening ? (
+                  <MicOff className="h-4 w-4" />
+                ) : (
+                  <Mic className="h-4 w-4" />
+                )}
+              </Button>
+
+              <Button
+                onClick={handleSendMessage}
+                disabled={!input.trim() || loading}
+                size="lg"
+                className="bg-white hover:bg-gray-200 text-black border-0 px-6 py-3 rounded-lg font-medium transition-all duration-300"
+              >
+                <Send className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
+          
+          {/* Voice Input Help Text */}
+          {voiceRecognition.isSupported && !voiceRecognition.isListening && (
+            <div className="mt-2 text-center">
+              <p className="text-xs text-gray-500">
+                💡 Tip: Click the <Mic className="inline h-3 w-3 mx-1" /> microphone or press <kbd className="px-1 py-0.5 bg-gray-800 border border-gray-600 rounded text-xs">Ctrl+Shift+M</kbd> for voice input
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Enhanced Query Suggestions */}
@@ -857,6 +951,12 @@ export default function EnhancedAIChatPage() {
             <div className="flex items-center gap-2">
               <TrendingUp className="h-5 w-5 text-white" />
               <h3 className="text-lg font-semibold text-white">Quick Questions</h3>
+              {voiceRecognition.isSupported && (
+                <div className="flex items-center gap-1 text-xs text-gray-500">
+                  <Mic className="h-3 w-3" />
+                  <span>Ctrl+Shift+M</span>
+                </div>
+              )}
             </div>
             <Button
               onClick={() => setShowAllSuggestions(!showAllSuggestions)}

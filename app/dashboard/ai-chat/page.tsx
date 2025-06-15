@@ -103,21 +103,23 @@ export default function EnhancedAIChatPage() {
       role: "assistant",
       content: "Welcome to Enhanced Story Protocol AI! 🚀",
       htmlContent: `
-        <div class="space-y-8 p-6 max-w-full">
+        <div class="space-y-6">
           <div class="text-center">
-            <div class="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 flex items-center justify-center">
-              <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-white flex items-center justify-center">
+              <svg class="w-8 h-8 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
               </svg>
             </div>
-            <h1 class="text-3xl font-bold text-white mb-3">Enhanced Story Protocol AI</h1>
-            <p class="text-white/70 text-lg">Real-time analytics • Voice input • IP Token calculations • Gaia AI</p>
+            <h1 class="text-2xl font-bold text-white mb-2">Enhanced Story Protocol AI</h1>
+            <p class="text-gray-400">Real-time analytics • Voice input • IP Token calculations • Gaia AI</p>
           </div>
           
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div class="p-6 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-xl border border-blue-500/20">
-              <h3 class="font-semibold text-blue-300 mb-3 text-lg">🎨 IP Asset Operations</h3>
-              <ul class="text-sm text-white/70 space-y-2">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="p-4 bg-black rounded-lg border border-gray-700">
+              <h3 class="font-semibold text-white mb-2 flex items-center gap-2">
+                🎨 IP Asset Operations
+              </h3>
+              <ul class="text-sm text-gray-400 space-y-1">
                 <li>• Create new IP assets</li>
                 <li>• View all assets with rich cards</li>
                 <li>• Get detailed asset information</li>
@@ -125,9 +127,11 @@ export default function EnhancedAIChatPage() {
               </ul>
             </div>
             
-            <div class="p-6 bg-gradient-to-r from-green-500/10 to-emerald-500/10 rounded-xl border border-green-500/20">
-              <h3 class="font-semibold text-green-300 mb-3 text-lg">💰 Advanced Analytics</h3>
-              <ul class="text-sm text-white/70 space-y-2">
+            <div class="p-4 bg-black rounded-lg border border-gray-700">
+              <h3 class="font-semibold text-white mb-2 flex items-center gap-2">
+                💰 Advanced Analytics
+              </h3>
+              <ul class="text-sm text-gray-400 space-y-1">
                 <li>• Today's royalty payments in IP tokens</li>
                 <li>• Highest earning assets</li>
                 <li>• Performance rankings</li>
@@ -135,9 +139,11 @@ export default function EnhancedAIChatPage() {
               </ul>
             </div>
             
-            <div class="p-6 bg-gradient-to-r from-orange-500/10 to-red-500/10 rounded-xl border border-orange-500/20">
-              <h3 class="font-semibold text-orange-300 mb-3 text-lg">🔍 Gaia AI</h3>
-              <ul class="text-sm text-white/70 space-y-2">
+            <div class="p-4 bg-black rounded-lg border border-gray-700">
+              <h3 class="font-semibold text-white mb-2 flex items-center gap-2">
+                🔍 Gaia AI
+              </h3>
+              <ul class="text-sm text-gray-400 space-y-1">
                 <li>• Advanced reasoning</li>
                 <li>• General question answering</li>
                 <li>• Real-time information</li>
@@ -145,9 +151,11 @@ export default function EnhancedAIChatPage() {
               </ul>
             </div>
             
-            <div class="p-6 bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-xl border border-purple-500/20">
-              <h3 class="font-semibold text-purple-300 mb-3 text-lg">🎤 Voice & Features</h3>
-              <ul class="text-sm text-white/70 space-y-2">
+            <div class="p-4 bg-black rounded-lg border border-gray-700">
+              <h3 class="font-semibold text-white mb-2 flex items-center gap-2">
+                🎤 Voice & Features
+              </h3>
+              <ul class="text-sm text-gray-400 space-y-1">
                 <li>• Voice input support</li>
                 <li>• Step-by-step asset creation</li>
                 <li>• Real-time voice recognition</li>
@@ -157,12 +165,12 @@ export default function EnhancedAIChatPage() {
           </div>
           
           <div class="text-center">
-            <p class="text-white/60 text-base mb-6">Try these enhanced queries:</p>
-            <div class="flex flex-wrap gap-3 justify-center">
-              <span class="px-4 py-2 bg-white/10 rounded-full text-sm text-white/80">"Create new IP asset"</span>
-              <span class="px-4 py-2 bg-white/10 rounded-full text-sm text-white/80">"Show today's royalties"</span>
-              <span class="px-4 py-2 bg-white/10 rounded-full text-sm text-white/80">"What is blockchain?"</span>
-              <span class="px-4 py-2 bg-white/10 rounded-full text-sm text-white/80">"Show all IP assets"</span>
+            <p class="text-gray-500 mb-4">Try these enhanced queries:</p>
+            <div class="flex flex-wrap gap-2 justify-center">
+              <span class="px-3 py-1.5 bg-gray-900 rounded-full text-sm text-gray-300 border border-gray-700">"Create new IP asset"</span>
+              <span class="px-3 py-1.5 bg-gray-900 rounded-full text-sm text-gray-300 border border-gray-700">"Show today's royalties"</span>
+              <span class="px-3 py-1.5 bg-gray-900 rounded-full text-sm text-gray-300 border border-gray-700">"What is blockchain?"</span>
+              <span class="px-3 py-1.5 bg-gray-900 rounded-full text-sm text-gray-300 border border-gray-700">"Show all IP assets"</span>
             </div>
           </div>
         </div>
@@ -571,27 +579,23 @@ export default function EnhancedAIChatPage() {
   // Enhanced query suggestions
   const querySuggestions: QuerySuggestion[] = [
     // General Questions
-    { text: "What is blockchain?", category: "General", icon: "🤔", description: "Learn about blockchain technology" },
-    { text: "How does Story Protocol work?", category: "General", icon: "📚", description: "Understanding Story Protocol" },
+    { text: "What is Story Protocol?", category: "General", icon: "📚", description: "Understanding Story Protocol" },
     { text: "What is an IP asset?", category: "General", icon: "💡", description: "Learn about IP assets" },
+    { text: "How do royalties work?", category: "General", icon: "💰", description: "Understanding royalty payments" },
 
     // IP Assets
     { text: "Show all IP assets", category: "Assets", icon: "📋", description: "View all registered IP assets" },
     { text: "Create new IP asset", category: "Assets", icon: "🎨", description: "Register new intellectual property" },
     { text: "Show highest earning assets", category: "Assets", icon: "💎", description: "Most valuable assets by royalties" },
 
-    // Time-based Analytics
-    { text: "Show today's royalties", category: "Today's Data", icon: "💰", description: "Today's royalty payments in IP tokens" },
-    { text: "Show today's transactions", category: "Today's Data", icon: "⚡", description: "Today's blockchain activity" },
-    { text: "Show today's minting fees", category: "Today's Data", icon: "💎", description: "Today's minting costs in IP tokens" },
-
-    // Performance Analytics
-    { text: "Show highest royalty payments", category: "Performance", icon: "📈", description: "Top earning transactions" },
-    { text: "Show top earning assets", category: "Performance", icon: "🏆", description: "Assets by total revenue" },
-    { text: "Show highest transaction volumes", category: "Performance", icon: "📊", description: "Most active assets" },
+    // Analytics
+    { text: "Show today's royalties", category: "Analytics", icon: "💰", description: "Today's royalty payments in IP tokens" },
+    { text: "Show today's transactions", category: "Analytics", icon: "⚡", description: "Today's blockchain activity" },
+    { text: "Show top earning assets", category: "Analytics", icon: "🏆", description: "Assets by total revenue" },
+    { text: "Platform analytics overview", category: "Analytics", icon: "📊", description: "Complete platform statistics" },
   ]
 
-  const displayedSuggestions = showAllSuggestions ? querySuggestions : querySuggestions.slice(0, 18)
+  const displayedSuggestions = showAllSuggestions ? querySuggestions : querySuggestions.slice(0, 6)
   const suggestionsByCategory = displayedSuggestions.reduce(
     (acc, suggestion) => {
       if (!acc[suggestion.category]) acc[suggestion.category] = []
@@ -633,75 +637,95 @@ export default function EnhancedAIChatPage() {
   }
 
   return (
-    <div className="flex flex-col h-full w-full bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white overflow-hidden">
+    <div className="flex flex-col h-full w-full bg-background text-white overflow-hidden">
       {/* Enhanced Header */}
-      <div className="flex justify-between items-center p-6 border-b border-white/10 bg-black/50 backdrop-blur-sm shrink-0">
-        <div className="flex items-center gap-6">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 flex items-center justify-center">
-              <Search className="h-5 w-5 text-white" />
-            </div>
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-white to-white/80 text-transparent bg-clip-text">
-              Enhanced Story Protocol AI
-            </h1>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-              <span className="text-sm text-green-400">Enhanced Mode • IP Tokens • Voice Input</span>
-            </div>
-            {createAssetFlow.active && (
-              <div className="flex items-center gap-2">
-                <CheckCircle className="h-4 w-4 text-blue-400" />
-                <span className="text-sm text-blue-400">Asset Creation Mode</span>
+      <div className="bg-black/80 backdrop-blur-sm border-b border-gray-800 p-6 shrink-0">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <div className="relative">
+              <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center">
+                <Search className="h-6 w-6 text-black" />
               </div>
-            )}
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold text-white">Enhanced Story AI</h1>
+              <div className="flex items-center space-x-2 text-sm">
+                <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                <span className="text-gray-400">Voice • Analytics • Real-time</span>
+                {createAssetFlow.active && (
+                  <>
+                    <span className="text-gray-600">•</span>
+                    <span className="text-white">Asset Creation Mode</span>
+                  </>
+                )}
+              </div>
+            </div>
           </div>
-        </div>
-        <div className="flex items-center gap-3">
-          <Button
-            onClick={testAPI}
-            size="sm"
-            variant="outline"
-            className="text-xs bg-white/5 border-white/20 text-white hover:bg-white/10"
-          >
-            <RefreshCw className="h-3 w-3 mr-1" />
-            Test API
-          </Button>
-          <div className="text-sm text-white/60">Real-Time Data • IP Tokens • Gaia AI</div>
+          <div className="flex items-center space-x-3">
+            <div className="text-right">
+              <div className="text-sm text-gray-500">Messages</div>
+              <div className="text-lg font-semibold text-white">{messages.length}</div>
+            </div>
+            <Button
+              onClick={testAPI}
+              size="sm"
+              variant="outline"
+              className="border-gray-700 text-gray-400 hover:bg-gray-800 hover:text-white"
+            >
+              <RefreshCw className="h-3 w-3 mr-1" />
+              Test API
+            </Button>
+            <Button
+              onClick={() => setMessages([messages[0]])}
+              variant="outline"
+              size="sm"
+              className="border-gray-700 text-gray-400 hover:bg-gray-800 hover:text-white"
+            >
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Reset
+            </Button>
+          </div>
         </div>
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-8 space-y-8">
+      <div className="flex-1 overflow-y-auto p-6 space-y-6">
         {messages.map((message) => (
           <div key={message.id} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
             <div className={`flex max-w-[95%] ${message.role === "user" ? "flex-row-reverse" : "flex-row"}`}>
               <div
-                className={`rounded-full h-12 w-12 flex items-center justify-center shrink-0 ${
-                  message.role === "user" ? "bg-blue-600 ml-4" : "bg-gradient-to-r from-purple-500 to-blue-500 mr-4"
+                className={`rounded-full h-10 w-10 flex items-center justify-center shrink-0 ${
+                  message.role === "user" 
+                    ? "bg-white ml-3" 
+                    : "bg-black border border-gray-700 mr-3"
                 }`}
               >
                 {message.role === "user" ? (
-                  <User className="h-5 w-5 text-white" />
+                  <User className="h-5 w-5 text-black" />
                 ) : (
                   <Search className="h-5 w-5 text-white" />
                 )}
               </div>
               <div
-                className={`py-6 px-8 rounded-2xl overflow-hidden ${
+                className={`py-4 px-6 rounded-lg border ${
                   message.role === "user"
-                    ? "bg-blue-600/20 border border-blue-500/30"
-                    : "bg-white/5 border border-white/10"
+                    ? "bg-white text-black border-gray-300"
+                    : "bg-black border-gray-700"
                 }`}
               >
                 {message.htmlContent ? (
                   <div
-                    className="prose prose-invert max-w-none overflow-x-auto"
+                    className={`prose max-w-none overflow-x-auto ${
+                      message.role === "user" 
+                        ? "prose-black [&_*]:text-black [&_h1]:text-black [&_h2]:text-black [&_h3]:text-black [&_h4]:text-black [&_p]:text-gray-800 [&_ul]:text-gray-800 [&_li]:text-gray-800 [&_strong]:text-black [&_table]:border-gray-300 [&_th]:border-gray-300 [&_td]:border-gray-300 [&_th]:bg-gray-100 [&_code]:bg-gray-100 [&_code]:text-black [&_pre]:bg-gray-100 [&_pre]:text-black"
+                        : "prose-invert [&_*]:text-white [&_h1]:text-white [&_h2]:text-white [&_h3]:text-white [&_h4]:text-white [&_p]:text-gray-200 [&_ul]:text-gray-200 [&_li]:text-gray-200 [&_strong]:text-white [&_table]:border-gray-600 [&_th]:border-gray-600 [&_td]:border-gray-600 [&_th]:bg-gray-800 [&_code]:bg-gray-800 [&_code]:text-gray-200 [&_pre]:bg-gray-800 [&_pre]:text-gray-200"
+                    }`}
                     dangerouslySetInnerHTML={{ __html: message.htmlContent }}
                   />
                 ) : (
-                  <div className="text-white/90 whitespace-pre-wrap text-lg">{message.content}</div>
+                  <div className={`whitespace-pre-wrap ${message.role === "user" ? "text-black" : "text-white"}`}>
+                    {message.content}
+                  </div>
                 )}
                 {renderInputField(message)}
               </div>
@@ -712,14 +736,14 @@ export default function EnhancedAIChatPage() {
         {loading && (
           <div className="flex justify-start">
             <div className="flex flex-row">
-              <div className="rounded-full h-12 w-12 flex items-center justify-center bg-gradient-to-r from-purple-500 to-blue-500 mr-4">
+              <div className="rounded-full h-10 w-10 flex items-center justify-center bg-black border border-gray-700 mr-3">
                 <Search className="h-5 w-5 text-white" />
               </div>
-              <div className="py-6 px-8 rounded-2xl bg-white/5 border border-white/10">
+              <div className="py-4 px-6 rounded-lg bg-black border border-gray-700">
                 <div className="flex space-x-2">
-                  <div className="h-2 w-2 bg-white/60 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
-                  <div className="h-2 w-2 bg-white/60 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
-                  <div className="h-2 w-2 bg-white/60 rounded-full animate-bounce"></div>
+                  <div className="h-2 w-2 bg-white rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+                  <div className="h-2 w-2 bg-white rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+                  <div className="h-2 w-2 bg-white rounded-full animate-bounce"></div>
                 </div>
               </div>
             </div>
@@ -728,10 +752,10 @@ export default function EnhancedAIChatPage() {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Enhanced Input Area with Voice */}
-      <div className="p-8 border-t border-white/10 bg-black/30 backdrop-blur-sm shrink-0">
+      {/* Enhanced Input Area */}
+      <div className="bg-black/80 backdrop-blur-sm border-t border-gray-800 p-6 shrink-0">
         <div className="relative">
-          <div className="flex items-end gap-4 p-6 border border-white/20 rounded-2xl bg-white/5 backdrop-blur-sm focus-within:border-white/40 transition-colors">
+          <div className="flex items-end gap-4 p-4 border border-gray-700 rounded-lg bg-black focus-within:border-white focus-within:bg-gray-900 transition-all duration-300">
             <Textarea
               value={input}
               onChange={(e) => setInput(e.target.value)}
@@ -746,56 +770,68 @@ export default function EnhancedAIChatPage() {
                   ? "Enter the requested information..."
                   : "Ask me anything about Story Protocol, create IP assets, or general questions!"
               }
-              className="flex-1 resize-none border-none outline-none bg-transparent text-white placeholder:text-white/50 max-h-40 min-h-[32px] text-lg"
+              className="flex-1 resize-none border-none outline-none bg-transparent text-white placeholder:text-gray-500 max-h-40 min-h-[32px]"
               rows={1}
               disabled={loading}
             />
-            
-           
 
             <Button
               onClick={handleSendMessage}
               disabled={!input.trim() || loading}
               size="lg"
-              className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white border-0 px-6 py-3 rounded-xl"
+              className="bg-white hover:bg-gray-200 text-black border-0 px-6 py-3 rounded-lg font-medium transition-all duration-300"
             >
               <Send className="h-4 w-4" />
             </Button>
           </div>
         </div>
 
-        {/* Enhanced Working Suggestions */}
-        <div className="mt-6">
-          <div className="flex items-center justify-between mb-4">
-            <span className="text-base text-white/60 flex items-center gap-2">
-              <TrendingUp className="h-4 w-4" />
-              Enhanced Query Examples (IP Token Analytics):
-            </span>
+        {/* Enhanced Query Suggestions */}
+        <div className="mt-8">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-2">
+              <TrendingUp className="h-5 w-5 text-white" />
+              <h3 className="text-lg font-semibold text-white">Quick Questions</h3>
+            </div>
             <Button
               onClick={() => setShowAllSuggestions(!showAllSuggestions)}
               variant="ghost"
               size="sm"
-              className="text-sm text-white/60 hover:text-white"
+              className="text-sm text-gray-400 hover:text-white hover:bg-gray-800 border border-gray-700"
             >
               {showAllSuggestions ? "Show Less" : `Show All (${querySuggestions.length})`}
             </Button>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-6">
             {Object.entries(suggestionsByCategory).map(([category, suggestions]) => (
-              <div key={category}>
-                <div className="text-sm text-white/50 mb-3 font-medium">{category}</div>
-                <div className="flex flex-wrap gap-3">
+              <div key={category} className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <div className="h-px bg-gray-700 flex-1"></div>
+                  <span className="text-sm text-gray-400 font-medium px-3">{category}</span>
+                  <div className="h-px bg-gray-700 flex-1"></div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                   {suggestions.map((suggestion, idx) => (
                     <button
                       key={idx}
                       onClick={() => setInput(suggestion.text)}
                       disabled={loading || createAssetFlow.active}
-                      className="group text-sm py-3 px-4 rounded-lg bg-white/5 hover:bg-white/10 transition-all border border-white/10 text-white/80 hover:text-white hover:border-white/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                      className="group relative text-left p-4 rounded-lg bg-black border border-gray-700 hover:border-white transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg hover:shadow-white/10"
                       title={suggestion.description}
                     >
-                      <span className="text-base">{suggestion.icon}</span>
-                      <span className="truncate max-w-[400px]">{suggestion.text}</span>
+                      <div className="flex items-start gap-3">
+                        <span className="text-lg flex-shrink-0 mt-0.5">{suggestion.icon}</span>
+                        <div className="flex-1 min-w-0">
+                          <div className="text-sm font-medium text-white group-hover:text-white transition-colors">
+                            {suggestion.text}
+                          </div>
+                          <div className="text-xs text-gray-500 mt-1 group-hover:text-gray-400 transition-colors">
+                            {suggestion.description}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg"></div>
                     </button>
                   ))}
                 </div>

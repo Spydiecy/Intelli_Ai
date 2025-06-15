@@ -19,13 +19,13 @@ You are an EXPERT Story Protocol AI Assistant and Analytics HTML Generator. You 
 - Add summary statistics at the top
 -make the icons size small in size very 
 
-## COLOR SCHEME:
-- IP Assets: Blue theme (bg-blue-500/10, border-blue-500/20, text-blue-400)
-- Royalties: Green theme (bg-green-500/10, border-green-500/20, text-green-400)
-- Transactions: Orange theme (bg-orange-500/10, border-orange-500/20, text-orange-400)
-- Minting Fees: Purple theme (bg-purple-500/10, border-purple-500/20, text-purple-400)
-- Performance: Gradient theme (bg-gradient-to-r from-yellow-500/10 to-orange-500/10)
-- Errors: Red theme (bg-red-500/10, border-red-500/20, text-red-400)
+## COLOR SCHEME (BLACK & WHITE THEME):
+- All cards: Black background (bg-black, border-gray-700)
+- Text: White headers (text-white), gray content (text-gray-400)
+- Success states: White background with black text
+- Error states: Dark background with white text
+- Icons: White icons on black backgrounds
+- Hover effects: bg-gray-800 hover states
 
 ## ADVANCED DATA PROCESSING:
 
@@ -112,6 +112,7 @@ interface AgentResponse {
   htmlContent: string
   data?: any
   perplexityResponse?: any
+  requiresCreateAsset?: boolean
 }
 
 interface PerplexityResponse {
@@ -335,6 +336,10 @@ async function callPerplexityAI(prompt: string): Promise<PerplexityResponse> {
   try {
     console.log("Calling Perplexity AI...")
 
+    // Detect if it's a simple query to adjust API parameters
+    const isSimpleQuery = prompt.length < 100 && 
+      /^(what|who|when|where|how|why|is|are|can|will|do|does|define|explain)\b/i.test(prompt.trim())
+
     const options = {
       method: "POST",
       headers: {
@@ -342,9 +347,9 @@ async function callPerplexityAI(prompt: string): Promise<PerplexityResponse> {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        search_mode: "web",
-        reasoning_effort: "high",
-        temperature: 0.2,
+        search_mode: isSimpleQuery ? "web" : "web",
+        reasoning_effort: isSimpleQuery ? "medium" : "high",
+        temperature: isSimpleQuery ? 0.1 : 0.2,
         top_p: 0.9,
         return_images: false,
         return_related_questions: false,
@@ -353,12 +358,14 @@ async function callPerplexityAI(prompt: string): Promise<PerplexityResponse> {
         presence_penalty: 0,
         frequency_penalty: 0,
         web_search_options: {
-          search_context_size: "low",
+          search_context_size: isSimpleQuery ? "minimal" : "low",
         },
         model: "sonar-pro",
         messages: [
           {
-            content: prompt,
+            content: isSimpleQuery ? 
+              `Please provide a brief, direct answer to: ${prompt}. Keep it concise and to the point.` : 
+              prompt,
             role: "user",
           },
         ],
@@ -383,21 +390,110 @@ async function callPerplexityAI(prompt: string): Promise<PerplexityResponse> {
 
 // Generate beautiful HTML for Perplexity response with web results
 function generatePerplexityHTML(perplexityResponse: PerplexityResponse, userQuery: string): string {
-  const { choices, citations, search_results, usage } = perplexityResponse
-  const content = choices[0]?.message?.content || "No response available"
+  const { choices } = perplexityResponse
+  let content = choices[0]?.message?.content || "No response available"
+
+  // Clean and format the content properly
+  content = content.trim()
+
+  // Enhanced logic for detecting simple/short queries that need concise responses
+  const isSimpleQuery = userQuery.length < 60 || 
+    userQuery.split(' ').length < 10 ||
+    /^(what|who|when|where|how|why|define|explain|tell me about)\b/i.test(userQuery.trim()) ||
+    userQuery.includes('?') && userQuery.length < 100 ||
+    /^(is|are|can|will|do|does)\b/i.test(userQuery.trim())
+
+  // For simple queries, provide much more concise responses
+  if (isSimpleQuery) {
+    // Split content into paragraphs and sentences
+    const paragraphs = content.split(/\n\s*\n/).filter(p => p.trim())
+    
+    if (paragraphs.length > 0) {
+      // Take only the first paragraph for very short queries
+      if (userQuery.length < 30) {
+        const sentences = paragraphs[0].split(/\.\s+/)
+        content = sentences.slice(0, 2).join('. ')
+        if (!content.endsWith('.')) content += '.'
+      } 
+      // Take first 2 paragraphs for medium short queries
+      else if (paragraphs.length > 2) {
+        content = paragraphs.slice(0, 2).join('\n\n')
+      }
+    }
+    
+    // Further trim if still too long for very simple queries
+    if (userQuery.length < 20 && content.length > 300) {
+      const sentences = content.split(/\.\s+/)
+      content = sentences.slice(0, 3).join('. ') + '.'
+    }
+  }
+
+  // Convert markdown-style formatting to HTML
+  content = content
+    .replace(/\*\*(.*?)\*\*/g, '<strong class="text-white">$1</strong>')
+    .replace(/(?<!\*)\*([^*]+)\*(?!\*)/g, '<em class="text-gray-300">$1</em>')
+    .replace(/^### (.*$)/gm, '<h3 class="text-lg font-semibold text-white mt-3 mb-2">$1</h3>')
+    .replace(/^## (.*$)/gm, '<h2 class="text-xl font-bold text-white mt-4 mb-2">$1</h2>')
+    .replace(/^# (.*$)/gm, '<h1 class="text-2xl font-bold text-white mt-4 mb-3">$1</h1>')
+    .replace(/^- (.*$)/gm, '<li class="text-gray-200">$1</li>')
+    .replace(/^• (.*$)/gm, '<li class="text-gray-200">$1</li>')
+    .replace(/^\d+\. (.*$)/gm, '<li class="text-gray-200">$1</li>')
+
+  // Wrap consecutive list items in ul tags
+  const lines = content.split('\n')
+  const processedLines: string[] = []
+  let inList = false
+  
+  for (const line of lines) {
+    if (line.includes('<li class="text-gray-200">')) {
+      if (!inList) {
+        processedLines.push('<ul class="list-disc list-inside space-y-1 my-2">')
+        inList = true
+      }
+      processedLines.push(line)
+    } else {
+      if (inList) {
+        processedLines.push('</ul>')
+        inList = false
+      }
+      processedLines.push(line)
+    }
+  }
+  
+  if (inList) {
+    processedLines.push('</ul>')
+  }
+  
+  content = processedLines.join('\n')
+
+  // Convert paragraphs
+  const paragraphs = content.split(/\n\s*\n/).filter(p => p.trim())
+  content = paragraphs
+    .map(p => {
+      p = p.trim()
+      if (p.startsWith('<')) return p
+      return `<p class="text-gray-200 leading-relaxed mb-3">${p}</p>`
+    })
+    .join('')
+
+  // Simple, clean response without sources or extra metadata
+  // For very simple queries, use a more compact layout
+  const isVerySimple = userQuery.length < 30 || 
+    /^(what|who|when|where|is|are)\s/i.test(userQuery.trim())
+  
+  if (isVerySimple && content.length < 200) {
+    return `
+      <div class="bg-gray-900/50 border border-gray-700 rounded-lg p-4">
+        <div class="text-gray-200 leading-relaxed">
+          ${content}
+        </div>
+      </div>
+    `
+  }
 
   return `
-    <div class="space-y-6 p-4">
-      <!-- AI Response -->
-      <div class="p-6 bg-gradient-to-r from-purple-500/10 to-blue-500/10 rounded-xl border border-purple-500/20">
-        <div class="flex items-center gap-2 mb-4">
-          <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
-          </svg>
-          <h2 class="text-xl font-semibold text-purple-300">AI Analysis</h2>
-        </div>
-        <div class="text-white/90 leading-relaxed whitespace-pre-wrap">${content}</div>
-      </div>
+    <div class="prose prose-invert max-w-none">
+      ${content}
     </div>
   `
 }
@@ -410,14 +506,45 @@ export async function enhancedIntelligentAgent(userQuery: string, api: any): Pro
     const intentData = analyzeIntent(userQuery)
     console.log("Enhanced intent analysis:", intentData)
 
-    // Step 2: Check if it's a general query (use Perplexity) or specific data query
+    // Step 2: Check for asset creation first
+    if (intentData.intent === "create_asset") {
+      console.log("Asset creation request detected")
+      return {
+        content: "Let's create a new IP Asset! I'll guide you through the process.",
+        htmlContent: `
+          <div class="space-y-4">
+            <div class="p-6 bg-black border border-gray-700 rounded-lg">
+              <h3 class="text-white font-semibold mb-2">🎨 Create New IP Asset</h3>
+              <p class="text-gray-300 mb-4">I'll help you create and register a new IP asset on Story Protocol. This process involves:</p>
+              <ul class="text-gray-400 space-y-2 ml-4">
+                <li>• Asset name and description</li>
+                <li>• Creator information</li>
+                <li>• Optional image upload</li>
+                <li>• On-chain registration</li>
+              </ul>
+              <p class="text-white mt-4 font-medium">Ready to start? Please provide a name for your IP asset.</p>
+            </div>
+          </div>
+        `,
+        requiresCreateAsset: true,
+        data: {},
+      }
+    }
+
+    // Step 3: Check if it's a general query (use Perplexity) or specific data query
     if (intentData.queryType === "general" || intentData.apis.length === 0) {
       console.log("Using Perplexity AI for general query...")
-      const perplexityResponse = await callPerplexityAI(userQuery)
+      
+      // Use a simple, natural prompt for general queries
+      const simplePrompt = userQuery.length < 100 && !userQuery.includes("Story Protocol") 
+        ? `Please provide a concise, direct answer to: ${userQuery}. Keep the response brief and focused.`
+        : userQuery
+      
+      const perplexityResponse = await callPerplexityAI(simplePrompt)
       const htmlContent = generatePerplexityHTML(perplexityResponse, userQuery)
 
       return {
-        content: `Perplexity AI research complete for: ${userQuery}`,
+        content: "Here's what I found:",
         htmlContent,
         data: {},
         perplexityResponse,
@@ -506,18 +633,17 @@ export async function enhancedIntelligentAgent(userQuery: string, api: any): Pro
 
     // Clean and extract HTML
     htmlContent = htmlContent
-      .replace(/```html\n?/g, "")
-      .replace(/\n?```/g, "")
-      .replace(/```/g, "")
+      .split("```html").join("")
+      .split("```").join("")
       .trim()
 
     // Ensure we have proper HTML structure
     if (!htmlContent.includes("<div")) {
       htmlContent = `
         <div class="space-y-6 p-4">
-          <div class="p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
-            <h3 class="text-blue-300 font-semibold mb-2">Enhanced Response</h3>
-            <p class="text-white/80">${htmlContent}</p>
+          <div class="p-4 bg-black border border-gray-700 rounded-lg">
+            <h3 class="text-white font-semibold mb-2">Enhanced Response</h3>
+            <p class="text-gray-300">${htmlContent}</p>
           </div>
         </div>
       `
@@ -534,7 +660,7 @@ export async function enhancedIntelligentAgent(userQuery: string, api: any): Pro
     console.log("Final enhanced HTML content:", htmlContent)
 
     return {
-      content: `Enhanced analysis complete for: ${userQuery}`,
+      content: "Here's the analysis of your Story Protocol data:",
       htmlContent,
       data: fetchedData,
       perplexityResponse,
@@ -546,7 +672,7 @@ export async function enhancedIntelligentAgent(userQuery: string, api: any): Pro
       content: "I encountered an error processing your request.",
       htmlContent: `
         <div class="space-y-4 p-4">
-          <div class="p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
+          <div class="p-4 bg-black border border-red-700 rounded-lg">
             <div class="flex items-center gap-2 mb-2">
               <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -554,9 +680,9 @@ export async function enhancedIntelligentAgent(userQuery: string, api: any): Pro
               <span class="text-red-400 font-semibold">Perplexity Processing Error</span>
             </div>
             <p class="text-red-300 mb-2">${error.message}</p>
-            <p class="text-red-300/70 text-sm">The Perplexity AI engine encountered an issue. Please try a different query or contact support.</p>
-            <div class="mt-3 p-3 bg-red-500/5 rounded border border-red-500/10">
-              <p class="text-red-300/80 text-xs">Debug info: ${JSON.stringify({ error: error.message, timestamp: new Date().toISOString() })}</p>
+            <p class="text-gray-400 text-sm">The Perplexity AI engine encountered an issue. Please try a different query or contact support.</p>
+            <div class="mt-3 p-3 bg-gray-900 rounded border border-gray-800">
+              <p class="text-gray-500 text-xs">Debug info: ${JSON.stringify({ error: error.message, timestamp: new Date().toISOString() })}</p>
             </div>
           </div>
         </div>

@@ -47,9 +47,9 @@ You are an EXPERT Story Protocol AI Assistant and Analytics HTML Generator. You 
 - Calculate totals and averages
 
 ## DATA FORMATTING:
-- ETH amounts: Always show both wei and ETH formatted
+- ETH amounts: Always show both IP Token Amounts
 - Addresses: Show first 6 and last 4 characters with "..."
-- Dates: Use readable format like "Dec 15, 2024 14:30"
+- Dates: Use readable format .
 - Numbers: Add commas for thousands
 - Percentages: Show with 2 decimal places
 - Rankings: Use 🥇🥈🥉 for top 3, then numbers
@@ -83,6 +83,7 @@ You are an EXPERT Story Protocol AI Assistant and Analytics HTML Generator. You 
 - Show rankings and comparisons
 - Filter by time when requested
 - Calculate totals and averages
+- Do not include any dummy data only use the real one.
 - Use actual data, never placeholders
 - Do not include complete address write short form of address in ..
 - Everything in black theme if any image url comes then show the image also with src of the link given
@@ -385,12 +386,6 @@ function generatePerplexityHTML(perplexityResponse: PerplexityResponse, userQuer
 
   return `
     <div class="space-y-6 p-4">
-      <!-- Header -->
-      <div class="text-center">
-        <h1 class="text-2xl font-bold text-white mb-2">🔍 Perplexity AI Research Results</h1>
-        <p class="text-white/70">Query: "${userQuery}"</p>
-      </div>
-
       <!-- AI Response -->
       <div class="p-6 bg-gradient-to-r from-purple-500/10 to-blue-500/10 rounded-xl border border-purple-500/20">
         <div class="flex items-center gap-2 mb-4">
@@ -401,122 +396,6 @@ function generatePerplexityHTML(perplexityResponse: PerplexityResponse, userQuer
         </div>
         <div class="text-white/90 leading-relaxed whitespace-pre-wrap">${content}</div>
       </div>
-
-      <!-- Usage Stats -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
-          <div class="flex items-center gap-2 mb-2">
-            <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-            </svg>
-            <span class="text-blue-300 font-semibold">Tokens Used</span>
-          </div>
-          <p class="text-white text-2xl font-bold">${usage.total_tokens.toLocaleString()}</p>
-          <p class="text-blue-300/70 text-sm">Total tokens</p>
-        </div>
-
-        <div class="p-4 bg-green-500/10 border border-green-500/20 rounded-lg">
-          <div class="flex items-center gap-2 mb-2">
-            <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-            </svg>
-            <span class="text-green-300 font-semibold">Sources Found</span>
-          </div>
-          <p class="text-white text-2xl font-bold">${search_results.length}</p>
-          <p class="text-green-300/70 text-sm">Web sources</p>
-        </div>
-
-        <div class="p-4 bg-orange-500/10 border border-orange-500/20 rounded-lg">
-          <div class="flex items-center gap-2 mb-2">
-            <svg class="w-5 h-5 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
-            </svg>
-            <span class="text-orange-300 font-semibold">Citations</span>
-          </div>
-          <p class="text-white text-2xl font-bold">${citations.length}</p>
-          <p class="text-orange-300/70 text-sm">References</p>
-        </div>
-      </div>
-
-      <!-- Web Search Results -->
-      ${
-        search_results.length > 0
-          ? `
-      <div class="space-y-4">
-        <h3 class="text-xl font-semibold text-white flex items-center gap-2">
-          <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9v-9m0-9v9"></path>
-          </svg>
-          Web Search Results
-        </h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          ${search_results
-            .map(
-              (result, index) => `
-            <div class="p-4 bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 transition-colors">
-              <div class="flex items-start justify-between mb-2">
-                <span class="text-xs text-white/50 bg-white/10 px-2 py-1 rounded">#${index + 1}</span>
-                ${result.date ? `<span class="text-xs text-white/50">${result.date}</span>` : ""}
-              </div>
-              <h4 class="text-white font-medium mb-2 line-clamp-2">${result.title}</h4>
-              <a 
-                href="${result.url}" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                class="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 text-sm transition-colors"
-              >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
-                </svg>
-                Visit Source
-              </a>
-            </div>
-          `,
-            )
-            .join("")}
-        </div>
-      </div>
-      `
-          : ""
-      }
-
-      <!-- Citations -->
-      ${
-        citations.length > 0
-          ? `
-      <div class="space-y-4">
-        <h3 class="text-xl font-semibold text-white flex items-center gap-2">
-          <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-          </svg>
-          Citations & References
-        </h3>
-        <div class="space-y-2">
-          ${citations
-            .map(
-              (citation, index) => `
-            <div class="flex items-center gap-3 p-3 bg-green-500/5 border border-green-500/10 rounded-lg">
-              <span class="text-green-400 font-mono text-sm">[${index + 1}]</span>
-              <a 
-                href="${citation}" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                class="text-green-300 hover:text-green-200 text-sm transition-colors flex-1 truncate"
-              >
-                ${citation}
-              </a>
-              <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
-              </svg>
-            </div>
-          `,
-            )
-            .join("")}
-        </div>
-      </div>
-      `
-          : ""
-      }
     </div>
   `
 }

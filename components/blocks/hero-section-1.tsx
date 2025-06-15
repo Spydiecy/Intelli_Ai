@@ -167,14 +167,14 @@ export function HeroSection() {
                                 <div className="inset-shadow-2xs ring-background dark:inset-shadow-white/20 bg-background relative mx-auto max-w-6xl overflow-hidden rounded-2xl border p-4 shadow-lg shadow-zinc-950/15 ring-1">
                                     <img
                                         className="bg-background aspect-15/8 relative hidden rounded-2xl dark:block"
-                                        src="/hero.png"
+                                        src="./hero.png"
                                         alt="IntelliAI dashboard screen"
                                         width="2700"
                                         height="1440"
                                     />
                                     <img
                                         className="z-2 border-border/25 aspect-15/8 relative rounded-2xl border dark:hidden"
-                                        src="/hero.png"
+                                        src="./hero.png"
                                         alt="IntelliAI dashboard screen"
                                         width="2700"
                                         height="1440"
@@ -332,7 +332,7 @@ export function HeroSection() {
                             
                             <div className="rounded-xl border p-4">
                                 <img 
-                                    src="/ai.png" 
+                                    src="https://raw.githubusercontent.com/Spydiecy/Intelli_Ai/refs/heads/main/public/ai.png?token=GHSAT0AAAAAAC3HREOVX5C2YVJGJTP5PTM62COYUAA" 
                                     alt="IntelliAI Technology" 
                                     className="rounded-lg w-full object-contain mx-auto" 
                                 />

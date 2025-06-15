@@ -57,8 +57,8 @@ export default function SwapPage() {
       setSupportedChains(chains)
 
       // Set Story Protocol as default from chain and Ethereum as to chain
-      const storyChain = chains.find((c) => c.chainId === STORY_CHAIN_ID)
-      const ethChain = chains.find((c) => c.chainId === 1)
+      const storyChain = chains.find((c:any) => c.chainId === STORY_CHAIN_ID)
+      const ethChain = chains.find((c:any) => c.chainId === 1)
 
       if (storyChain) {
         setFromChain(storyChain)
@@ -87,13 +87,13 @@ export default function SwapPage() {
 
         if (fromTokensList.length > 0 && !fromToken) {
           // Prefer native token (IP for Story)
-          const nativeToken = fromTokensList.find((t) => t.isNative)
+          const nativeToken = fromTokensList.find((t:any) => t.isNative)
           setFromToken(nativeToken || fromTokensList[0])
         }
 
         if (toTokensList.length > 0 && !toToken) {
           // Prefer native token (ETH for Ethereum)
-          const nativeToken = toTokensList.find((t) => t.isNative)
+          const nativeToken = toTokensList.find((t:any) => t.isNative)
           setToToken(nativeToken || toTokensList[0])
         }
       } catch (error) {
@@ -210,8 +210,8 @@ export default function SwapPage() {
       }
 
       // Calculate fees from estimation
-      const protocolFeeDetail = swapTransaction.estimation.costsDetails?.find((c) => c.type === "protocolFee")
-      const solverFeeDetail = swapTransaction.estimation.costsDetails?.find((c) => c.type === "solverFee")
+      const protocolFeeDetail = swapTransaction.estimation.costsDetails?.find((c:any) => c.type === "protocolFee")
+      const solverFeeDetail = swapTransaction.estimation.costsDetails?.find((c:any) => c.type === "solverFee")
 
       const protocolFeeAmount = protocolFeeDetail
         ? debridgeApi.formatAmount(protocolFeeDetail.amountIn, fromToken.decimals)

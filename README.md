@@ -1,252 +1,298 @@
 # IntelliAI ✨
-**Your AI-powered platform for Story Protocol IP Asset management with Multi-Chain Wallet Support**
-https://intelliai.vercel.app/
+**AI-Powered Story Protocol IP Asset Management Platform**
 
-![IntelliAI Landing Page](https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-LW61UbVGHx08UdwYCJrymJnjhEBcP1.png)
-[![Twitter Follow](https://img.shields.io/twitter/follow/IntelliAI_platform?style=social)](https://x.com/IntelliAI_platform)
-[![Story Protocol](https://img.shields.io/badge/Built%20on-Story%20Protocol-FF6B6B?style=flat)](https://storyprotocol.xyz/)
-[![Tomo Wallet](https://img.shields.io/badge/Powered%20by-Tomo%20Wallet-4ECDC4?style=flat)](https://tomo.inc/)
-[![deBridge](https://img.shields.io/badge/Cross--Chain-deBridge-8B5CF6?style=flat)](https://debridge.finance/)
-[![Web3](https://img.shields.io/badge/Powered%20by-Story%20APIs-4ECDC4?style=flat)](https://api.storyapis.com)
+[![Live Demo](https://img.shields.io/badge/🚀-Live%20Demo-blue?style=for-the-badge)](https://intelliai.vercel.app/)
+[![Story Protocol](https://img.shields.io/badge/Built%20on-Story%20Protocol-FF6B6B?style=flat-square)](https://storyprotocol.xyz/)
+[![Tomo Wallet](https://img.shields.io/badge/Powered%20by-Tomo%20Wallet-4ECDC4?style=flat-square)](https://tomo.inc/)
+[![deBridge](https://img.shields.io/badge/Cross--Chain-deBridge-8B5CF6?style=flat-square)](https://debridge.finance/)
 
-## Overview 🌐
+> *Transforming intellectual property management through AI-powered insights and blockchain innovation*
 
-IntelliAI is an intelligent IP asset management platform that harnesses the power of artificial intelligence and Story Protocol's innovative IP infrastructure to transform intellectual property management. As your personal IP management assistant, IntelliAI simplifies complex IP operations, provides insights into licensing opportunities, and helps you navigate the emerging world of programmable IP assets.
+---
 
-Built for the next generation of creators, developers, and IP holders, IntelliAI represents the convergence of AI technology and blockchain-based intellectual property management on Story Protocol. **Now featuring seamless multi-chain wallet integration powered by Tomo Wallet's cutting-edge technology and cross-chain bridging capabilities through deBridge Protocol's advanced infrastructure.**
+## 🎯 What is IntelliAI?
 
-## 🏆 Hackathon Bounty Features
+IntelliAI is a next-generation platform that revolutionizes how creators and businesses manage intellectual property assets on Story Protocol. By combining advanced AI capabilities with blockchain technology, we provide an intuitive, powerful, and secure environment for IP asset creation, management, and monetization.
 
-### 🚀 **Tomo Wallet Integration** - *Featured Bounty*
-IntelliAI integrates **Tomo Wallet's EVM Kit** for seamless multi-chain wallet connectivity:
+### 🌟 Key Value Propositions
 
-- **Universal Wallet Support**: MetaMask, Rainbow, WalletConnect, and 20+ wallets
-- **Social Sign In**: Supports walletless sign in with google, X, etc...
-- **One-Click Connection**: Instant wallet authentication across all networks
-- **Enterprise Security**: Non-custodial with industry-standard encryption
-- **Mobile Optimized**: Perfect experience on all devices
-
-### 🌉 **deBridge Cross-Chain Integration** - *Featured Bounty*
-IntelliAI integrates **deBridge Protocol** for cross-chain token bridging:
-
-- **Story Protocol Native**: Optimized for Story Protocol
-- **Multi-Chain Support**: Bridge between Story, Ethereum, Polygon, Arbitrum, Optimism
-- **DLN Technology**: Decentralized liquidity network with competitive rates
-- **Real-Time Tracking**: Order monitoring with unique IDs and status updates
-- **Transparent Fees**: Clear breakdown of protocol and solver fees
+- **🤖 AI-First Approach**: Intelligent IP asset creation and management with voice input support
+- **🔗 Seamless Integration**: Native Story Protocol integration with real-time blockchain data
+- **💼 Multi-Chain Ready**: Powered by Tomo Wallet for universal wallet connectivity
+- **🌉 Cross-Chain Bridge**: deBridge integration for seamless token transfers
+- **📊 Real-Time Analytics**: Live IP token pricing and comprehensive asset tracking
+- **🎙️ Voice Interface**: Hands-free IP management with advanced speech recognition
 
 ---
 
 ## 🚀 Core Features
 
-### 🤖 AI-Powered IP Intelligence
-- Advanced algorithms provide insights into IP asset performance and licensing opportunities
-- Real-time IP market analysis with intelligent recommendations
-- AI chat interface with integrated IP asset data visualization
+### 🤖 AI-Powered IP Assistant
+- **Smart Chat Interface**: Natural language interaction for IP asset queries and creation
+- **Voice Input Support**: Hands-free operation with `Ctrl+Shift+M` keyboard shortcut
+- **Intelligent Responses**: AI-generated insights using Perplexity and Gemini models
+- **Auto-Send Voice**: Speech-to-text with automatic message transmission
+- **Contextual Understanding**: Wallet-aware responses using connected user data
 
-### 📋 Comprehensive IP Asset Management
-- Browse and explore IP assets registered on Story Protocol
-- Real-time IP asset tracking and performance metrics
-- Detailed IP asset information including metadata, licensing terms, and ancestry
+### 💰 Advanced Analytics Dashboard
+- **Real-Time IP Token Pricing**: Live price data from Coinbase API integration
+- **Performance Metrics**: Comprehensive tracking of IP asset performance
+- **Revenue Analytics**: Minting fees, royalties, and transaction monitoring
+- **Interactive Charts**: Responsive data visualization with trend analysis
+- **Multi-Chain Data**: Aggregated insights across supported blockchain networks
 
-### 💰 Minting Fees & Royalty Tracking
-- Monitor licensing minting fees across the Story Protocol ecosystem
-- Track royalty distributions and revenue streams
-- Comprehensive fee analysis with pagination and filtering
+### 🔗 Story Protocol Integration
+- **Native IP Asset Creation**: Streamlined asset registration with metadata management
+- **Licensing Management**: Track terms, conditions, and revenue sharing
+- **Relationship Mapping**: Visualize IP asset hierarchies and derivatives
+- **Real-Time Synchronization**: Live blockchain data from Story Protocol APIs
+- **Comprehensive Search**: Advanced filtering and discovery mechanisms
 
-### 🔗 IP Asset Relationships
-- Visualize IP asset hierarchies and derivative relationships
-- Track parent-child relationships between IP assets
-- Explore IP asset ancestry and descendant trees
+### 💼 Wallet & Bridge Infrastructure
 
-### 📊 License Management
-- View and analyze IP licensing terms and conditions
-- Track commercial usage rights and revenue sharing
-- Monitor licensing policies and arbitration settings
+#### Tomo Wallet Integration
+- **Universal Compatibility**: Support for 20+ wallets (MetaMask, Rainbow, WalletConnect)
+- **One-Click Connection**: Seamless authentication across all networks
+- **Multi-Chain Support**: Ethereum, Polygon, Optimism, Arbitrum, Base
+- **Social Sign-In**: Walletless authentication with Google, X, and more
+- **Enterprise Security**: Non-custodial with industry-standard encryption
 
-### 🎯 Story Protocol Integration
-- Direct integration with Story Protocol APIs
-- Real-time blockchain data from Story testnet
-- Native support for IP asset registration and management
-- Interactive candlestick charts with market data
+#### deBridge Cross-Chain Bridge
+- **Story Protocol Optimized**: Native token bridging for IP ecosystem
+- **DLN Technology**: Decentralized liquidity network with competitive rates
+- **Real-Time Tracking**: Order monitoring with unique IDs and status updates
+- **Multi-Chain Coverage**: Bridge between major EVM networks
+- **Transparent Fees**: Clear breakdown of protocol and solver costs
 
-### ⚡ Intelligent Data Processing
-- Sophisticated filtering mechanisms for IP asset discovery
-- Smart pagination for large datasets
-- Real-time data synchronization with Story Protocol
+---
 
-### 🔗 Cross-Chain IP Discovery
-- Seamless operation across Story Protocol and compatible networks
-- Multi-chain IP asset exploration and management
-- Cross-platform IP licensing opportunities
+## 🎙️ Voice Interface Innovation
 
-### 💼 Advanced Wallet Integration
-- **Tomo Wallet EVM Kit**: Multi-chain wallet support (20+ wallets)
-- **One-Click Connection**: MetaMask, Rainbow, WalletConnect integration
-- **Multi-Chain Ready**: Ethereum, Polygon, Optimism, Arbitrum, Base
-- **Enterprise Security**: Non-custodial with real-time balance tracking
+IntelliAI features cutting-edge voice recognition technology for hands-free IP management:
 
-### 🌉 Cross-Chain Bridging
-- **deBridge Protocol**: Professional cross-chain infrastructure
-- **Story Protocol Native**: Optimized token transfers and order tracking
-- **DLN Technology**: Decentralized liquidity with competitive rates
-- **Auto Discovery**: Real-time token detection across networks
+### Voice Input Capabilities
+- **Speech-to-Text**: Advanced recognition with auto-transcription
+- **Smart Auto-Send**: Automatic message transmission after speech completion
+- **Visual Feedback**: Real-time listening indicators with animated status
+- **Keyboard Shortcuts**: `Ctrl+Shift+M` (Windows/Linux) or `Cmd+Shift+M` (Mac)
+- **Error Handling**: Graceful fallback with browser compatibility detection
 
-## 📱 Screenshots
+### User Experience
+- **Animated Status Indicators**: Pulsing microphone with sound wave effects
+- **Contextual Placeholders**: Dynamic input hints based on listening state
+- **Accessibility Support**: Full keyboard navigation and screen reader compatibility
+- **Mobile Optimized**: Touch-friendly voice activation on all devices
 
-### IP Asset Dashboard
-![IntelliAI Dashboard](https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-lkFuL1NaBGSI0c7Hs5spClWbNIPFHi.png)
-*Comprehensive IP asset management with real-time Story Protocol data*
+---
 
-### Minting Fees Interface
-![IntelliAI Fees](https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-yheZLjFSiOgbBAhKkYn8Su9G2RXpMW.png)
-*Detailed minting fee tracking with advanced filtering and pagination*
+## �️ Technical Architecture
 
-## 🔧 Technical Architecture
+### Frontend Stack
+```typescript
+Next.js 15          // React framework with App Router
+React 19            // Latest React with concurrent features
+TypeScript          // Type-safe development
+Tailwind CSS        // Utility-first styling
+Shadcn/UI          // Modern component library
+```
 
-IntelliAI employs a robust technical foundation designed for performance, security, and exceptional user experience in the IP management space:
+### AI & Integration Layer
+```typescript
+Perplexity AI       // Advanced natural language processing
+Gemini AI           // Google's multimodal AI capabilities
+Speech Recognition  // Native browser voice input API
+Coinbase API        // Real-time cryptocurrency pricing
+Story Protocol APIs // Blockchain IP asset data
+```
 
-- **Frontend**: Next.js 15 with React 19 and Tailwind CSS
-- **AI Engine**: Custom-trained models with IP analysis algorithms
-- **Blockchain**: Story Protocol APIs for IP asset data and transactions
-- **Wallet**: Tomo EVM Kit for multi-chain wallet connectivity
-- **Bridge**: deBridge Protocol for cross-chain token transfers
-- **Multi-Chain**: Wagmi + Viem for blockchain interactions
-- **State Management**: React Query for data fetching and caching
+### Blockchain Infrastructure
+```typescript
+Wagmi + Viem        // Ethereum interaction libraries
+Tomo EVM Kit        // Multi-chain wallet connectivity
+deBridge SDK        // Cross-chain bridging protocol
+Story Protocol SDK  // IP asset management
+Web3 Modal          // Wallet connection interface
+```
 
-## 🎯 Key Features
+### State Management & Performance
+```typescript
+React Query         // Data fetching and caching
+Zustand            // Lightweight state management
+React Hook Form    // Form state and validation
+Recharts           // Data visualization
+Framer Motion      // Smooth animations
+```
 
-### Real-Time IP Data Integration
-- **Live IP Assets**: Instant updates of registered IP assets on Story Protocol
-- **Licensing Data**: Real-time licensing terms and minting fee information
-- **Relationship Mapping**: Interactive visualization of IP asset hierarchies
-- **Portfolio Tracking**: Comprehensive overview of your IP asset holdings
+---
 
-### AI-Powered IP Assistant
-- Intelligent IP asset recommendations based on market analysis
-- Natural language queries about IP performance and licensing opportunities
-- Integration with Story Protocol data for comprehensive IP insights
-- Personalized IP management strategies and optimization advice
+## 🌟 User Journey
 
-### Story Protocol Functionality
-- **IP Asset Discovery**: Explore registered IP assets with advanced filtering
-- **Licensing Management**: Track and analyze licensing terms and fees
-- **Ancestry Tracking**: Visualize IP asset relationships and derivative works
-- **Revenue Analytics**: Monitor minting fees and royalty distributions
+### 1. **Connect & Authenticate**
+- Choose from 20+ supported wallets via Tomo integration
+- Automatic network detection and switching
+- Secure, non-custodial connection
 
-### Story APIs Integration
-- Direct access to Story Protocol's comprehensive IP database
-- Advanced IP asset search and filtering capabilities
-- Real-time IP asset metadata and licensing information
-- Professional-grade IP management tools and analytics
+### 2. **Explore IP Ecosystem**
+- Browse Story Protocol IP assets with advanced filtering
+- Real-time market data and pricing information
+- AI-powered asset recommendations
 
-## 💡 Strategic Use Cases
+### 3. **Create IP Assets**
+- Voice-guided asset creation process
+- Wallet-aware metadata assignment
+- Automated blockchain registration
 
-### IP Asset Discovery
-Deploy sophisticated search algorithms to discover and analyze IP assets on Story Protocol with AI-powered insights.
+### 4. **Manage & Monitor**
+- Track asset performance and royalty streams
+- Cross-chain portfolio management
+- AI insights for optimization
 
-### Licensing Optimization
-Identify optimal licensing opportunities and track revenue performance across your IP asset portfolio.
+### 5. **Bridge & Transfer**
+- Cross-chain token movements via deBridge
+- Real-time transaction tracking
+- Transparent fee structure
 
-### IP Portfolio Management
-Implement systematic IP asset management strategies with AI-optimized recommendations for licensing and monetization.
+---
 
-### Derivative Tracking
-Utilize Story Protocol's relationship mapping to track derivative works and understand IP asset genealogy.
+## 🎯 Innovation Highlights
 
-### Revenue Analytics
-Maintain comprehensive tracking of licensing fees, royalties, and IP-related revenue streams across your portfolio.
+### AI Integration
+- **Multi-Model Approach**: Combining Perplexity and Gemini for comprehensive AI capabilities
+- **Contextual Intelligence**: Wallet-aware responses with personalized insights
+- **Voice-First Design**: Pioneering speech interface for blockchain applications
+- **Real-Time Processing**: Instant AI responses with live blockchain data
+
+### Blockchain Innovation
+- **Story Protocol Focus**: Purpose-built for IP asset management
+- **Multi-Chain Architecture**: Seamless operation across EVM networks
+- **Real-Time Synchronization**: Live data feeds from multiple blockchain sources
+- **User-Centric Design**: Simplified complexity without sacrificing functionality
+
+### User Experience
+- **Zero Learning Curve**: Intuitive interface for both Web3 natives and newcomers
+- **Accessibility First**: Voice control, keyboard shortcuts, and screen reader support
+- **Performance Optimized**: Sub-second response times with efficient caching
+- **Mobile Ready**: Responsive design optimized for all device types
+
+---
 
 ## 🚀 Getting Started
 
 ### Prerequisites
-- **Modern Web Browser**: Chrome, Firefox, Safari, or Edge
-- **Web3 Wallet**: Any EVM-compatible wallet (MetaMask, Rainbow, Trust Wallet, etc.)
-- **Internet Connection**: For real-time IP data access and wallet connectivity
+- Modern web browser (Chrome, Firefox, Safari, Edge)
+- EVM-compatible wallet or social login credentials
+- Internet connection for real-time data
 
-### Quick Start with Tomo Wallet Integration
-1. **🔗 Connect Your Wallet**: 
-   - Click the sleek "Connect Wallet" button in the top navigation
-   - Choose from 20+ supported wallets including MetaMask, Rainbow, WalletConnect
-   - Enjoy one-click connection with Tomo's seamless integration
-   
-2. **🌐 Multi-Chain Ready**: 
-   - Automatically works with Ethereum, Polygon, Optimism, Arbitrum, and Base
-   - Smart chain detection for optimal performance
-   - No manual network switching required
-   
-3. **📋 Explore IP Assets**: 
-   - Browse registered IP assets on Story Protocol with advanced filtering
-   - Real-time data synchronization across all supported chains
-   
-4. **💰 Track Licensing**: 
-   - Monitor minting fees and licensing opportunities across the ecosystem
-   - Multi-chain fee tracking and analytics
-   
-5. **🤖 Chat with AI**: 
-   - Ask questions and get personalized IP management insights
-   - AI-powered analysis with real-time blockchain data
-   
-6. **🔍 Analyze Relationships**: 
-   - Explore IP asset hierarchies and derivative relationships
-   - Cross-chain IP asset discovery and management
+### Quick Start Guide
 
-### 🎯 Tomo Wallet Benefits for Users
-- **Zero Setup Friction**: Connect any wallet instantly without configuration
-- **Universal Access**: Works with your existing favorite wallet
-- **Mobile Perfect**: Flawless mobile experience on any device
-- **Secure & Private**: Non-custodial with enterprise-grade security
-- **Future-Proof**: Ready for the multi-chain Web3 ecosystem
+1. **Visit [IntelliAI Dashboard](https://intelliai.vercel.app/)**
 
-## 🏆 Innovation Focus
-IntelliAI represents the cutting edge of IP management technology, showcasing innovative solutions for the emerging programmable IP economy. The project demonstrates the potential of combining AI technology with blockchain-based IP infrastructure to create next-generation IP management experiences.
+2. **Connect Your Wallet**
+   - Click "Connect Wallet" in the header
+   - Choose your preferred wallet or social login
+   - Automatic network configuration
 
-**Our Tomo Wallet integration exemplifies this innovation**, providing users with:
-- **Seamless Multi-Chain Access**: Breaking down barriers between different blockchain networks
-- **Universal Wallet Compatibility**: Supporting the entire Web3 wallet ecosystem
-- **Enterprise-Grade UX**: Professional user experience that rivals traditional fintech apps
-- **Developer-First Approach**: Clean, maintainable code with excellent documentation
+3. **Explore AI Chat**
+   - Use voice input with `Ctrl+Shift+M`
+   - Ask questions about IP assets or Story Protocol
+   - Experience real-time AI responses
 
-## 👨‍💻 Developer
+4. **Create IP Assets**
+   - Navigate to AI Chat and say "Create new IP asset"
+   - Follow the guided creation process
+   - Your connected wallet is automatically linked
 
-Passionate about building the future of intellectual property management through innovative technology solutions. Specializing in AI integration, blockchain development, and IP-focused user experience design.
+5. **Monitor Analytics**
+   - View real-time IP token pricing
+   - Track your asset performance
+   - Access cross-chain insights
 
-## 🔗 Links & Resources
+---
 
+## 🎉 Hackathon Achievements
+
+### Tomo Wallet Integration Excellence
+- ✅ Universal wallet support (20+ wallets)
+- ✅ Social authentication integration
+- ✅ Multi-chain connectivity
+- ✅ Enterprise-grade security
+- ✅ Mobile optimization
+
+### deBridge Integration Success
+- ✅ Cross-chain token bridging
+- ✅ Real-time order tracking
+- ✅ Transparent fee structure
+- ✅ DLN technology implementation
+- ✅ Story Protocol optimization
+
+### Innovation Highlights
+- ✅ First AI voice interface for IP management
+- ✅ Real-time IP token pricing integration
+- ✅ Wallet-aware AI responses
+- ✅ Comprehensive Story Protocol integration
+- ✅ Professional UX/UI design
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions from the community! Please read our [Contributing Guidelines](CONTRIBUTING.md) and [Code of Conduct](CODE_OF_CONDUCT.md).
+
+### Development Workflow
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+---
+
+## 📞 Support & Community
+
+- **Documentation**: [IntelliAI Docs](https://intelliai.vercel.app/docs)
 - **Twitter/X**: [@IntelliAI_platform](https://x.com/IntelliAI_platform)
-- **Live Demo**: [Launch Dashboard](https://intelliai.vercel.app/)
-- **Story Protocol**: [Official Documentation](https://docs.storyprotocol.xyz/)
-- **Story APIs**: [API Documentation](https://api.storyapis.com)
-- **Tomo Wallet**: [Official Website](https://tomo.inc/)
-- **deBridge**: [Cross-Chain Protocol](https://debridge.finance/)
+- **Discord**: [Join our community](https://discord.gg/intelliai)
+- **Email**: support@intelliai.com
 
-## 🤝 Acknowledgements
+---
 
-- **Tomo Inc.** for multi-chain wallet infrastructure and seamless developer experience
-- **deBridge** for cross-chain bridging protocol and comprehensive API suite
-- **Story Protocol Foundation** for revolutionary IP infrastructure and developer tools
-- **Story APIs Team** for comprehensive IP management API ecosystem
-- **Open Source Contributors** for valuable contributions to the Web3 ecosystem
+## 🙏 Acknowledgments
+
+Special thanks to our technology partners:
+
+- **[Tomo Inc.](https://tomo.inc/)** - Revolutionary multi-chain wallet infrastructure
+- **[deBridge](https://debridge.finance/)** - Advanced cross-chain bridging protocol
+- **[Story Protocol](https://storyprotocol.xyz/)** - Innovative IP infrastructure
+- **[Perplexity AI](https://perplexity.ai/)** - Advanced AI reasoning capabilities
+- **[Google Gemini](https://gemini.google.com/)** - Multimodal AI technology
+
+---
 
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
+---
+
 ## 🚀 Future Roadmap
 
-- [ ] Advanced AI IP analysis and recommendations
-- [ ] Mobile application for IP management
-- [ ] Multi-chain IP asset support
-- [ ] Social IP collaboration features
-- [ ] Advanced IP analytics dashboard
-- [ ] Enterprise IP management tools
-- [ ] IP licensing marketplace integration
-- [ ] Automated royalty distribution
+- [ ] **Mobile Native App** - iOS and Android applications
+- [ ] **Advanced AI Models** - Custom IP-focused training
+- [ ] **Social Features** - Community IP collaboration
+- [ ] **Enterprise Tools** - Business-grade IP management
+- [ ] **API Marketplace** - Third-party integrations
+- [ ] **Global Localization** - Multi-language support
 
 ---
 
-**Built with ❤️ for the IP creator community**
+<div align="center">
 
-*Transforming the future of intellectual property management, one IP asset at a time.*
+**Built with ❤️ for the future of intellectual property**
+
+*Empowering creators, protecting innovation, and building the decentralized IP economy*
+
+[🚀 Launch IntelliAI](https://intelliai.vercel.app/) | [📖 Documentation](https://intelliai.vercel.app/docs) | [🐦 Follow Us](https://x.com/IntelliAI_platform)
+
+</div>
 ```
 

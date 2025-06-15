@@ -2,6 +2,7 @@
 **AI-Powered Story Protocol IP Asset Management Platform**
 
 [![Live Demo](https://img.shields.io/badge/🚀-Live%20Demo-blue?style=for-the-badge)](https://intelli-ai-self.vercel.app/)
+[![Pitch Deck](https://img.shields.io/badge/📊-Pitch%20Deck-6A4C93?style=for-the-badge)](https://drive.google.com/file/d/1QQLDq7BK3bZSyaH07PbSn4cBbnLsXEUH/view?usp=sharing)
 [![Story Protocol](https://img.shields.io/badge/Built%20on-Story%20Protocol-FF6B6B?style=flat-square)](https://storyprotocol.xyz/)
 [![Tomo Wallet](https://img.shields.io/badge/Powered%20by-Tomo%20Wallet-4ECDC4?style=flat-square)](https://tomo.inc/)
 [![deBridge](https://img.shields.io/badge/Cross--Chain-deBridge-8B5CF6?style=flat-square)](https://debridge.finance/)

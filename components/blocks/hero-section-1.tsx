@@ -139,7 +139,7 @@ export function HeroSection() {
                                         size="lg"
                                         variant="ghost"
                                         className="h-10.5 rounded-xl px-5">
-                                        <Link href="#link">
+                                        <Link href="https://youtu.be/oRdECQ_X_24">
                                             <span className="text-nowrap">Watch Video</span>
                                         </Link>
                                     </Button>

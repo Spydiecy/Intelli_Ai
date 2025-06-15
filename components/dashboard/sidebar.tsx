@@ -72,8 +72,8 @@ export function DashboardSidebar({ open, setOpen }: DashboardSidebarProps) {
       "fixed h-full bg-background/50 border-r border-white/10 transition-all duration-300 z-20 backdrop-blur-sm shadow-lg",
       open ? "w-64" : "w-16"
     )}>
-      <div className="flex flex-col h-full pr-2">
-        <div className="flex items-center justify-between p-5 border-b border-white/10 mr-2">
+      <div className="flex flex-col h-full">
+        <div className="flex items-center justify-between p-5 border-b border-white/10">
           <div className={cn("flex items-center gap-2", !open && "hidden")}>
             <span className="text-xl font-bold bg-gradient-to-b from-white to-white/70 text-transparent bg-clip-text">IntelliAI</span>
             <div className="px-2 py-0.5 bg-orange-500/20 border border-orange-500/40 rounded-full text-xs text-orange-300 font-medium">
@@ -88,7 +88,7 @@ export function DashboardSidebar({ open, setOpen }: DashboardSidebarProps) {
           </button>
         </div>
         
-        <div className="flex-1 py-6 overflow-y-auto scrollbar-hide mr-2">
+        <div className="flex-1 py-6 overflow-y-auto scrollbar-hide">
           <nav className="px-3 space-y-1">
             {routes.map((route) => (
               <Link
@@ -121,7 +121,7 @@ export function DashboardSidebar({ open, setOpen }: DashboardSidebarProps) {
           </nav>
         </div>
         
-        <div className="p-4 border-t border-white/10 mr-2">
+        <div className="p-4 border-t border-white/10">
           <Link href="/" className={cn(
             "flex items-center px-3 py-3 text-sm text-white/60 rounded-lg transition-all duration-200 hover:bg-white/5 cursor-pointer group relative", 
             !open && "justify-center"

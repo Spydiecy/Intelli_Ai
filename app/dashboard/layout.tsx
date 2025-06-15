@@ -50,14 +50,14 @@ export default function DashboardLayout({
           "flex-1 transition-all duration-300 min-h-screen",
           sidebarOpen ? "ml-64" : "ml-16"
         )}>
-          <div className="sticky top-0 z-10 backdrop-blur-sm bg-black/30 border-b border-white/10 py-3 px-6 mr-6">
+          <div className="sticky top-0 z-10 backdrop-blur-sm bg-black/30 border-b border-white/10 py-4 px-6 mr-8 mb-4">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-medium text-white/90">{getPageName()}</h2>
               <ConnectWalletButton />
             </div>
           </div>
           
-          <main className="mx-auto pl-2 mr-6 ">
+          <main className="mx-auto pl-6 pr-8">
             {children}
           </main>
         </div>

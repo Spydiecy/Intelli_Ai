@@ -1,7 +1,7 @@
 # IntelliAI ✨
 **AI-Powered Story Protocol IP Asset Management Platform**
 
-[![Live Demo](https://img.shields.io/badge/🚀-Live%20Demo-blue?style=for-the-badge)](https://intelliai.vercel.app/)
+[![Live Demo](https://img.shields.io/badge/🚀-Live%20Demo-blue?style=for-the-badge)](https://intelli-ai-self.vercel.app/)
 [![Story Protocol](https://img.shields.io/badge/Built%20on-Story%20Protocol-FF6B6B?style=flat-square)](https://storyprotocol.xyz/)
 [![Tomo Wallet](https://img.shields.io/badge/Powered%20by-Tomo%20Wallet-4ECDC4?style=flat-square)](https://tomo.inc/)
 [![deBridge](https://img.shields.io/badge/Cross--Chain-deBridge-8B5CF6?style=flat-square)](https://debridge.finance/)
@@ -121,6 +121,200 @@ Zustand            // Lightweight state management
 React Hook Form    // Form state and validation
 Recharts           // Data visualization
 Framer Motion      // Smooth animations
+```
+
+---
+
+## 📊 Workflow Diagrams
+
+### 🔄 Complete Platform Architecture
+
+```mermaid
+graph TD
+    A[👤 User] --> B[🌐 IntelliAI Frontend]
+    B --> C[🎙️ Voice Interface]
+    B --> D[💼 Tomo Wallet]
+    B --> E[🤖 AI Engine]
+    B --> F[📊 Dashboard]
+    
+    C --> G[🎵 Speech Recognition]
+    G --> H[📝 Text Processing]
+    H --> E
+    
+    D --> I[🔗 20+ Wallets]
+    D --> J[🌉 Multi-Chain]
+    
+    E --> K[🧠 Perplexity AI]
+    E --> L[💎 Gemini AI]
+    E --> M[⚡ Story Protocol APIs]
+    
+    F --> N[💰 Real-time Pricing]
+    F --> O[📈 Analytics]
+    F --> P[🎯 Asset Management]
+    
+    M --> Q[🏗️ Story Protocol Blockchain]
+    J --> R[🌉 deBridge Protocol]
+    R --> S[🔗 Cross-Chain Networks]
+    
+    style A fill:#4ECDC4
+    style B fill:#FF6B6B
+    style E fill:#8B5CF6
+    style Q fill:#FFD93D
+```
+
+### 🎙️ Voice Input Workflow
+
+```mermaid
+sequenceDiagram
+    participant U as 👤 User
+    participant V as 🎙️ Voice Interface
+    participant S as 🎵 Speech Recognition
+    participant A as 🤖 AI Engine
+    participant B as ⛓️ Blockchain
+    participant W as 💼 Wallet
+    
+    U->>V: Press Ctrl+Shift+M or Click Mic
+    V->>S: Activate Speech Recognition
+    S->>V: Start Listening (Animated UI)
+    U->>S: Speak Command
+    S->>V: Convert Speech to Text
+    V->>A: Send Text + Wallet Context
+    A->>B: Fetch Real-time Data
+    A->>W: Get Wallet Address
+    A->>V: Return AI Response
+    V->>U: Display Results + Auto-send
+    
+    Note over V: Visual feedback with pulsing mic
+    Note over A: Context-aware responses
+    Note over W: Non-custodial security
+```
+
+### 🎨 IP Asset Creation Flow
+
+```mermaid
+flowchart TD
+    A[🚀 Start Creation] --> B{💼 Wallet Connected?}
+    B -->|No| C[🔐 Connect Wallet via Tomo]
+    B -->|Yes| D[🎙️ Voice or Text Input]
+    C --> D
+    
+    D --> E[📝 Asset Name]
+    E --> F[📄 Description]
+    F --> G[👤 Creator Info]
+    G --> H[🖼️ Image Upload]
+    H --> I[🔍 AI Validation]
+    
+    I --> J{✅ Valid Data?}
+    J -->|No| K[❌ Show Errors]
+    K --> E
+    J -->|Yes| L[📡 Submit to Story Protocol]
+    
+    L --> M[⛓️ Blockchain Transaction]
+    M --> N[📋 Metadata to IPFS]
+    N --> O[🎉 Success Response]
+    
+    O --> P[📊 Update Dashboard]
+    O --> Q[💰 Track Performance]
+    
+    style A fill:#4ECDC4
+    style O fill:#90EE90
+    style K fill:#FFB6C1
+    style L fill:#FFD93D
+```
+
+### 🌉 Cross-Chain Bridge Workflow
+
+```mermaid
+graph LR
+    A[💼 User Wallet] --> B[🌉 deBridge Interface]
+    B --> C{🔍 Select Networks}
+    
+    C --> D[📡 Ethereum]
+    C --> E[🟣 Polygon]
+    C --> F[🔴 Arbitrum]
+    C --> G[🔵 Optimism]
+    C --> H[📖 Story Protocol]
+    
+    D --> I[💰 Select Token & Amount]
+    E --> I
+    F --> I
+    G --> I
+    H --> I
+    
+    I --> J[🧮 Calculate Fees]
+    J --> K[✅ Confirm Transaction]
+    K --> L[⚡ DLN Processing]
+    
+    L --> M[🔗 Cross-Chain Transfer]
+    M --> N[📊 Real-time Tracking]
+    N --> O[✅ Completion Notification]
+    
+    style A fill:#4ECDC4
+    style L fill:#8B5CF6
+    style O fill:#90EE90
+```
+
+### 🤖 AI Processing Pipeline
+
+```mermaid
+graph TD
+    A[📥 User Query] --> B{🎙️ Voice or Text?}
+    B -->|Voice| C[🎵 Speech Recognition]
+    B -->|Text| D[📝 Text Input]
+    
+    C --> E[📄 Transcript Processing]
+    D --> E
+    E --> F[🧠 Intent Analysis]
+    
+    F --> G{🎯 Query Type?}
+    G -->|General| H[🌐 Perplexity AI]
+    G -->|IP Asset| I[⛓️ Story Protocol APIs]
+    G -->|Create Asset| J[🎨 Asset Creation Flow]
+    
+    H --> K[📚 Knowledge Processing]
+    I --> L[📊 Blockchain Data]
+    J --> M[🔧 Guided Creation]
+    
+    K --> N[💼 Wallet Context]
+    L --> N
+    M --> N
+    
+    N --> O[🎨 Response Generation]
+    O --> P[📱 UI Display]
+    
+    style F fill:#8B5CF6
+    style N fill:#FFD93D
+    style P fill:#4ECDC4
+```
+
+### 📊 Real-Time Data Flow
+
+```mermaid
+graph LR
+    A[🏗️ Story Protocol] --> B[📡 Story APIs]
+    C[💰 Coinbase API] --> D[💱 Price Data]
+    E[⛓️ Multi-Chain] --> F[🌉 deBridge APIs]
+    
+    B --> G[📊 IntelliAI Backend]
+    D --> G
+    F --> G
+    
+    G --> H[🎯 Data Processing]
+    H --> I[📈 Analytics Engine]
+    H --> J[🤖 AI Context]
+    H --> K[💼 Wallet Integration]
+    
+    I --> L[📱 Dashboard UI]
+    J --> M[🎙️ AI Responses]
+    K --> N[🔐 User Context]
+    
+    L --> O[👤 User Experience]
+    M --> O
+    N --> O
+    
+    style G fill:#FF6B6B
+    style H fill:#8B5CF6
+    style O fill:#4ECDC4
 ```
 
 ---

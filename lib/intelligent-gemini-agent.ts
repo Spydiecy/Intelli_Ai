@@ -498,7 +498,7 @@ function generatePerplexityHTML(perplexityResponse: PerplexityResponse, userQuer
   `
 }
 
-export async function enhancedIntelligentAgent(userQuery: string, api: any): Promise<AgentResponse> {
+export async function enhancedIntelligentAgent(userQuery: string, api: any, walletAddress?: string): Promise<AgentResponse> {
   try {
     console.log("Processing enhanced query:", userQuery)
 
@@ -623,10 +623,11 @@ export async function enhancedIntelligentAgent(userQuery: string, api: any): Pro
     console.log("All enhanced fetched data:", fetchedData)
 
     // Step 4: Use Perplexity AI to analyze the blockchain data
+    const walletInfo = walletAddress ? `\nCONNECTED WALLET: ${walletAddress}` : "\nWALLET: Not connected"
     const dataAnalysisPrompt = `${ENHANCED_MASTER_PERPLEXITY_PROMPT.replace("{userQuery}", userQuery)
       .replace("{fetchedData}", JSON.stringify(fetchedData, null, 2))
       .replace("{intent}", intentData.intent)
-      .replace("{currentTimestamp}", Math.floor(Date.now() / 1000).toString())}`
+      .replace("{currentTimestamp}", Math.floor(Date.now() / 1000).toString())}${walletInfo}`
 
     const perplexityResponse = await callPerplexityAI(dataAnalysisPrompt)
     let htmlContent = perplexityResponse.choices[0]?.message?.content || ""

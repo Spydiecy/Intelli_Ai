@@ -2,12 +2,13 @@
 import { useState, useEffect, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
-import { Send, User, TrendingUp, RefreshCw, Search, Globe, Mic, MicOff, Upload, CheckCircle } from "lucide-react"
+import { Send, User, TrendingUp, RefreshCw, Search, Globe, Mic, MicOff, Upload, CheckCircle, Wallet } from "lucide-react"
 import { enhancedIntelligentAgent } from "@/lib/intelligent-gemini-agent"
 import { api } from "@/lib/api"
 import {fixedGaiaAgent} from "@/lib/gaia-agent"
 import { debridgeApi } from "@/lib/debridge-api"
 import { createIPAsset, type CreateIPAssetParams } from "@/lib/create-story-asset"
+import { useWallet } from "@/contexts/WalletContext"
 
 // Fix TypeScript declarations for Speech Recognition
 interface SpeechRecognitionConstructor {
@@ -95,6 +96,7 @@ interface VoiceRecognition {
 }
 
 export default function EnhancedAIChatPage() {
+  const { connected, publicKey, connectWallet, openConnectModal } = useWallet()
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [messages, setMessages] = useState<Message[]>([
@@ -235,6 +237,24 @@ export default function EnhancedAIChatPage() {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [messages])
+
+  // Expose wallet connection function globally
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      (window as any).connectWallet = () => {
+        if (openConnectModal) {
+          openConnectModal()
+        } else {
+          connectWallet()
+        }
+      }
+    }
+    return () => {
+      if (typeof window !== 'undefined') {
+        delete (window as any).connectWallet
+      }
+    }
+  }, [openConnectModal, connectWallet])
 
   const addMessage = (
     role: "user" | "assistant",
@@ -388,6 +408,7 @@ export default function EnhancedAIChatPage() {
             title: data.title!,
             description: data.description!,
             creatorName: data.creatorName!,
+            creatorAddress: publicKey || undefined, // Use connected wallet address
             imageFile: data.imageFile,
           }
 
@@ -422,10 +443,16 @@ export default function EnhancedAIChatPage() {
                     <h3 class="text-purple-300 font-semibold mb-3">🔗 Blockchain Info</h3>
                     <div class="space-y-2 text-sm">
                       <div><span class="text-white/60">Contract:</span> <span class="text-white font-mono">${result.spgNftContract.slice(0, 10)}...${result.spgNftContract.slice(-8)}</span></div>
-                      <div><span class="text-white/60">Wallet:</span> <span class="text-white font-mono">${result.walletAddress.slice(0, 10)}...${result.walletAddress.slice(-8)}</span></div>
+                      <div><span class="text-white/60">Creator Wallet:</span> <span class="text-white font-mono">${publicKey ? `${publicKey.slice(0, 10)}...${publicKey.slice(-8)}` : 'N/A'}</span></div>
                       <div><span class="text-white/60">TX Hash:</span> <span class="text-white font-mono">${result.txHash.slice(0, 10)}...${result.txHash.slice(-8)}</span></div>
                     </div>
                   </div>
+                </div>
+
+                <div class="p-3 bg-blue-500/5 border border-blue-500/10 rounded-lg">
+                  <p class="text-blue-300 text-sm">
+                    <span class="font-semibold">Note:</span> Your connected wallet address (${publicKey ? `${publicKey.slice(0, 6)}...${publicKey.slice(-4)}` : 'N/A'}) has been recorded as the creator in the asset metadata.
+                  </p>
                 </div>
 
                 <div class="flex flex-wrap gap-3 justify-center">
@@ -525,6 +552,33 @@ export default function EnhancedAIChatPage() {
     setLoading(true)
 
     try {
+      // Check wallet connection first
+      if (!connected || !publicKey) {
+        addMessage("assistant", "Wallet Connection Required", {
+          htmlContent: `
+            <div class="space-y-4 p-4">
+              <div class="p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+                <div class="flex items-center gap-2 mb-2">
+                  <svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                  </svg>
+                  <span class="text-yellow-400 font-semibold">Wallet Not Connected</span>
+                </div>
+                <p class="text-yellow-300 mb-3">To access Story Protocol data and create IP assets, please connect your Tomo wallet first.</p>
+                <button 
+                  onclick="window.connectWallet()" 
+                  class="px-4 py-2 bg-black text-black rounded-lg transition-colors font-medium"
+                >
+                  Connect Wallet
+                </button>
+              </div>
+            </div>
+          `,
+        })
+        setLoading(false)
+        return
+      }
+
       // Handle active flows first
       if (createAssetFlow.active) {
         await handleCreateAssetFlow(currentInput)
@@ -532,8 +586,8 @@ export default function EnhancedAIChatPage() {
         return
       }
 
-      console.log("Starting enhanced agent processing...")
-      const response:any = await enhancedIntelligentAgent(currentInput, api)
+      console.log("Starting enhanced agent processing with wallet:", publicKey)
+      const response:any = await enhancedIntelligentAgent(currentInput, api, publicKey)
       console.log("Agent response received:", response)
 
       // Check if create asset is required
@@ -662,19 +716,30 @@ export default function EnhancedAIChatPage() {
             </div>
           </div>
           <div className="flex items-center space-x-3">
+            {/* Wallet Status */}
+            <div className="flex items-center space-x-2">
+              {connected && publicKey ? (
+                <div className="flex items-center space-x-2 px-3 py-2 bg-green-500/10 border border-green-500/20 rounded-lg">
+                  <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                  <span className="text-green-400 text-sm font-medium">Connected</span>
+                  <span className="text-green-300 text-xs font-mono">
+                    {`${publicKey.slice(0, 6)}...${publicKey.slice(-4)}`}
+                  </span>
+                </div>
+              ) : (
+                <button
+                  onClick={() => openConnectModal ? openConnectModal() : connectWallet()}
+                  className="flex items-center space-x-2 px-3 py-2 bg-yellow-500/10 border border-yellow-500/20 rounded-lg hover:bg-yellow-500/20 transition-colors"
+                >
+                  <Wallet className="w-4 h-4 text-yellow-400" />
+                  <span className="text-yellow-400 text-sm font-medium">Connect Wallet</span>
+                </button>
+              )}
+            </div>
             <div className="text-right">
               <div className="text-sm text-gray-500">Messages</div>
               <div className="text-lg font-semibold text-white">{messages.length}</div>
             </div>
-            <Button
-              onClick={testAPI}
-              size="sm"
-              variant="outline"
-              className="border-gray-700 text-gray-400 hover:bg-gray-800 hover:text-white"
-            >
-              <RefreshCw className="h-3 w-3 mr-1" />
-              Test API
-            </Button>
             <Button
               onClick={() => setMessages([messages[0]])}
               variant="outline"
@@ -682,7 +747,7 @@ export default function EnhancedAIChatPage() {
               className="border-gray-700 text-gray-400 hover:bg-gray-800 hover:text-white"
             >
               <RefreshCw className="h-4 w-4 mr-2" />
-              Reset
+              New chat
             </Button>
           </div>
         </div>

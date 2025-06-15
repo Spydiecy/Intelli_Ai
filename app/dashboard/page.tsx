@@ -42,6 +42,7 @@ export default function DashboardHomePage() {
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [royalties, setRoyalties] = useState<RoyaltyPay[]>([])
   const [loading, setLoading] = useState(true)
+  const [refreshing, setRefreshing] = useState(false)
   const [stats, setStats] = useState({
     totalAssets: 0,
     totalTransactions: 0,
@@ -73,10 +74,10 @@ export default function DashboardHomePage() {
         const royaltyData = royaltiesResponse.data || []
         setRoyalties(royaltyData.slice(0, 3))
 
-        // Generate Story price history (mock data with realistic volatility)
-        const mockPriceHistory = generateStoryPriceHistory(7)
-        setPriceHistory(mockPriceHistory)
-        setStoryPrice(mockPriceHistory[mockPriceHistory.length - 1]?.price || 0.25)
+        // Fetch real IP token price and generate history
+        const priceHistory = await generateIPPriceHistory(7)
+        setPriceHistory(priceHistory)
+        setStoryPrice(priceHistory[priceHistory.length - 1]?.price || 3.544)
 
         // Calculate stats
         const totalRoyalties = royaltyData.reduce((sum: number, royalty: { amount: any }) => {
@@ -87,7 +88,7 @@ export default function DashboardHomePage() {
           totalAssets: assetData.length,
           totalTransactions: transactionData.length,
           totalRoyalties: totalRoyalties.toFixed(4),
-          totalValue: (totalRoyalties * (mockPriceHistory[mockPriceHistory.length - 1]?.price || 0.25)).toFixed(2)
+          totalValue: (totalRoyalties * (priceHistory[priceHistory.length - 1]?.price || 3.544)).toFixed(2)
         })
         
       } catch (error) {
@@ -100,18 +101,44 @@ export default function DashboardHomePage() {
     fetchDashboardData()
   }, [])
 
-  const generateStoryPriceHistory = (days: number): PriceData[] => {
+  // Real price fetching function
+  const fetchIPTokenPrice = async (): Promise<number> => {
+    try {
+      const response = await fetch('https://api.coinbase.com/v2/prices/IP-USD/spot')
+      const data = await response.json()
+      
+      if (data.data && data.data.amount) {
+        return parseFloat(data.data.amount)
+      }
+      
+      // Fallback to mock price if API fails
+      return 3.544 // Default IP token price
+    } catch (error) {
+      console.error('Error fetching IP token price:', error)
+      // Fallback to mock price
+      return 3.544
+    }
+  }
+
+  // Generate price history with real current price
+  const generateIPPriceHistory = async (days: number): Promise<PriceData[]> => {
+    const currentPrice = await fetchIPTokenPrice()
     const data: PriceData[] = []
     const now = Date.now()
     const dayMs = 24 * 60 * 60 * 1000
-    const basePrice = 0.25
 
     for (let i = days; i >= 0; i--) {
       const timestamp = now - i * dayMs
       
-      const volatility = (Math.random() - 0.5) * 1.08 // ±8% volatility
-      const trendFactor = (days - i) * 0.002 // Slight upward trend
-      const price = basePrice + basePrice * volatility + trendFactor+3.294
+      // Generate realistic historical prices based on current price
+      const volatility = (Math.random() - 0.5) * 0.15 // ±15% volatility
+      const trendFactor = (i - days) * 0.01 // Gradual trend toward current price
+      let price = currentPrice + currentPrice * volatility + trendFactor
+      
+      // For the current day, use the actual fetched price
+      if (i === 0) {
+        price = currentPrice
+      }
 
       data.push({
         timestamp,
@@ -121,6 +148,20 @@ export default function DashboardHomePage() {
     }
 
     return data
+  }
+
+  // Refresh price data
+  const refreshPriceData = async () => {
+    setRefreshing(true)
+    try {
+      const priceHistory = await generateIPPriceHistory(7)
+      setPriceHistory(priceHistory)
+      setStoryPrice(priceHistory[priceHistory.length - 1]?.price || 3.544)
+    } catch (error) {
+      console.error('Error refreshing price data:', error)
+    } finally {
+      setRefreshing(false)
+    }
   }
 
   const quickActions = [
@@ -211,16 +252,34 @@ export default function DashboardHomePage() {
         <Card className="lg:col-span-2 bg-black/50 border-white/20 backdrop-blur-sm">
           <CardHeader className="pb-2">
             <CardTitle className="text-white flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-purple-400" />
-              Story Protocol Price
+              <Coins className="h-5 w-5 text-purple-400" />
+              IP Token Price (Real-time)
             </CardTitle>
             <div className="flex items-center gap-4">
               <div>
-                <p className="text-2xl font-bold text-white">${storyPrice?.toFixed(4) || '0.0000'}</p>
-                <p className="text-sm text-green-400">
-                  +0.0012 (+4.8%) 24h
-                </p>
+                {storyPrice ? (
+                  <>
+                    <p className="text-2xl font-bold text-white">${storyPrice.toFixed(4)}</p>
+                    <p className="text-xs text-gray-400">
+                      Powered by Coinbase API
+                    </p>
+                  </>
+                ) : (
+                  <div className="animate-pulse">
+                    <div className="h-8 bg-white/10 rounded w-24 mb-1"></div>
+                    <div className="h-3 bg-white/10 rounded w-32"></div>
+                  </div>
+                )}
               </div>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="text-white/60 border-white/30 hover:border-white/50"
+                onClick={refreshPriceData}
+                disabled={refreshing}
+              >
+                {refreshing ? "Refreshing..." : "Refresh"}
+              </Button>
             </div>
           </CardHeader>
           <CardContent>

@@ -43,17 +43,18 @@ You are an EXPERT Story Protocol AI Assistant and Analytics HTML Generator. You 
 ### ETH CALCULATIONS:
 - Convert wei to ETH: divide by 10^18
 - Format to 6 decimal places for precision
-- Show both wei and ETH when relevant
+- Show In IP by converting 1 IP=0.0014 eth use this conversion do not show in ETH or wei 
 - Calculate totals and averages
 
 ## DATA FORMATTING:
-- ETH amounts: Always show both IP Token Amounts
+- ETH amounts: Always show IN IP Token Amounts Only
 - Addresses: Show first 6 and last 4 characters with "..."
 - Dates: Use readable format .
 - Numbers: Add commas for thousands
 - Percentages: Show with 2 decimal places
 - Rankings: Use 🥇🥈🥉 for top 3, then numbers
 - Remember my time is given in unix date so convert it into today's date and time.
+only show the small size logos and images.
 
 ## EXAMPLE ENHANCED STRUCTURE:
 <div class="space-y-6 p-4">
@@ -83,14 +84,14 @@ You are an EXPERT Story Protocol AI Assistant and Analytics HTML Generator. You 
 - Show rankings and comparisons
 - Filter by time when requested
 - Calculate totals and averages
-- Do not include any dummy data only use the real one.
+- Do not include any dummy data only use the real one
 - Use actual data, never placeholders
 - Do not include complete address write short form of address in ..
 - Everything in black theme if any image url comes then show the image also with src of the link given
 - In list all ip assets only list the ip asset details with image in table format not more than 10 in length in black theme
 - Do not show any dummy data. only real data show all data
 - Generate COMPLETE ANALYTICAL HTML response
-
+-show the mintin fees logo in small size
 Now process this request with ADVANCED ANALYTICS:
 
 USER QUERY: {userQuery}
@@ -341,7 +342,7 @@ async function callPerplexityAI(prompt: string): Promise<PerplexityResponse> {
       },
       body: JSON.stringify({
         search_mode: "web",
-        reasoning_effort: "medium",
+        reasoning_effort: "high",
         temperature: 0.2,
         top_p: 0.9,
         return_images: false,
@@ -353,7 +354,7 @@ async function callPerplexityAI(prompt: string): Promise<PerplexityResponse> {
         web_search_options: {
           search_context_size: "low",
         },
-        model: "sonar",
+        model: "sonar-pro",
         messages: [
           {
             content: prompt,

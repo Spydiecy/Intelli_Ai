@@ -143,7 +143,7 @@ export const api = {
         options: {
           orderBy: "blockNumber",
           orderDirection: "desc",
-          pagination: { limit: 1 },
+          pagination: { limit: 10 },
           ...options,
         },
       }),

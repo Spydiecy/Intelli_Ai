@@ -247,7 +247,7 @@ export interface CancelTransaction {
 // Story Protocol is chain ID 100000013 according to the API docs
 export const STORY_CHAIN_ID = 100000013
 
-export const debridgeApi = {
+export const debridgeApi:any = {
   async getSupportedChains(): Promise<SupportedChain[]> {
     try {
       const response = await fetch(`${DEBRIDGE_API_BASE}/supported-chains-info`)

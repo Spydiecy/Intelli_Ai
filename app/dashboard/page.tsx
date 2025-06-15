@@ -108,9 +108,10 @@ export default function DashboardHomePage() {
 
     for (let i = days; i >= 0; i--) {
       const timestamp = now - i * dayMs
-      const volatility = (Math.random() - 0.5) * 0.08 // ±8% volatility
+      
+      const volatility = (Math.random() - 0.5) * 1.08 // ±8% volatility
       const trendFactor = (days - i) * 0.002 // Slight upward trend
-      const price = basePrice + basePrice * volatility + trendFactor
+      const price = basePrice + basePrice * volatility + trendFactor+3.294
 
       data.push({
         timestamp,

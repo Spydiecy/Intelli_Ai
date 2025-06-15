@@ -78,7 +78,7 @@ export default function MintingFeesPage() {
 
   const totalAmount = mintingFees.reduce((sum, f) => sum + Number.parseFloat(f.amount || "0"), 0)
 
-  // Format large numbers for total volume (no Wei conversion, just K/M/B suffixes)
+  // Format large numbers for total volume (no smallest unit conversion, just K/M/B suffixes)
   const formatLargeNumber = (num: number) => {
     if (num >= 1000000000) {
       return `${(num / 1000000000).toFixed(2)}B`
@@ -92,7 +92,7 @@ export default function MintingFeesPage() {
     return num.toFixed(6)
   }
 
-  // Format token amounts with proper Wei-like conversion (Story Protocol uses IP token)
+  // Format token amounts with proper smallest unit conversion (Story Protocol uses IP token)
   const formatTokenAmount = (amount: string | number) => {
     const num = Number(amount || 0)
     
@@ -101,7 +101,7 @@ export default function MintingFeesPage() {
       return `${num.toExponential(2)} IP`
     }
     
-    // Assuming 18 decimal places like ETH (convert from Wei-like units)
+    // Assuming 18 decimal places (convert from smallest units)
     const actualAmount = num / Math.pow(10, 18)
     
     if (actualAmount >= 1000000000) {

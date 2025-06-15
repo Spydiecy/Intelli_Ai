@@ -132,7 +132,7 @@ export default function RoyaltiesPage() {
     return num.toFixed(6)
   }
 
-  // Format token amounts with proper Wei-like conversion
+  // Format token amounts with proper smallest unit conversion
   const formatTokenAmount = (amount: string | number) => {
     const num = Number(amount || 0)
     
@@ -141,7 +141,7 @@ export default function RoyaltiesPage() {
       return `${num.toExponential(2)} IP`
     }
     
-    // Assuming 18 decimal places like ETH (convert from Wei-like units)
+    // Assuming 18 decimal places (convert from smallest units)
     const actualAmount = num / Math.pow(10, 18)
     
     if (actualAmount >= 1000000000) {

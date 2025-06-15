@@ -125,7 +125,7 @@ export default function EnhancedAIChatPage() {
                 <li>• Create new IP assets</li>
                 <li>• View all assets with rich cards</li>
                 <li>• Get detailed asset information</li>
-                <li>• IP Token calculations (1 IP = 0.0014 ETH)</li>
+                <li>• IP Token calculations and analytics</li>
               </ul>
             </div>
             

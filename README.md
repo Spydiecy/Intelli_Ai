@@ -53,7 +53,6 @@ IntelliAI is a next-generation platform that revolutionizes how creators and bus
 #### Tomo Wallet Integration
 - **Universal Compatibility**: Support for 20+ wallets (MetaMask, Rainbow, WalletConnect)
 - **One-Click Connection**: Seamless authentication across all networks
-- **Multi-Chain Support**: Ethereum, Polygon, Optimism, Arbitrum, Base
 - **Social Sign-In**: Walletless authentication with Google, X, and more
 - **Enterprise Security**: Non-custodial with industry-standard encryption
 
@@ -107,7 +106,7 @@ Story Protocol APIs // Blockchain IP asset data
 
 ### Blockchain Infrastructure
 ```typescript
-Wagmi + Viem        // Ethereum interaction libraries
+Wagmi + Viem        // Blockchain interaction libraries
 Tomo EVM Kit        // Multi-chain wallet connectivity
 deBridge SDK        // Cross-chain bridging protocol
 Story Protocol SDK  // IP asset management
@@ -229,7 +228,7 @@ graph LR
     A[💼 User Wallet] --> B[🌉 deBridge Interface]
     B --> C{🔍 Select Networks}
     
-    C --> D[📡 Ethereum]
+    C --> D[� Tomo]
     C --> E[🟣 Polygon]
     C --> F[🔴 Arbitrum]
     C --> G[🔵 Optimism]

@@ -81,7 +81,7 @@ export default function DashboardHomePage() {
 
         // Calculate stats
         const totalRoyalties = royaltyData.reduce((sum: number, royalty: { amount: any }) => {
-          return sum + parseFloat(royalty.amount || "0") / 1e18 // Convert from wei
+          return sum + parseFloat(royalty.amount || "0") / 1e18 // Convert from smallest unit
         }, 0)
 
         setStats({
